@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>wamp安装php扩展 | Jay的实验室</title>
+<meta name="description" content="老杨的代码历程">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="shortcut icon" href="https://yangweijie.github.io/note/favicon.ico">
+<link rel="stylesheet" href="https://yangweijie.github.io/note/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://yangweijie.github.io/note">
+        <img src="https://yangweijie.github.io/note/images/avatar.png" class="site-logo">
+        <h1 class="site-title">Jay的实验室</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="site-description">
+      老杨的代码历程
+    </div>
+    <div class="site-footer">
+      Powered by Hve Notes
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">wamp安装php扩展</h2>
+            <div class="post-date">2019-03-08</div>
+            
+            <div class="post-content">
+              <p>pecl的mongodb扩展链接我们很多开发工作都要在windows下进行，但是在windows下给这些脚本程序安装一些插件扩展都比较麻烦，没有办法像linux环境一样一行命令完成，这里我在为PHP安装mongodb扩展的时候遇到了一些问题，特此写一遍wamp安装php扩展的教程。</p>
+<p>1.下载mongodb扩展</p>
+<p>下载windows环境下php的mongodb扩展。</p>
+<p>windows下的php的扩展一般都是dll文件，mongodb的php扩展在这里下载：</p>
+<p><a href="http://pecl.php.net/package/mongo">http://pecl.php.net/package/mongo</a></p>
+<p>我们这里选择最新的dll下载就好了。</p>
+<p>扩展一般会区分non thread safe (非线程安全)和thread safe（线程安全）区别就在于，非线程安全一般搭配IIS环境使用，线程安全搭配apache使用。当然除此之外php还有 VC6 VC9版本区分VC6和VC9一个支持apache一个支持IIS，VC9 用在apache上也没问题。当然这里还有更多内容这里就不再详细讨论了。</p>
+<p>我的环境是win10 64位 wamp（apache+php5.5）那么就下载php5.5 Thread Safe(TS)x64的那个文件。</p>
+<p>2.安装mongodb扩展</p>
+<p>下载好以后打开压缩包我们会发现php_mongo.dll文件。</p>
+<p>将这个文件复制到“wamp\bin\php\php5.5.12\ext”这个路径的文件夹下面。</p>
+<p>如果你自己安装的php就复制到php的ext文件夹当中。然后我们要修改php.ini配置文件来让PHP加载这个扩展。</p>
+<p>找到你的php.ini编辑这个文件，添加</p>
+<p>extension=php_mongo.dll 添加到这个文件目的是为了告诉PHP我们安装了这么一个扩展下次启动的时候要启动这个扩展。</p>
+<p>3.让mongodb的扩展找到libsasl.dll依赖库</p>
+<p>libsasl.dll是在php根目录下的一个文件夹，本文的mongodb需要依赖这个dll。由于wamp安装的过程当中不会添加php的环境变量，所以我们在使用php的mongodb扩展的时候，扩展无法找到libsasl.dll的位置导致mongodb的扩展是无法使用的。</p>
+<p>我们需要把php的目录路径添加到我们的系统环境变量里面。</p>
+<p>4.测试mongodb扩展安装是否成功</p>
+<p>最后我们重启所有的wamp服务，最好把wamp关闭再重新打开。启动wamp的localhost网页，找到phpinfo()</p>
+<p>出现mongo的字样就对了，说明mongodb安装成功了。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://yangweijie.github.io/note/tag/blog" class="tag">
+                    blog
+                  </a>
+                
+                  <a href="https://yangweijie.github.io/note/tag/php" class="tag">
+                    PHP
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://yangweijie.github.io/note/post/7-CCiPrjC">
+                  <h3 class="post-title">
+                    JS/jQuery 遍历对象属性
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

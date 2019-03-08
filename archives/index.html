@@ -1,96 +1,306 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="description" content="" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hve Notes</title>
+    <meta charset="utf-8" >
+
+<title>文章归档 | Jay的实验室</title>
+<meta name="description" content="老杨的代码历程">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="shortcut icon" href="https://yangweijie.github.io/note/favicon.ico">
 <link rel="stylesheet" href="https://yangweijie.github.io/note/styles/main.css">
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://yangweijie.github.io/note">
-  <img class="avatar" src="https://yangweijie.github.io/note/images/avatar.png" alt="" width="80px" height="80px">
-  </a>
-  <h1 class="site-title">
-    Hve Notes
-  </h1>
-  <p class="site-description">
-    温故而知新
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://yangweijie.github.io/note">
+        <img src="https://yangweijie.github.io/note/images/avatar.png" class="site-logo">
+        <h1 class="site-title">Jay的实验室</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/" class="menu">
-          首页
-        </a>
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
       
-    
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-    
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="site-description">
+      老杨的代码历程
+    </div>
+    <div class="site-footer">
+      Powered by Hve Notes
+    </div>
   </div>
 </div>
 
-    
-        
 
-<div class="archives-container">
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          
+
+          <h2 class="archives-title">文章归档</h2>
+          <div class="archives-container">
+            
+              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2019</h2>
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/dp1abq4R6">
+                      <h2 class="post-title">
+                        HTML 转 PDF 之 wkhtmltopdf 工具简介 术语定义
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/hwuHNKVwr">
+                      <h2 class="post-title">
+                        css设置各种中文字体如雅黑、黑体、宋体、楷体等等
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/tU2FZuNlm">
+                      <h2 class="post-title">
+                        慕课手机客户端缓存的视频，存储路径在哪里？
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/sZ3kK17QI">
+                      <h2 class="post-title">
+                        wamp安装php扩展
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/7-CCiPrjC">
+                      <h2 class="post-title">
+                        JS/jQuery 遍历对象属性
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2018</h2>
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/hello-hve-notes">
+                      <h2 class="post-title">
+                        Hello Hve Notes
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2017</h2>
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/l72O5PsD-">
+                      <h2 class="post-title">
+                        查看某个表的字段结构
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/1kmVWKQkf">
+                      <h2 class="post-title">
+                        composer 更新thinkphp5.0 稳定版为开发版
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/_3to9XImk">
+                      <h2 class="post-title">
+                        给通过书签给chrome控制台添加jquery支持
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/zcF7uxBlI">
+                      <h2 class="post-title">
+                        查找端口占用进程
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/9P3HViKfQ">
+                      <h2 class="post-title">
+                        base64格式 如何获取图片大小
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/7wWX3Qhgr">
+                      <h2 class="post-title">
+                        css设置各种中文字体如雅黑、黑体、宋体、楷体等等
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://yangweijie.github.io/note/post/hello-world">
+                      <h2 class="post-title">
+                        Hello World
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+            
+          </div>
+
+          <div class="pagination-container">
   
-    <h2 class="year">2018</h2>
-    
-      
-        <article class="post">
-          <a href="https://yangweijie.github.io/note/post/hello-hve-notes">
-            <h2 class="post-title">
-              Hello Hve Notes
-              <small>2018-12-12</small>
-            </h2>
-          </a>
-        </article>
-      
-    
   
 </div>
 
-    
-        <div class="pagination-container">
-  
-  
-</div>
-
-    
-        <div class="site-footer">
-  Powered by Hve Notes
-</div>
-
-<script>
-  hljs.initHighlightingOnLoad()
-</script>
-
+        </div>
       </div>
     </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
   </body>
 </html>

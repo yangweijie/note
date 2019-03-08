@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>标签列表 | Jay的实验室</title>
+<title>base64格式 如何获取图片大小 | Jay的实验室</title>
 <meta name="description" content="老杨的代码历程">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -75,20 +75,44 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <h2 class="tag-list-title">标签列表</h2>
-          <div class="tags-container">
+          <div class="post-detail">
+            <h2 class="post-title">base64格式 如何获取图片大小</h2>
+            <div class="post-date">2017-07-11</div>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/css">CSS</a>
+            <div class="post-content">
+              <p>今天 微信群友问了一句 base64格式 如何获取图片大小，我想了下 有个getimagesizefromstring 函数 可以获取，让他看手册，结果他说能不能不存获取。我想可以啊，就自己封装了个函数 实验了下。可以</p>
+<p>function get_img_info_from_base64($base64_image_content){<br>    if (preg_match(&#39;/^(data:\s*image/(\w+);base64,)/&#39;, $base64_image_content, $result)){<br>        $file_content = base64_decode(str_replace($result[1], &#39;&#39;, $base64_image_content));<br>        return getimagesizefromstring($file_content);<br>    }else{<br>        return false;<br>    }<br>}<br>测试</p>
+<p> public function test_base64_img_info(){<br>        $image_file = &#39;<a href="https://www.baidu.com/img/bd_logo1.png&#39;">https://www.baidu.com/img/bd_logo1.png&#39;</a>;<br>        $image_info = getimagesize($image_file);<br>        $base64_image_content = &quot;data:{$image_info[&#39;mime&#39;]};base64,&quot; . chunk_split(base64_encode(file_get_contents($image_file)));<br>        $ret = get_img_info_from_base64($base64_image_content);<br>        return json($ret);<br>    }<br>如果是文件存储大小，strlen一下个那个file_content 就行了，我拿百度logo测试了一下 7877 一样的。</p>
+
+            </div>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/blog">blog</a>
+              <div class="tag-container">
+                
+                  <a href="https://yangweijie.github.io/note/tag/blog" class="tag">
+                    blog
+                  </a>
+                
+                  <a href="https://yangweijie.github.io/note/tag/php" class="tag">
+                    PHP
+                  </a>
+                
+              </div>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/php">PHP</a>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/javascript">javascript</a>
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://yangweijie.github.io/note/post/7wWX3Qhgr">
+                  <h3 class="post-title">
+                    css设置各种中文字体如雅黑、黑体、宋体、楷体等等
+                  </h3>
+                </a>
+              </div>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/hvenotes">HveNotes</a>
+
             
+
           </div>
+
         </div>
       </div>
     </div>

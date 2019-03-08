@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>标签列表 | Jay的实验室</title>
+<title>查找端口占用进程 | Jay的实验室</title>
 <meta name="description" content="老杨的代码历程">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -75,20 +75,34 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <h2 class="tag-list-title">标签列表</h2>
-          <div class="tags-container">
+          <div class="post-detail">
+            <h2 class="post-title">查找端口占用进程</h2>
+            <div class="post-date">2017-07-11</div>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/css">CSS</a>
+            <div class="post-content">
+              <p>今天发现启动不了apache 看windows 事件查看器 发现提示日志写不了。 查找了一篇文章 说是80端口被占用 提到skpe 想起昨天有看到skype 窗口 win10的 然后用文章里说的查看端口方式看了 一下 还不是它 是宝塔面板</p>
+<p>netstat -aon|findstr &quot;80&quot;<br>tasklist|findstr &quot;2448&quot;<br>这里的2448是之前列表里的 pid</p>
+<p>然后任务管理器里 查看pid 路径 把路径名称列开启。</p>
+<p>找到元凶 卸载掉 重启 - 他装了服务。</p>
+<p>再次启动好了</p>
+
+            </div>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/blog">blog</a>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/php">PHP</a>
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://yangweijie.github.io/note/post/9P3HViKfQ">
+                  <h3 class="post-title">
+                    base64格式 如何获取图片大小
+                  </h3>
+                </a>
+              </div>
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/javascript">javascript</a>
+
             
-              <a class="tag" href="https://yangweijie.github.io/note/tag/hvenotes">HveNotes</a>
-            
+
           </div>
+
         </div>
       </div>
     </div>

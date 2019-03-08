@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>HTML 转 PDF 之 wkhtmltopdf 工具简介 术语定义 | Jay的实验室</title>
+<meta name="description" content="老杨的代码历程">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="shortcut icon" href="https://yangweijie.github.io/note/favicon.ico">
+<link rel="stylesheet" href="https://yangweijie.github.io/note/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://yangweijie.github.io/note">
+        <img src="https://yangweijie.github.io/note/images/avatar.png" class="site-logo">
+        <h1 class="site-title">Jay的实验室</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="site-description">
+      老杨的代码历程
+    </div>
+    <div class="site-footer">
+      Powered by Hve Notes
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">HTML 转 PDF 之 wkhtmltopdf 工具简介 术语定义</h2>
+            <div class="post-date">2019-03-09</div>
+            
+            <div class="post-content">
+              <p>术语定义<br>文档对象<br>“文档对象”是指PDF文档中的文档对象，共有三种类型的“文档对象”，他们分别是“页面对象”，“封面对象”和“目录对象”。</p>
+<p>页面对象<br>“页面对象”是指以页面的形式在PDF文档中呈现的对象，这个是相对于“封面对象”和“目录对象”来讲的。此类对象会成为PDF文档中内容。</p>
+<p>封面对象<br>“封面对象”是指以封面的形式在PDF文档中呈现的对象。这类对象会成为PDF文档中的封面。</p>
+<p>目录对象<br>“目录对象”是以目录的形式在PDF文档中呈现的对象，又叫“TOC对象”。这类对象会成为PDF文档中的目录。</p>
+<p>大纲<br>“大纲”是指阅读PDF文档时的书签导航。</p>
+<p>外链<br>“外链”是指所有在这个页面中且不指向它自身页面中锚点的超链接。</p>
+<p>内链<br>“内链”是指在这个页面中且指向的目标页面是这个页面本身中的一个锚点的超链接。</p>
+<p>命令格式<br>wkhtmltopdf [GLOBAL OPTION]... [OBJECT]... <output file><br>上述代码就是 wkhtmltopdf 的命令行格式，看似简单，其实在 [GLOBAL OPTION] 和 [OBJECT] 中还别有洞天。预知详情，且听我慢慢道来。</p>
+<p>文档对象简介<br>wkhtmltopdf 能够把多个“对象”合并生成一个pdf文档，这些“对象”可以是“页面对象”、“封面对象”、或是“目录对象”。这些对象在pdf文档中的顺序可以通过命令行参数来指定。命令行参数包括两部分，一种是针对某一特定“对象”的命令行参数，另一种是全局的命令行参数。并且全局的命令行参数只能放在全局参数区([GLOBAL OPTION])中指定。</p>
+<p>页面对象简介<br>“页面对象”作用是用来把一个网页作为内容输出到PDF文档中。</p>
+<p>(page)? &lt;input url/file name&gt; [PAGE OPTION]...</p>
+<p>“页面对象”的参数可以放在“全局参数域([GLOBAL OPTIONS])”和“页面参数域([PAGE OPTIONS])”。程序会根据实际情况在所有参数中找到合适的参数应用到页面、页眉和页脚。</p>
+<p>封面对象简介<br>“封面对象”用来把一个网页作为封面输出到PDF文档中，输出的页面不会在TOC中出现，并且不会包含页眉和页脚。</p>
+<p>cover &lt;input url/file name&gt; [PAGE OPTION]...<br>所有能够在“页面对象”中使用的参数都可以用到“封面对象”</p>
+<p>目录对象简介<br>“目录对象”的作用是输出一个目录到PDF文件中。</p>
+<p>toc [TOC OPTION]...<br>所有能够在“页面对象”中使用的参数都可以用到“TOC对象”，并且还有许多的针对“TOC对象”的参数可以应用到“TOC对象”中。目录是通过 XSLT 生成的，这就意味着它可以被定义成任何你想看到的样子。你可以通过命令行参数 --dump-default-toc-xsl 输出默认的 XSLT 文档，通过 --dump-outline 命令行参数 可指定以XML格式输出当前处理文档的目录到指定文件。更多详细内容请查看后面介绍的 目录对象参数</p>
+<p>命令参数<br>命令参数包含五部分，分别是“全局参数”，“大纲参数选项”，“页面对象参数”，“页眉和页脚参数选项”和“目录对象参数”。</p>
+<p>全局参数<br>    --collate             当输出多个副本时进行校验(这是默认设置)<br>    --no-collate          当输出多个副本时不进行校验<br>    --cookie-jar <path>   从提供的JAR文件中读写cookie数据<br>    --copies <number>     设置输出副本的数量(默认主1)，其实为1就够了<br>-d, --dpi <dpi>           指定一个要分辨率(这在 X11 系统中并没有什么卵用)<br>-H, --extended-help       相对 -h 参数，显示更详细的说明文档<br>-g, --grayscale           指定以灰度图生成PDF文档。占用的空间更小<br>-h, --help                显示帮助信息<br>    --htmldoc             输出程序的html帮助文档<br>    --image-dpi <integer> 当页面中有内嵌的图片时，<br>                          会下载此命令行参数指定尺寸的图片(默认值是 600)<br>    --image-quality <interger> 当使用 jpeg 算法压缩图片时使用这个参数指定的质量(默认为 94)<br>    --license             输出授权信息并退出<br>-l, --lowquality          生成低质量的 PDF/PS ,能够很好的节约最终生成文档所占存储空间<br>    --manpage             输出程序的手册页<br>-B, --margin-bottom <unitreal> 设置页面的 底边距<br>-L, --margin-left <unitreal>   设置页面的 左边距 (默认是 10mm)<br>-R, --margin-right <unitreal>  设置页面的 右边距 (默认是 10mm)<br>-T, --margin-top <unitreal>    设置页面的 上边距<br>-O, --orientation <orientation> 设置为“风景(Landscape)”或“肖像(Portrait)”模式,<br>                                默认是肖像模块(Portrait)<br>    --page-height <unitreal>   页面高度<br>-s, --page-size <Size>         设置页面的尺寸，如：A4,Letter等，默认是：A4<br>    --page-width <unitreal>    页面宽度<br>    --no-pdf-compression       不对PDF对象使用丢失少量信息的压缩算法，不建议使用些参数，<br>                               因为生成的PDF文件会非常大。<br>-q, --quiet                    静态模式，不在标准输出中打印任何信息<br>    --read-args-from-stdin     从标准输入中读取命令行参数，后续会有针对此指令的详细介绍，<br>                               请参见 <strong>从标准输入获取参数</strong><br>    --readme                   输出程序的 readme 文档<br>    --title <text>             生成的PDF文档的标题，如果不指定则使用第一个文档的标题<br>-V, --version                  输出版本信息后退出<br>上述代码区是所有全局参数及注释，下面简单说一下个别参数的意义及用法。</p>
+<p>--copies N<br>N 是一个正整数。</p>
+<p>这个选项可以先不用关心了，因为你这辈子可能都用不到。他的作用是在生成的PDF文档中，把内容重复输出 N 份。也就是说，你将得到一个PDF文档，这个文档中的大小、内容量都将是不使用此参数时的 N 倍。然而重复的内容对你来说并没有什么卵用。</p>
+<p>如果不使用 --copies 参数，那么 --collate 和 --no-collate 参数就不用了解了，因为他们只在 --copies 参数中的 N 大于 1 时才有意义。</p>
+<p>-g, --grayscale<br>这个参数非常有用，使用这个参数可以有效压缩生成的PDF所占用的存储空间。当然这个压缩是要付出一定代价的，那就是最终生成的PDF文档将是灰度的，没有任何色彩。如果你能接受灰度PDF文档，并不影响实际使用，那就请使用这个参数吧。生成的PDF文档越大，使用此参数获得的惊喜就越大。</p>
+<p>-l, --lowquality<br>这个参数与 -g 参数有异曲同工之妙， -l 参数也会大大压缩PDF文档所占用的存储空间。只是它是通过降低PDF文档的质量来完成这一任务的。这个参数也值得推荐，你最好先尝试一下，看看使用此参数后生成的PDF文档与不使用此参数的区别再做决定。我可以告诉你的是，在纯文字的情况下他们的差别不大，此参数只是降低了PDF文档的质量，看上去是糙了一些，但不会影响阅读。如果你是一个追求感官享受，或是你生成的PDF文档中有大量图片，那就不要使用此参数了。</p>
+<p>--no-pdf-compression<br>这个参数强烈建议不要使用，最好这辈子都不要去了解他的好，因为对于你来说肯定用不到。它的作用就是在输出PDF文档时，不使用任何的压缩。这将会导致输出的PDF文档特别的大，质量是无损的，但是对于人类来说从感观上根本察觉不到压缩前后的质量变化的。如果你的感观超乎于常人，压缩之后的体验对你来说无法接受，那我收回前面的话，你就尽情使用此参数吧。</p>
+<p>-q, --quiet<br>使用这个参数后，你将得到一个干净的命令行输出，就连程序处理的进度和状态都没有。这个参数会抑制所有命令行输出，在程序的工作过程中，你看不到任何输出。建议不会使用此参数，因为程序输出一些进度和状态信息还是非常有用的。万一程序工作到某处死了呢(嘿嘿)，在 -q 模式下你是无法分辨是否程序死掉了的。</p>
+<p>大纲参数选项<br>--dump-default-toc-xsl     输出默认的 TOC xsl 样式表到标准输出<br>--dump-outline <file>      输出“大纲”到指定的文件(文件内容为xml)<br>--outline                  在生成的PDF文档中输出“大纲”(这是默认设置)<br>--no-outline               不在pdf文档中输出大纲<br>--outline-depth <level>    设置生成大纲的深度(默认为 4)<br>大纲参数中唯一需要特别说一下的是 --outline-depth ，其他参数默认就好了。</p>
+<p>何为大纲</p>
+<p>大纲</p>
+<p>如上图所示，其实我更喜欢称之为目录或导航。大纲是根据你HTML中的标题(Hn标签)自动生成的。</p>
+<p>--outline-depth<br>--outline-depth 用来指定生成的大纲的深度。默认值为 4。你可以指定一个大一些的数字，以保证所有在HTML中指定的H标签都能在大纲中生成对应的项，方便阅读时快速跳转。</p>
+<p>当指定了 --no-outline 参数时， 将不会输出大纲到PDF文档，所以再指定 --outline-depth 也就没有意义了。</p>
+<p>页面对象参数<br>    --allow <path>                指定加载HTML中相对路径文件的目录(可重复使用此参数指定多个<br>                                  目录)，这个参数会在后面进行更详细的讲解<br>    --background                  输出页面背景到PDF文档(这是默认设置)<br>    --no-background               不输出页面背景到PDF文档<br>    --cache-dir <path>            网页的缓存目录<br>    --checkbox-checked-svg <path> 使用指定的SVG文件渲染选中的复选框<br>    --checkbox-svg <path>         使用指定的SVG文件渲染未选中的筛选框<br>    --cookie <name> <value>       设置访问网页时的cookie,value 需要进行url编码<br>                                  (可重复使用此参数指定多个cookie)<br>    --custom-header <name> <value> 设置访问网页时的HTTP头(可重复使用此参数指定多个HTTP头)<br>    --custom-header-propagation   为每个要加载的资源添加由 --custom-header 指定的HTTP头<br>    --no-custom-header-propagation 不为每个要加载的资源添加由 --custom-header 指定的HTTP头<br>    --debug-javascript            显示javascript调试输出的信息<br>    --no-debug-javascript         不显示javascript调试输出的信息(这是默认设置)<br>    --default-header              添加一个默认的“头”，在页面的左头显示页面的名字，<br>                                  在页面的右头显示页码，这相对于进行了如下设置：<br>                                  --header-left=&#39;[webpage]&#39;<br>                                  --header-right=&#39;[page]/[toPage]&#39;<br>                                  --top 2cm<br>                                  --header-line<br>    --encoding <encoding>         为输入的文本设置默认的编码方式<br>    --disable-external-links      禁止页面中的外链生成超链接<br>    --enable-external-links       允许页面中的外链生成超链接(这是默认设置)<br>    --disable-forms               不转换HTML表单为PDF表单(这是默认设置)<br>    --enable-forms                转换HTML表单为PDF表单<br>    --images                      加载图片并输出到PDF文档(这是默认设置)<br>    --no-images                   在生成的PDF文档中过滤掉图片<br>    --disable-internal-links      禁止页面中的内链生成超链接<br>    --enable-internal-links       允许页面中的内链生成超连接(这是默认设置)<br>-n, --disable-javascript          禁止WEB页面执行 javascript<br>    --enable-javascript           允许WEB页面执行 javascript(这是默认设置)<br>    --javascript-delay <msec>     延迟一定的毫秒等待javascript 执行完成(默认值是200)<br>    --load-error-handling <handler> 指定当页面加载失败后的动作，可以指定为：abort(中止)、<br>                                    ignore(忽略)、skip(跳过)；(默认值是：abort)<br>    --load-media-error-handling <handler> 指定当媒体文件加载失败后的动作，可以指定为：<br>                                          abort(中止)、ignore(忽略)、skip(跳过)；<br>                                          (默认值是：ignore)<br>    --disable-local-file-access   不允许一个本地文件加载其他的本地文件，使用命令行参数<br>                                   <code>--allow</code> 指定的目录除外。<br>    --enable-local-file-access    允许本地文件加载其他的本地文件(这是默认设置)<br>    --minimum-font-size <int>     设置最小的字号，除非必要不推荐使用该参数<br>    --exclude-from-outline        拒绝加载当前页面到PDF文档的目录和大纲中<br>    --include-in-outline          加载当前页面到PDF文档的目录和大纲中(这是默认设置)<br>    --page-offset <offset>        设置页码的起始值(默认值为0)<br>    --password <password>         HTTP身份认证的密码<br>    --disable-plugins             禁止使用插件(这是默认设置)<br>    --enable-plugins              允许使用插件，但插件可能并不工作<br>    --post <name> <value>         添加一个POST字段，可以重复使用该参数添加多个POST字段。<br>    --post-file <name> <value>    添加一个POST文件，可以重复使用该参数添加多个文件。<br>    --print-media-type            用显示媒体类型代替屏幕<br>    --no-print-media-type         不用显示媒体类型代替屏幕<br>-p, --proxy <proxy>               使用代理<br>--radiobutton-checked-svg <path>  使用指定的SVG文件渲染选中的单选框<br>--radiobutton-svg <path>          使用指定的SVG文件渲染未选中的单选框<br>--run-sript <js>                  页面加载完成后执行一个附加的JS文件，可以重复使用此参数指定<br>                                  多个要在页面加载完成后要执行的JS文件。<br>--disable-smart-shrinking         不使用智能收缩策略<br>--enable-smart-shrinking          使用智能收缩策略(这是默认设置)<br>--stop-slow-scripts               停止运行缓慢的javascript代码(这是默认设置)<br>--no-stop-slow-scripts            不停止运行缓慢的javascript代码<br>--disable-toc-back-links          禁止从标题链接到目录(这是默认设置)<br>--enable-toc-back-links           允许从标题链接到目录<br>--user-style-sheet <url>          设置一个在每个页面都加载的用户自定义样式表<br>--username <username>             HTTP身谁的用户名<br>--viewport-size &lt;&gt;                设置窗口大小,需要你自定义滚动条或css属性来自适应窗口大小。<br>--window-status <windowStatus>    Wait until window.status is equal to<br>                                  this string before rendering page<br>--zoom <float>                    设置转换成PDF时页面的缩放比例(默认为1)<br>上面代码段中只是对所有 页面对象参数 做了个大概的说明，下面针对个别主要参数做更详细的讲解。</p>
+<p>--allow<br>这个参数只在“页面对象”是一个文件时有效，在“页面对象”是一个url时此参数无效。</p>
+<p>这个参数的作用是为HTML页面中使用相对路径引用的文件指定一个加载文件的基目录。也就是说HTML文件中所有以相对路径指定的文件都会从 --allow 参数指定的目录进行加载。其实在HTML中指定 base 标签可以达到同样的目的。如果两者(--allow参数和base标签)都没有指定，则使用当前处理的HTML文件所在的目录作为基目录加载当前处理的HTML中相对路径指定的文件。</p>
+<p>--background AND --no-background<br>这两个参数是一对，用来指定是否在生成的PDF中应用网页的背景，默认 --background参数是开启的，也就是说默认生成的PDF文档中是带有HTML页面的背景图片或背景色的。如果开启 --no-backgroupd 参数，则生成的PDF文档中不会有HTML页面中的背景图片和背景色。</p>
+<p>--debug-javascript ADN --no-debug-javascript<br>这两个参数用来指定是否在标准输出中输出javascript的调试信息，默认 --no-debug-javasript 参数是开启的，也就是说默认不会输出javascript的调试信息。下图是打开 --debug-javascript 参数的演示。</p>
+<p>--debug-javascript</p>
+<p>--disable-external-links AND --enable-external-links<br>这两个参数是用来设置在页面中的外链是否以超链接的形式出现在PDF文档中。关于“外链”的定义请移架 术语定义 。默认 --enable-external-links 参数被打开，所以默认情况是页面中的外链是以超链接的形式出现的PDF文档中的，点击可以打开指定的网页。</p>
+<p>--exclude-from-outline AND --include-in-outline<br>这两个参数用来设置当前页面对象是否包含到目录和大纲中。 默认情况下 --include-in-outline 参数是打开的。也就是说默认情况下生成的PDF文档目录和大纲中是包含当前页面的，如果你不想让当前页面加到目录和大纲中可以打开 --exclude-from-outline 参数。</p>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://yangweijie.github.io/note/post/hwuHNKVwr">
+                  <h3 class="post-title">
+                    css设置各种中文字体如雅黑、黑体、宋体、楷体等等
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
