@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>PHP获取上周、本周、上月、本月、本季度、上季度时间方法大全 | Jay的实验室</title>
+<meta name="description" content="老杨的代码历程">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="shortcut icon" href="https://yangweijie.github.io/note/favicon.ico">
+<link rel="stylesheet" href="https://yangweijie.github.io/note/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://yangweijie.github.io/note">
+        <img src="https://yangweijie.github.io/note/images/avatar.png" class="site-logo">
+        <h1 class="site-title">Jay的实验室</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="site-description">
+      老杨的代码历程
+    </div>
+    <div class="site-footer">
+      Powered by Hve Notes
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">PHP获取上周、本周、上月、本月、本季度、上季度时间方法大全</h2>
+            <div class="post-date">2017-07-11</div>
+            
+            <div class="post-content">
+              <pre><code>/**date 2015-04-11
+     * author http://www.lai18.com
+     **/
+    echo date(&quot;Ymd&quot;,strtotime(&quot;now&quot;)), &quot;\n&quot;;
+    echo date(&quot;Ymd&quot;,strtotime(&quot;-1 week Monday&quot;)), &quot;\n&quot;;
+    echo date(&quot;Ymd&quot;,strtotime(&quot;-1 week Sunday&quot;)), &quot;\n&quot;;
+    echo date(&quot;Ymd&quot;,strtotime(&quot;+0 week Monday&quot;)), &quot;\n&quot;;
+    echo date(&quot;Ymd&quot;,strtotime(&quot;+0 week Sunday&quot;)), &quot;\n&quot;;
+
+    echo &quot;*********第几个月:&quot;;
+    echo date(&#39;n&#39;);
+    echo &quot;*********本周周几:&quot;;
+    echo date(&quot;w&quot;);
+    echo &quot;*********本月天数:&quot;;
+    echo date(&quot;t&quot;);
+    echo &quot;*********&quot;;
+
+    echo &#39;&lt;br&gt;上周起始时间:&lt;br&gt;&#39;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(0, 0 , 0,date(&quot;m&quot;),date(&quot;d&quot;)-date(&quot;w&quot;)+1-7,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(23,59,59,date(&quot;m&quot;),date(&quot;d&quot;)-date(&quot;w&quot;)+7-7,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo &#39;&lt;br&gt;本周起始时间:&lt;br&gt;&#39;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(0, 0 , 0,date(&quot;m&quot;),date(&quot;d&quot;)-date(&quot;w&quot;)+1,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(23,59,59,date(&quot;m&quot;),date(&quot;d&quot;)-date(&quot;w&quot;)+7,date(&quot;Y&quot;))),&quot;\n&quot;;
+
+    echo &#39;&lt;br&gt;上月起始时间:&lt;br&gt;&#39;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(0, 0 , 0,date(&quot;m&quot;)-1,1,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(23,59,59,date(&quot;m&quot;) ,0,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo &#39;&lt;br&gt;本月起始时间:&lt;br&gt;&#39;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(0, 0 , 0,date(&quot;m&quot;),1,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(23,59,59,date(&quot;m&quot;),date(&quot;t&quot;),date(&quot;Y&quot;))),&quot;\n&quot;;
+
+    $season = ceil((date(&#39;n&#39;))/3);//当月是第几季度
+    echo &#39;&lt;br&gt;本季度起始时间:&lt;br&gt;&#39;;
+    echo date(&#39;Y-m-d H:i:s&#39;, mktime(0, 0, 0,$season*3-3+1,1,date(&#39;Y&#39;))),&quot;\n&quot;;
+    echo date(&#39;Y-m-d H:i:s&#39;, mktime(23,59,59,$season*3,date(&#39;t&#39;,mktime(0, 0 , 0,$season*3,1,date(&quot;Y&quot;))),date(&#39;Y&#39;))),&quot;\n&quot;;
+
+    $season = ceil((date(&#39;n&#39;))/3)-1;//上季度是第几季度
+    echo &#39;&lt;br&gt;上季度起始时间:&lt;br&gt;&#39;;
+    echo date(&#39;Y-m-d H:i:s&#39;, mktime(0, 0, 0,$season*3-3+1,1,date(&#39;Y&#39;))),&quot;\n&quot;;
+    echo date(&#39;Y-m-d H:i:s&#39;, mktime(23,59,59,$season*3,date(&#39;t&#39;,mktime(0, 0 , 0,$season*3,1,date(&quot;Y&quot;))),date(&#39;Y&#39;))),&quot;\n&quot;;</code></pre>
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://yangweijie.github.io/note/tag/thinkphp" class="tag">
+                    ThinkPHP
+                  </a>
+                
+                  <a href="https://yangweijie.github.io/note/tag/blog" class="tag">
+                    blog
+                  </a>
+                
+                  <a href="https://yangweijie.github.io/note/tag/php" class="tag">
+                    PHP
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://yangweijie.github.io/note/post/x8qJFoZ7p">
+                  <h3 class="post-title">
+                    thinkphp5 速查表
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
