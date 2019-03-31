@@ -1,160 +1,104 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" >
-
-<title>jay的实验室</title>
-<meta name="description" content="编程的开发日志">
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-<link rel="shortcut icon" href="https://yangweijie.github.io/note/favicon.ico">
-<link rel="stylesheet" href="https://yangweijie.github.io/note/styles/main.css">
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-
-
-  </head>
-  <body>
-    <div id="app" class="main">
-
-      <div class="sidebar" :class="{ 'full-height': menuVisible }">
-  <div class="top-container" data-aos="fade-right">
-    <div class="top-header-container">
-      <a class="site-title-container" href="https://yangweijie.github.io/note">
-        <img src="https://yangweijie.github.io/note/images/avatar.png" class="site-logo">
-        <h1 class="site-title">jay的实验室</h1>
-      </a>
-      <div class="menu-btn" @click="menuVisible = !menuVisible">
-        <div class="line"></div>
-      </div>
-    </div>
-    <div>
-      
-        
-          <a href="/note/" class="site-nav">
-            首页
-          </a>
-        
-      
-        
-          <a href="/note/archives" class="site-nav">
-            归档
-          </a>
-        
-      
-        
-          <a href="/note/tags" class="site-nav">
-            标签
-          </a>
-        
-      
-        
-          <a href="/note/post/about" class="site-nav">
-            关于
-          </a>
-        
-      
-    </div>
-  </div>
-  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
-    <div class="site-description">
-      编程的开发日志
-    </div>
-    <div class="site-footer">
-      Powered by Hve Notes
-    </div>
-  </div>
-</div>
-
-
-      <div class="main-container">
-        <div class="content-container" data-aos="fade-up">
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://yangweijie.github.io/note/post/base64-ge-shi-ru-he-huo-qu-tu-pian-da-xiao">
-                  <h2 class="post-title">base64格式 如何获取图片大小</h2>
-                </a>
-                <div class="post-date">
-                  2019-03-08
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://yangweijie.github.io/note/post/hello-hve-notes">
-                  <h2 class="post-title">Hello Hve Notes</h2>
-                </a>
-                <div class="post-date">
-                  2018-12-12
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-                <a class="right" href="https://yangweijie.github.io/note/post/hello-hve-notes">
-                  <div class="feature-container" style="background-image: url('https://yangweijie.github.io/note/post-images/hello-hve-notes.png')">
-                  </div>
-                </a>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://yangweijie.github.io/note/post/cong-hua-shao-hui-gui-nei-rong">
-                  <h2 class="post-title">从花哨回归内容</h2>
-                </a>
-                <div class="post-date">
-                  2017-06-10
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
-
-          <div class="pagination-container">
-  
-  
-</div>
-
-        </div>
-      </div>
-    </div>
-
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-
-<script type="application/javascript">
-
-AOS.init();
-
-hljs.initHighlightingOnLoad()
-
-var app = new Vue({
-  el: '#app',
-  data: {
-    menuVisible: false,
-  },
-})
-
+<html lang="en" class="loading">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" >
+<link rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoBAMAAAB+0KVeAAAAGFBMVEUAAAA7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozsmr7C1AAAAB3RSTlMA8o3HRiCjAZ7XVAAAAFRJREFUKM9jGAUMDE6GwiroYkHi5eWFqqhirOnlQFAWgCLIVA4GCiiCjhBBERRBdYhgEYqgOUSwGEVQHCJYSEgQoZ2QRQgnEXI8wpsEAgQRdKOAAQCvriuz6lBMNwAAAABJRU5ErkJggg==" />
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title> Loading... </title>
+<script>
+window.config = {
+  organization: false,
+  order: 'UPDATED_AT',
+  title: 'Jay的实验室',
+  user: 'yangweijie',
+  repository: 'note',
+  authors: 'yangweijie',
+  ignores: '',
+  hash: 'WAUbaEaUAXXFAedcTFFEdAaCPCfefdWWaXbAdTaWeWFuZ3dlaWppZS5naXRodWIuaW8=',
+  perpage: 10,
+}
 </script>
-
-
-
-
-  </body>
+<style>
+  .loading,
+  .error,
+  .transition {
+    height: 100%;
+  }
+  .loading body,
+  .error body,
+  .transition body {
+    height: 100%;
+  }
+  #loader {
+    text-align: center;
+    position: fixed;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+    background-color: rgba(255, 255, 255, .95);
+  }
+  .loading #loader {
+    opacity: 1;
+    visibility: visible;
+  }
+  .loading #loader div {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #fff;
+    -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, .15);
+    box-shadow: 0 0 3px rgba(0, 0, 0, .15);
+  }
+  .loading #loader div:before {
+    content: '';
+    width: 26px;
+    height: 26px;
+    display: block;
+    margin: 8px auto 0;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+    -webkit-animation: loading .5s linear forwards infinite;
+    animation: loading .5s linear forwards infinite;
+    border-top: 4px solid #0089fa;
+    border-right: 4px solid #ff002b;
+    border-bottom: 4px solid #ffa900;
+    border-left: 4px solid #00a753;
+  }
+  .loading #loader:after {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+  @keyframes loading { 100% { transform: rotate(360deg) } }
+  @-webkit-keyframes loading { 100% { -webkit-transform: rotate(360deg) } }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div class="page home">
+  <div>
+  <div id="user"></div>
+  <div id="posts"></div>
+  </div>
+</div>
+<div class="page single">
+  <div>
+  <div id="post"></div>
+  <div id="comments"></div>
+  </div>
+</div>
+<div id="loader"><div></div></div>
+<script src="./index.b8c607cf.js"></script>
+</body>
 </html>
