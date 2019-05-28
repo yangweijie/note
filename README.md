@@ -3,4 +3,4 @@
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/yangweijie/note)](https://starchart.cc/yangweijie/note)
+[![Stargazers over time](https://starchart.cc/yangweijie/note.svg)](https://starchart.cc/yangweijie/note)
