@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="
+
+**1.安装**
+
+宿主机环境：（Centos7）
+
+![](http://upload-images.jianshu.io/upload_images/35360-3d52bb0de044d78d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+宿主机环境
+
+#yum install python-setuptools
+
+![](http://upload-images.jianshu.io/upload_images/35360-e10c50020df81643.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+yum install python-setuptools
+
+#easy_install supervisor
+
+![](http://upload-images.jianshu.io/upload_images/35360-3efd1976de43fa03.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+easy_install supervisor
+
+**测试安装是否成功：**
+
+#echo_supervisord_conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-0fa69d64c0541fd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+echo_supervisord_conf
+
+**2.创建配置文件**
+
+创建supervisor配置文件目录/etc/supervisor/
+
+#mkdir -m 755 -p /etc/supervisor/
+
+![](http://upload-images.jianshu.io/upload_images/35360-a35442b3b3322d2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+mkdir -m 755 -p /etc/supervisor/
+
+创建主配文件supervisord.conf
+
+#echo_supervisord_conf > /etc/supervisor/supervisord.conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-57b2b291869440b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+echo_supervisord_conf > /etc/supervisor/supervisord.conf
+
+创建项目配置文件目录
+
+# mkdir -m 755 conf.d
+
+![](http://upload-images.jianshu.io/upload_images/35360-bdf1528dab7d0811.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+# mkdir -m 755 conf.d
+
+3.调试
+
+在/home/k1ic/supervisor_simple 目录下创建test.c
+
+![](http://upload-images.jianshu.io/upload_images/35360-02ba4cf694e9a6f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+test.c
+
+编译为test #gcc -o test test.c
+
+![](http://upload-images.jianshu.io/upload_images/35360-cf151a9c4551a838.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+gcc -o test test.c
+
+在/etc/supervisor/conf.d 目录下创建 test.ini
+
+![](http://upload-images.jianshu.io/upload_images/35360-941fcf9c291e0caf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+test.ini
+
+在主配文档中引入test.ini
+
+![](http://upload-images.jianshu.io/upload_images/35360-7a827afc1b0a1460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+files = ./conf.d/*.ini
+
+启动supervisor
+
+# supervisord -c /etc/supervisor/supervisord.conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-69e6e917e6739846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+supervisord -c /etc/supervisor/supervisord.conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-b03469800dce2f08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+pstree -p | grep supervisord
+
+查看supervisord.log发现program test已启动
+
+# cat /tmp/supervisord.log
+
+![](http://upload-images.jianshu.io/upload_images/35360-5078fcc82a70ca05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+# cat /tmp/supervisord.log
+
+用 supervisorctl 查看已经被监控的program（**注：直接用 #supervisorctl 会提示：http://localhost:9001 refused connection**）
+
+#supervisorctl -c /etc/supervisor/supervisord.conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-56c63f5d75495aa4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+supervisorctl -c /etc/supervisor/supervisord.conf
+
+增加一例监控php脚本
+
+创建skud.ini
+
+![](http://upload-images.jianshu.io/upload_images/35360-a3dbfb53f038b47e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+skud.ini
+
+![](http://upload-images.jianshu.io/upload_images/35360-727cca0530107c8d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+[program:skuld]
+
+在/home/k1ic/supervisor_simple目录下创建skuld.php
+
+![](http://upload-images.jianshu.io/upload_images/35360-6b747b9cd5bf02e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+skuld.php
+
+重启监控服务
+
+![](http://upload-images.jianshu.io/upload_images/35360-e97398ee02681218.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+reload
+
+![](http://upload-images.jianshu.io/upload_images/35360-c8322a7f66809846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+pstree
+
+================分割线================
+
+**这才是重点^^**
+
+0\. supervisor 比较适合监控业务应用，且只能监控前台程序，**php fork方式实现的daemon不能用它监控，**否则supervisor> status 会提示：**BACKOFF  Exited too quickly (process log may have details)**
+
+![](http://upload-images.jianshu.io/upload_images/35360-e05f53999df42586.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+**BACKOFF  Exited too quickly (process log may have details)**
+
+![](http://upload-images.jianshu.io/upload_images/35360-dd9a1b44b39d19e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+cat supervisord.log
+
+1.每次修改配置文件后**需进入supervisorctl，执行reload**， 改动部分才能生效
+
+![](http://upload-images.jianshu.io/upload_images/35360-8aaf0b1f7e40807b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+reload
+
+2.两个命令
+
+supervisord : supervisor的服务器端部分，用于supervisor启动
+
+supervisorctl：启动supervisor的命令行窗口，在该命令行中可执行start、stop、status、reload等操作。">
+<meta property="og:title" content="supervisor初体验">
+<meta property="og:description" content="
+
+**1.安装**
+
+宿主机环境：（Centos7）
+
+![](http://upload-images.jianshu.io/upload_images/35360-3d52bb0de044d78d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+宿主机环境
+
+#yum install python-setuptools
+
+![](http://upload-images.jianshu.io/upload_images/35360-e10c50020df81643.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+yum install python-setuptools
+
+#easy_install supervisor
+
+![](http://upload-images.jianshu.io/upload_images/35360-3efd1976de43fa03.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+easy_install supervisor
+
+**测试安装是否成功：**
+
+#echo_supervisord_conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-0fa69d64c0541fd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+echo_supervisord_conf
+
+**2.创建配置文件**
+
+创建supervisor配置文件目录/etc/supervisor/
+
+#mkdir -m 755 -p /etc/supervisor/
+
+![](http://upload-images.jianshu.io/upload_images/35360-a35442b3b3322d2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+mkdir -m 755 -p /etc/supervisor/
+
+创建主配文件supervisord.conf
+
+#echo_supervisord_conf > /etc/supervisor/supervisord.conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-57b2b291869440b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+echo_supervisord_conf > /etc/supervisor/supervisord.conf
+
+创建项目配置文件目录
+
+# mkdir -m 755 conf.d
+
+![](http://upload-images.jianshu.io/upload_images/35360-bdf1528dab7d0811.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+# mkdir -m 755 conf.d
+
+3.调试
+
+在/home/k1ic/supervisor_simple 目录下创建test.c
+
+![](http://upload-images.jianshu.io/upload_images/35360-02ba4cf694e9a6f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+test.c
+
+编译为test #gcc -o test test.c
+
+![](http://upload-images.jianshu.io/upload_images/35360-cf151a9c4551a838.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+gcc -o test test.c
+
+在/etc/supervisor/conf.d 目录下创建 test.ini
+
+![](http://upload-images.jianshu.io/upload_images/35360-941fcf9c291e0caf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+test.ini
+
+在主配文档中引入test.ini
+
+![](http://upload-images.jianshu.io/upload_images/35360-7a827afc1b0a1460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+files = ./conf.d/*.ini
+
+启动supervisor
+
+# supervisord -c /etc/supervisor/supervisord.conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-69e6e917e6739846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+supervisord -c /etc/supervisor/supervisord.conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-b03469800dce2f08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+pstree -p | grep supervisord
+
+查看supervisord.log发现program test已启动
+
+# cat /tmp/supervisord.log
+
+![](http://upload-images.jianshu.io/upload_images/35360-5078fcc82a70ca05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+# cat /tmp/supervisord.log
+
+用 supervisorctl 查看已经被监控的program（**注：直接用 #supervisorctl 会提示：http://localhost:9001 refused connection**）
+
+#supervisorctl -c /etc/supervisor/supervisord.conf
+
+![](http://upload-images.jianshu.io/upload_images/35360-56c63f5d75495aa4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+supervisorctl -c /etc/supervisor/supervisord.conf
+
+增加一例监控php脚本
+
+创建skud.ini
+
+![](http://upload-images.jianshu.io/upload_images/35360-a3dbfb53f038b47e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+skud.ini
+
+![](http://upload-images.jianshu.io/upload_images/35360-727cca0530107c8d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+[program:skuld]
+
+在/home/k1ic/supervisor_simple目录下创建skuld.php
+
+![](http://upload-images.jianshu.io/upload_images/35360-6b747b9cd5bf02e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+skuld.php
+
+重启监控服务
+
+![](http://upload-images.jianshu.io/upload_images/35360-e97398ee02681218.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+reload
+
+![](http://upload-images.jianshu.io/upload_images/35360-c8322a7f66809846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+pstree
+
+================分割线================
+
+**这才是重点^^**
+
+0\. supervisor 比较适合监控业务应用，且只能监控前台程序，**php fork方式实现的daemon不能用它监控，**否则supervisor> status 会提示：**BACKOFF  Exited too quickly (process log may have details)**
+
+![](http://upload-images.jianshu.io/upload_images/35360-e05f53999df42586.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+**BACKOFF  Exited too quickly (process log may have details)**
+
+![](http://upload-images.jianshu.io/upload_images/35360-dd9a1b44b39d19e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+cat supervisord.log
+
+1.每次修改配置文件后**需进入supervisorctl，执行reload**， 改动部分才能生效
+
+![](http://upload-images.jianshu.io/upload_images/35360-8aaf0b1f7e40807b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+reload
+
+2.两个命令
+
+supervisord : supervisor的服务器端部分，用于supervisor启动
+
+supervisorctl：启动supervisor的命令行窗口，在该命令行中可执行start、stop、status、reload等操作。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://yangweijie.github.io/note/post/supervisor-chu-ti-yan.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>supervisor初体验</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">supervisor初体验</h1>
+<div class="title-right">
+    <a href="https://yangweijie.github.io/note" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/yangweijie/note/issues/38" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p><strong>1.安装</strong></p>
+<p>宿主机环境：（Centos7）</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6889c05604f081beef4fc0bd5a0843b69cd22e41c9f727462186d9cbe11730d7/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d336435326262306465303434643738642e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/6889c05604f081beef4fc0bd5a0843b69cd22e41c9f727462186d9cbe11730d7/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d336435326262306465303434643738642e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-3d52bb0de044d78d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>宿主机环境</p>
+<p>#yum install python-setuptools</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/d1ba255a05f404cd53ff1a8ed5bed8e1d0be5bddefd20859e986bdcc34a517ec/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d653130633530303230646638313634332e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/d1ba255a05f404cd53ff1a8ed5bed8e1d0be5bddefd20859e986bdcc34a517ec/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d653130633530303230646638313634332e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-e10c50020df81643.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>yum install python-setuptools</p>
+<p>#easy_install supervisor</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7580d210ce078ca9ddfca0691e7b74b5d34b8bc808a90983171bc7ef2da88117/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d336566643139373664653433666130332e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/7580d210ce078ca9ddfca0691e7b74b5d34b8bc808a90983171bc7ef2da88117/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d336566643139373664653433666130332e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-3efd1976de43fa03.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>easy_install supervisor</p>
+<p><strong>测试安装是否成功：</strong></p>
+<p>#echo_supervisord_conf</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/27121c3c6c2cc72fe8d8d5354f3218e47e986a52b17dc8a2fc1c45f0148dbb00/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d306661363964363463303534316664342e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/27121c3c6c2cc72fe8d8d5354f3218e47e986a52b17dc8a2fc1c45f0148dbb00/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d306661363964363463303534316664342e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-0fa69d64c0541fd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>echo_supervisord_conf</p>
+<p><strong>2.创建配置文件</strong></p>
+<p>创建supervisor配置文件目录/etc/supervisor/</p>
+<p>#mkdir -m 755 -p /etc/supervisor/</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ed76276ff1734a38cd8597487a3fe1bd7ce589fd8a9d94d4b6c4b9e32f23e3e6/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d613335343432623362333332326432662e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/ed76276ff1734a38cd8597487a3fe1bd7ce589fd8a9d94d4b6c4b9e32f23e3e6/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d613335343432623362333332326432662e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-a35442b3b3322d2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>mkdir -m 755 -p /etc/supervisor/</p>
+<p>创建主配文件supervisord.conf</p>
+<p>#echo_supervisord_conf &gt; /etc/supervisor/supervisord.conf</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7964a288f615228dfc14b36e7ef8009d16ab91a2875aa60712c533986b3657b5/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d353762326232393138363934343062372e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/7964a288f615228dfc14b36e7ef8009d16ab91a2875aa60712c533986b3657b5/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d353762326232393138363934343062372e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-57b2b291869440b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>echo_supervisord_conf &gt; /etc/supervisor/supervisord.conf</p>
+<p>创建项目配置文件目录</p>
+<h1>mkdir -m 755 conf.d</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/60a35bb06676bb95ec6f69631cb4181e96a0c9cad58929373ad03a886a36cf96/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d626466313532386461623764303831312e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/60a35bb06676bb95ec6f69631cb4181e96a0c9cad58929373ad03a886a36cf96/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d626466313532386461623764303831312e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-bdf1528dab7d0811.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<h1>mkdir -m 755 conf.d</h1>
+<p>3.调试</p>
+<p>在/home/k1ic/supervisor_simple 目录下创建test.c</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/01b53a696158fb01327d67161f34cc7d45be12f0e6742826013c4b5c7b58eb08/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d303262613463663639346539613666302e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/01b53a696158fb01327d67161f34cc7d45be12f0e6742826013c4b5c7b58eb08/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d303262613463663639346539613666302e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-02ba4cf694e9a6f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>test.c</p>
+<p>编译为test #gcc -o test test.c</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/27b0cae297b1ac6c8716c79ae62408cedae6f2cbb6cd7f37ffb145653435e906/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d636631353161396334353531613833382e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/27b0cae297b1ac6c8716c79ae62408cedae6f2cbb6cd7f37ffb145653435e906/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d636631353161396334353531613833382e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-cf151a9c4551a838.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>gcc -o test test.c</p>
+<p>在/etc/supervisor/conf.d 目录下创建 test.ini</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/39b34cee533bbc3a37965bf48f07a37c806bc697d451c84e72f16ab40ea121fe/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d393431666366396332393165306361662e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/39b34cee533bbc3a37965bf48f07a37c806bc697d451c84e72f16ab40ea121fe/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d393431666366396332393165306361662e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-941fcf9c291e0caf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>test.ini</p>
+<p>在主配文档中引入test.ini</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2ef6cd3ade9fd2431c353b7afb6b581566a8d771667324ddd50ecca62f416b7c/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d376138323761666331623061313436302e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/2ef6cd3ade9fd2431c353b7afb6b581566a8d771667324ddd50ecca62f416b7c/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d376138323761666331623061313436302e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-7a827afc1b0a1460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>files = ./conf.d/*.ini</p>
+<p>启动supervisor</p>
+<h1>supervisord -c /etc/supervisor/supervisord.conf</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/00a184805f4ccee0fab8b7307faf5503158a54dabe2fc56029a21a09516da233/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d363965366539313765363733393834362e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/00a184805f4ccee0fab8b7307faf5503158a54dabe2fc56029a21a09516da233/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d363965366539313765363733393834362e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-69e6e917e6739846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>supervisord -c /etc/supervisor/supervisord.conf</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/80349394b3135b5c2e3d05fd30309f677a211f10b7971d8aa24e9b892c989f63/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d623033343639383030646365326630382e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/80349394b3135b5c2e3d05fd30309f677a211f10b7971d8aa24e9b892c989f63/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d623033343639383030646365326630382e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-b03469800dce2f08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>pstree -p | grep supervisord</p>
+<p>查看supervisord.log发现program test已启动</p>
+<h1>cat /tmp/supervisord.log</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c38d5848c6d434a41aa5ff5cb2cea0559feec23b1bc25709d6fa58db947b08cf/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d353037386663633832613730636130352e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/c38d5848c6d434a41aa5ff5cb2cea0559feec23b1bc25709d6fa58db947b08cf/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d353037386663633832613730636130352e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-5078fcc82a70ca05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<h1>cat /tmp/supervisord.log</h1>
+<p>用 supervisorctl 查看已经被监控的program（<strong>注：直接用 #supervisorctl 会提示：<a href="http://localhost:9001" rel="nofollow">http://localhost:9001</a> refused connection</strong>）</p>
+<p>#supervisorctl -c /etc/supervisor/supervisord.conf</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0f516039ddea8aff59aa44afa391400603b99e62d0f36c899d988e4e691aabcf/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d353663363366356437353439356161342e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/0f516039ddea8aff59aa44afa391400603b99e62d0f36c899d988e4e691aabcf/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d353663363366356437353439356161342e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-56c63f5d75495aa4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>supervisorctl -c /etc/supervisor/supervisord.conf</p>
+<p>增加一例监控php脚本</p>
+<p>创建skud.ini</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9fef070399942cf4358b44a23338698dd5297835dce2135af20b4fdc5221b2ec/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d613364626662353366303338623437652e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/9fef070399942cf4358b44a23338698dd5297835dce2135af20b4fdc5221b2ec/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d613364626662353366303338623437652e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-a3dbfb53f038b47e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>skud.ini</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6162a935cd16808dd83e88cc00e81fffe34a7ab85015569e1cb6748cbe58c836/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d373237636361303533303130376338642e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/6162a935cd16808dd83e88cc00e81fffe34a7ab85015569e1cb6748cbe58c836/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d373237636361303533303130376338642e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-727cca0530107c8d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>[program:skuld]</p>
+<p>在/home/k1ic/supervisor_simple目录下创建skuld.php</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e4ca4f79e2796092defdbd39c59554272aab960c3b379bde7ec3ba2a33a93780/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d366237343762396364356266303265322e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/e4ca4f79e2796092defdbd39c59554272aab960c3b379bde7ec3ba2a33a93780/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d366237343762396364356266303265322e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-6b747b9cd5bf02e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>skuld.php</p>
+<p>重启监控服务</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9074c4c4eb3c804c23456186a3c0dc453220de93ad4a2f8c227c65ef10d0be41/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d653937333938656530323638313231382e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/9074c4c4eb3c804c23456186a3c0dc453220de93ad4a2f8c227c65ef10d0be41/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d653937333938656530323638313231382e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-e97398ee02681218.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>reload</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e9075925e29df4e2fa9d4f21c4e5407dea124d6ff0ed648da0fcdbc07f85f3a8/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d633833323261376636363830393834362e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/e9075925e29df4e2fa9d4f21c4e5407dea124d6ff0ed648da0fcdbc07f85f3a8/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d633833323261376636363830393834362e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-c8322a7f66809846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>pstree</p>
+<p>================分割线================</p>
+<p><strong>这才是重点^^</strong></p>
+<p>0. supervisor 比较适合监控业务应用，且只能监控前台程序，**php fork方式实现的daemon不能用它监控，**否则supervisor&gt; status 会提示：<strong>BACKOFF  Exited too quickly (process log may have details)</strong></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/085aae887d9d42a3a119e4a8927e97c4a040b5d37b426cfbadab1bed67bc0f95/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d653035663533393939646634323538362e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/085aae887d9d42a3a119e4a8927e97c4a040b5d37b426cfbadab1bed67bc0f95/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d653035663533393939646634323538362e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-e05f53999df42586.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p><strong>BACKOFF  Exited too quickly (process log may have details)</strong></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/d3a15a446ad6cc1ca66728cb0b7cac3f28f0c68bd54ee36f66bd7c038c946dfd/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d646439613162343462333964313965352e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/d3a15a446ad6cc1ca66728cb0b7cac3f28f0c68bd54ee36f66bd7c038c946dfd/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d646439613162343462333964313965352e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-dd9a1b44b39d19e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>cat supervisord.log</p>
+<p>1.每次修改配置文件后<strong>需进入supervisorctl，执行reload</strong>， 改动部分才能生效</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f4e87643427114ba2a96e77f3104aabf25e8aec004a1ecbbf6a23d812202bdf8/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d386161663062316637653430383037622e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/f4e87643427114ba2a96e77f3104aabf25e8aec004a1ecbbf6a23d812202bdf8/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d386161663062316637653430383037622e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-8aaf0b1f7e40807b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>reload</p>
+<p>2.两个命令</p>
+<p>supervisord : supervisor的服务器端部分，用于supervisor启动</p>
+<p>supervisorctl：启动supervisor的命令行窗口，在该命令行中可执行start、stop、status、reload等操作。</p>
+<p>3.web管理界面</p>
+<p>将supervisord.conf中[inet_http_server]部分做相应配置，在supervisorctl中reload即可启动web管理界面</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/73d9a9d3d4345bb4d0da906c991d5a8ea55971a97e10e57d73e227a3c92ba70f/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d353564353433396436373666303437342e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/73d9a9d3d4345bb4d0da906c991d5a8ea55971a97e10e57d73e227a3c92ba70f/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d353564353433396436373666303437342e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-55d5439d676f0474.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>[inet_http_server]</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4688bef86419fa96d00fb8a0de532dfaad6ce2851860534204164264ea277ae8/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d613935613930366437643166613464342e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/4688bef86419fa96d00fb8a0de532dfaad6ce2851860534204164264ea277ae8/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f33353336302d613935613930366437643166613464342e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/35360-a95a906d7d1fa4d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p><a href="http://107.170.249.52:9001/?message=Page%20refreshed%20at%20Tue%20Sep%2029%2016%3A20%3A40%202015" rel="nofollow">http://107.170.249.52:9001/?message=Page%20refreshed%20at%20Tue%20Sep%2029%2016%3A20%3A40%202015</a></p>
+<p>参考文献：</p>
+<p>Supervisor的安装与使用入门</p>
+<p><a href="http://fukun.org/archives/07102224.html" rel="nofollow">http://fukun.org/archives/07102224.html</a></p>
+<p>按需讲解之Supervisor</p>
+<p><a href="http://www.cnblogs.com/yjf512/archive/2012/03/05/2380496.html" rel="nofollow">http://www.cnblogs.com/yjf512/archive/2012/03/05/2380496.html</a></p>
+<p>supervisord entered FATAL state, too many start retries too quickly错误处理</p>
+<p><a href="http://beginman.cn/linux/2015/09/25/error-about-supervisord/" rel="nofollow">http://beginman.cn/linux/2015/09/25/error-about-supervisord/</a></p>
+<p>Supervisor监控PHP进程</p>
+<p><a href="http://www.phpddt.com/php/supervisor.html" rel="nofollow">http://www.phpddt.com/php/supervisor.html</a></p>
+<p>关于进程监控及自动启动</p>
+<p><a href="http://www.vimer.cn/2013/07/%E5%85%B3%E4%BA%8E%E8%BF%9B%E7%A8%8B%E7%9B%91%E6%8E%A7%E5%8F%8A%E8%87%AA%E5%8A%A8%E5%90%AF%E5%8A%A8.html" rel="nofollow">http://www.vimer.cn/2013/07/%E5%85%B3%E4%BA%8E%E8%BF%9B%E7%A8%8B%E7%9B%91%E6%8E%A7%E5%8F%8A%E8%87%AA%E5%8A%A8%E5%90%AF%E5%8A%A8.html</a></p>
+<p>centos服务安装 #37</p>
+<p>Supervisor学习</p>
+<p><a href="http://beginman.cn/linux/2015/04/06/Supervisor/" rel="nofollow">http://beginman.cn/linux/2015/04/06/Supervisor/</a></p>
+<p>通过进程模型进行扩展</p>
+<p><a href="http://12factor.net/zh_cn/concurrency" rel="nofollow">http://12factor.net/zh_cn/concurrency</a></p>
+<p>作者：k1ic<br>
+链接：<a href="http://www.jianshu.com/p/9abffc905645" rel="nofollow">http://www.jianshu.com/p/9abffc905645</a><br>
+來源：简书<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://yangweijie.github.io/note">yangweijie's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","yangweijie/note");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>

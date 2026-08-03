@@ -1,0 +1,1 @@
+[https://www.iteblog.com/idea/](https://www.iteblog.com/idea/)

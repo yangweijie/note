@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="## 术语定义
+
+### 文档对象
+
+“文档对象”是指PDF文档中的文档对象，共有三种类型的“文档对象”，他们分别是“页面对象”，“封面对象”和“目录对象”。">
+<meta property="og:title" content="HTML 转 PDF 之 wkhtmltopdf 工具简介  术语定义">
+<meta property="og:description" content="## 术语定义
+
+### 文档对象
+
+“文档对象”是指PDF文档中的文档对象，共有三种类型的“文档对象”，他们分别是“页面对象”，“封面对象”和“目录对象”。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://yangweijie.github.io/note/post/HTML%20-zhuan-%20PDF%20-zhi-%20wkhtmltopdf%20-gong-ju-jian-jie-%20%20-shu-yu-ding-yi.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>HTML 转 PDF 之 wkhtmltopdf 工具简介  术语定义</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">HTML 转 PDF 之 wkhtmltopdf 工具简介  术语定义</h1>
+<div class="title-right">
+    <a href="https://yangweijie.github.io/note" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/yangweijie/note/issues/11" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h2>术语定义</h2>
+<h3>文档对象</h3>
+<p>“文档对象”是指PDF文档中的文档对象，共有三种类型的“文档对象”，他们分别是“页面对象”，“封面对象”和“目录对象”。</p>
+<h3>页面对象</h3>
+<p>“页面对象”是指以页面的形式在PDF文档中呈现的对象，这个是相对于“封面对象”和“目录对象”来讲的。此类对象会成为PDF文档中内容。</p>
+<h3>封面对象</h3>
+<p>“封面对象”是指以封面的形式在PDF文档中呈现的对象。这类对象会成为PDF文档中的封面。</p>
+<h3>目录对象</h3>
+<p>“目录对象”是以目录的形式在PDF文档中呈现的对象，又叫“TOC对象”。这类对象会成为PDF文档中的目录。</p>
+<h3>大纲</h3>
+<p>“大纲”是指阅读PDF文档时的书签导航。</p>
+<h3>外链</h3>
+<p>“外链”是指所有在这个页面中且不指向它自身页面中锚点的超链接。</p>
+<h3>内链</h3>
+<p>“内链”是指在这个页面中且指向的目标页面是这个页面本身中的一个锚点的超链接。</p>
+<h2>命令格式</h2>
+<div class="highlight highlight-source-shell"><pre class="notranslate">wkhtmltopdf [GLOBAL OPTION]... [OBJECT]... <span class="pl-k">&lt;</span>output file<span class="pl-k">&gt;</span></pre></div>
+<p>上述代码就是 wkhtmltopdf 的命令行格式，看似简单，其实在 <code class="notranslate">[GLOBAL OPTION]</code> 和 <code class="notranslate">[OBJECT]</code> 中还别有洞天。预知详情，且听我慢慢道来。</p>
+<h2>文档对象简介</h2>
+<p>wkhtmltopdf 能够把多个“对象”合并生成一个pdf文档，这些“对象”可以是“页面对象”、“封面对象”、或是“目录对象”。这些对象在pdf文档中的顺序可以通过命令行参数来指定。命令行参数包括两部分，一种是针对某一特定“对象”的命令行参数，另一种是全局的命令行参数。并且全局的命令行参数只能放在全局参数区([GLOBAL OPTION])中指定。</p>
+<h3>页面对象简介</h3>
+<p>“页面对象”作用是用来把一个网页作为内容输出到PDF文档中。</p>
+<pre class="notranslate"><code class="notranslate">(page)? &lt;input url/file name&gt; [PAGE OPTION]...
+
+</code></pre>
+<p>“页面对象”的参数可以放在“全局参数域([GLOBAL OPTIONS])”和“页面参数域([PAGE OPTIONS])”。程序会根据实际情况在所有参数中找到合适的参数应用到页面、页眉和页脚。</p>
+<h3>封面对象简介</h3>
+<p>“封面对象”用来把一个网页作为封面输出到PDF文档中，输出的页面不会在TOC中出现，并且不会包含页眉和页脚。</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">cover <span class="pl-k">&lt;</span>input url/file name<span class="pl-k">&gt;</span> [PAGE OPTION]...</pre></div>
+<p>所有能够在“页面对象”中使用的参数都可以用到“封面对象”</p>
+<h3>目录对象简介</h3>
+<p>“目录对象”的作用是输出一个目录到PDF文件中。</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">toc [TOC OPTION]...</pre></div>
+<p>所有能够在“页面对象”中使用的参数都可以用到“TOC对象”，并且还有许多的针对“TOC对象”的参数可以应用到“TOC对象”中。目录是通过 XSLT 生成的，这就意味着它可以被定义成任何你想看到的样子。你可以通过命令行参数 <code class="notranslate">--dump-default-toc-xsl</code> 输出默认的 XSLT 文档，通过 <code class="notranslate">--dump-outline</code> 命令行参数 可指定以XML格式输出当前处理文档的目录到指定文件。更多详细内容请查看后面介绍的 目录对象参数</p>
+<h2>命令参数</h2>
+<p>命令参数包含五部分，分别是“全局参数”，“大纲参数选项”，“页面对象参数”，“页眉和页脚参数选项”和“目录对象参数”。</p>
+<h3>全局参数</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate">    --collate             当输出多个副本时进行校验(这是默认设置)
+    --no-collate          当输出多个副本时不进行校验
+    --cookie-jar <span class="pl-k">&lt;</span>path<span class="pl-k">&gt;</span>   从提供的JAR文件中读写cookie数据
+    --copies <span class="pl-k">&lt;</span>number<span class="pl-k">&gt;</span>     设置输出副本的数量(默认主1)，其实为1就够了
+-d, --dpi <span class="pl-k">&lt;</span>dpi<span class="pl-k">&gt;</span>           指定一个要分辨率(这在 X11 系统中并没有什么卵用)
+-H, --extended-help       相对 -h 参数，显示更详细的说明文档
+-g, --grayscale           指定以灰度图生成PDF文档。占用的空间更小
+-h, --help                显示帮助信息  
+    --htmldoc             输出程序的html帮助文档
+    --image-dpi <span class="pl-k">&lt;</span>integer<span class="pl-k">&gt;</span> 当页面中有内嵌的图片时，
+                          会下载此命令行参数指定尺寸的图片(默认值是 600)
+    --image-quality <span class="pl-k">&lt;</span>interger<span class="pl-k">&gt;</span> 当使用 jpeg 算法压缩图片时使用这个参数指定的质量(默认为 94)
+    --license             输出授权信息并退出
+-l, --lowquality          生成低质量的 PDF/PS ,能够很好的节约最终生成文档所占存储空间
+    --manpage             输出程序的手册页
+-B, --margin-bottom <span class="pl-k">&lt;</span>unitreal<span class="pl-k">&gt;</span> 设置页面的 底边距
+-L, --margin-left <span class="pl-k">&lt;</span>unitreal<span class="pl-k">&gt;</span>   设置页面的 左边距 (默认是 10mm)
+-R, --margin-right <span class="pl-k">&lt;</span>unitreal<span class="pl-k">&gt;</span>  设置页面的 右边距 (默认是 10mm)
+-T, --margin-top <span class="pl-k">&lt;</span>unitreal<span class="pl-k">&gt;</span>    设置页面的 上边距
+-O, --orientation <span class="pl-k">&lt;</span>orientation<span class="pl-k">&gt;</span> 设置为“风景(Landscape)”或“肖像(Portrait)”模式,
+                                默认是肖像模块(Portrait)
+    --page-height <span class="pl-k">&lt;</span>unitreal<span class="pl-k">&gt;</span>   页面高度
+-s, --page-size <span class="pl-k">&lt;</span>Size<span class="pl-k">&gt;</span>         设置页面的尺寸，如：A4,Letter等，默认是：A4
+    --page-width <span class="pl-k">&lt;</span>unitreal<span class="pl-k">&gt;</span>    页面宽度
+    --no-pdf-compression       不对PDF对象使用丢失少量信息的压缩算法，不建议使用些参数，
+                               因为生成的PDF文件会非常大。
+-q, --quiet                    静态模式，不在标准输出中打印任何信息
+    --read-args-from-stdin     从标准输入中读取命令行参数，后续会有针对此指令的详细介绍，
+                               请参见 <span class="pl-k">**</span>从标准输入获取参数<span class="pl-k">**</span>
+    --readme                   输出程序的 readme 文档
+    --title <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>             生成的PDF文档的标题，如果不指定则使用第一个文档的标题
+-V, --version                  输出版本信息后退出</pre></div>
+<p>上述代码区是所有全局参数及注释，下面简单说一下个别参数的意义及用法。</p>
+<h4>--copies N</h4>
+<p>N 是一个正整数。</p>
+<p>这个选项可以先不用关心了，因为你这辈子可能都用不到。他的作用是在生成的PDF文档中，把内容重复输出 N 份。也就是说，你将得到一个PDF文档，这个文档中的大小、内容量都将是不使用此参数时的 N 倍。然而重复的内容对你来说并没有什么卵用。</p>
+<p>如果不使用 <code class="notranslate">--copies</code> 参数，那么 <code class="notranslate">--collate</code> 和 <code class="notranslate">--no-collate</code> 参数就不用了解了，因为他们只在 <code class="notranslate">--copies</code> 参数中的 N 大于 1 时才有意义。</p>
+<h4>-g, --grayscale</h4>
+<p>这个参数非常有用，使用这个参数可以有效压缩生成的PDF所占用的存储空间。当然这个压缩是要付出一定代价的，那就是最终生成的PDF文档将是灰度的，没有任何色彩。如果你能接受灰度PDF文档，并不影响实际使用，那就请使用这个参数吧。生成的PDF文档越大，使用此参数获得的惊喜就越大。</p>
+<h4>-l, --lowquality</h4>
+<p>这个参数与 <code class="notranslate">-g</code> 参数有异曲同工之妙， <code class="notranslate">-l</code> 参数也会大大压缩PDF文档所占用的存储空间。只是它是通过降低PDF文档的质量来完成这一任务的。这个参数也值得推荐，你最好先尝试一下，看看使用此参数后生成的PDF文档与不使用此参数的区别再做决定。我可以告诉你的是，在纯文字的情况下他们的差别不大，此参数只是降低了PDF文档的质量，看上去是糙了一些，但不会影响阅读。如果你是一个追求感官享受，或是你生成的PDF文档中有大量图片，那就不要使用此参数了。</p>
+<h4>--no-pdf-compression</h4>
+<p>这个参数强烈建议不要使用，最好这辈子都不要去了解他的好，因为对于你来说肯定用不到。它的作用就是在输出PDF文档时，不使用任何的压缩。这将会导致输出的PDF文档特别的大，质量是无损的，但是对于人类来说从感观上根本察觉不到压缩前后的质量变化的。如果你的感观超乎于常人，压缩之后的体验对你来说无法接受，那我收回前面的话，你就尽情使用此参数吧。</p>
+<h4>-q, --quiet</h4>
+<p>使用这个参数后，你将得到一个干净的命令行输出，就连程序处理的进度和状态都没有。这个参数会抑制所有命令行输出，在程序的工作过程中，你看不到任何输出。建议不会使用此参数，因为程序输出一些进度和状态信息还是非常有用的。万一程序工作到某处死了呢(嘿嘿)，在 <code class="notranslate">-q</code> 模式下你是无法分辨是否程序死掉了的。</p>
+<h3>大纲参数选项</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate">--dump-default-toc-xsl     输出默认的 TOC xsl 样式表到标准输出
+--dump-outline <span class="pl-k">&lt;</span>file<span class="pl-k">&gt;</span>      输出“大纲”到指定的文件(文件内容为xml)
+--outline                  在生成的PDF文档中输出“大纲”(这是默认设置)
+--no-outline               不在pdf文档中输出大纲
+--outline-depth <span class="pl-k">&lt;</span>level<span class="pl-k">&gt;</span>    设置生成大纲的深度(默认为 4)</pre></div>
+<p>大纲参数中唯一需要特别说一下的是 <code class="notranslate">--outline-depth</code> ，其他参数默认就好了。</p>
+<h4>何为大纲</h4>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9baea5daa99a4f619a2dcb8a1bf435430dbc79e11c0d89fe56000b47442ebe89/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f333036303031342d303539313435383365653532303931642e6a70673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/9baea5daa99a4f619a2dcb8a1bf435430dbc79e11c0d89fe56000b47442ebe89/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f333036303031342d303539313435383365653532303931642e6a70673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/3060014-05914583ee52091d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>大纲</p>
+<p>如上图所示，其实我更喜欢称之为目录或导航。大纲是根据你HTML中的标题(Hn标签)自动生成的。</p>
+<h4>--outline-depth</h4>
+<p><code class="notranslate">--outline-depth</code> 用来指定生成的大纲的深度。默认值为 4。你可以指定一个大一些的数字，以保证所有在HTML中指定的H标签都能在大纲中生成对应的项，方便阅读时快速跳转。</p>
+<p>当指定了 <code class="notranslate">--no-outline</code> 参数时， 将不会输出大纲到PDF文档，所以再指定 <code class="notranslate">--outline-depth</code> 也就没有意义了。</p>
+<h3>页面对象参数</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate">    --allow <span class="pl-k">&lt;</span>path<span class="pl-k">&gt;</span>                指定加载HTML中相对路径文件的目录(可重复使用此参数指定多个
+                                  目录)，这个参数会在后面进行更详细的讲解
+    --background                  输出页面背景到PDF文档(这是默认设置)
+    --no-background               不输出页面背景到PDF文档
+    --cache-dir <span class="pl-k">&lt;</span>path<span class="pl-k">&gt;</span>            网页的缓存目录
+    --checkbox-checked-svg <span class="pl-k">&lt;</span>path<span class="pl-k">&gt;</span> 使用指定的SVG文件渲染选中的复选框
+    --checkbox-svg <span class="pl-k">&lt;</span>path<span class="pl-k">&gt;</span>         使用指定的SVG文件渲染未选中的筛选框
+    --cookie <span class="pl-k">&lt;</span>name<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>value<span class="pl-k">&gt;</span>       设置访问网页时的cookie,value 需要进行url编码
+                                  (可重复使用此参数指定多个cookie)
+    --custom-header <span class="pl-k">&lt;</span>name<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>value<span class="pl-k">&gt;</span> 设置访问网页时的HTTP头(可重复使用此参数指定多个HTTP头)
+    --custom-header-propagation   为每个要加载的资源添加由 --custom-header 指定的HTTP头
+    --no-custom-header-propagation 不为每个要加载的资源添加由 --custom-header 指定的HTTP头
+    --debug-javascript            显示javascript调试输出的信息
+    --no-debug-javascript         不显示javascript调试输出的信息(这是默认设置)
+    --default-header              添加一个默认的“头”，在页面的左头显示页面的名字，
+                                  在页面的右头显示页码，这相对于进行了如下设置：
+                                  --header-left=<span class="pl-s"><span class="pl-pds">'</span>[webpage]<span class="pl-pds">'</span></span>
+                                  --header-right=<span class="pl-s"><span class="pl-pds">'</span>[page]/[toPage]<span class="pl-pds">'</span></span>
+                                  --top 2cm
+                                  --header-line
+    --encoding <span class="pl-k">&lt;</span>encoding<span class="pl-k">&gt;</span>         为输入的文本设置默认的编码方式
+    --disable-external-links      禁止页面中的外链生成超链接
+    --enable-external-links       允许页面中的外链生成超链接(这是默认设置)
+    --disable-forms               不转换HTML表单为PDF表单(这是默认设置)
+    --enable-forms                转换HTML表单为PDF表单
+    --images                      加载图片并输出到PDF文档(这是默认设置)
+    --no-images                   在生成的PDF文档中过滤掉图片
+    --disable-internal-links      禁止页面中的内链生成超链接
+    --enable-internal-links       允许页面中的内链生成超连接(这是默认设置)
+-n, --disable-javascript          禁止WEB页面执行 javascript
+    --enable-javascript           允许WEB页面执行 javascript(这是默认设置)
+    --javascript-delay <span class="pl-k">&lt;</span>msec<span class="pl-k">&gt;</span>     延迟一定的毫秒等待javascript 执行完成(默认值是200)
+    --load-error-handling <span class="pl-k">&lt;</span>handler<span class="pl-k">&gt;</span> 指定当页面加载失败后的动作，可以指定为：abort(中止)、
+                                    ignore(忽略)、skip(跳过)；(默认值是：abort)
+    --load-media-error-handling <span class="pl-k">&lt;</span>handler<span class="pl-k">&gt;</span> 指定当媒体文件加载失败后的动作，可以指定为：
+                                          abort(中止)、ignore(忽略)、skip(跳过)；
+                                          (默认值是：ignore)
+    --disable-local-file-access   不允许一个本地文件加载其他的本地文件，使用命令行参数
+                                   <span class="pl-s"><span class="pl-pds">`</span>--allow<span class="pl-pds">`</span></span> 指定的目录除外。
+    --enable-local-file-access    允许本地文件加载其他的本地文件(这是默认设置)
+    --minimum-font-size <span class="pl-k">&lt;</span>int<span class="pl-k">&gt;</span>     设置最小的字号，除非必要不推荐使用该参数
+    --exclude-from-outline        拒绝加载当前页面到PDF文档的目录和大纲中
+    --include-in-outline          加载当前页面到PDF文档的目录和大纲中(这是默认设置)
+    --page-offset <span class="pl-k">&lt;</span>offset<span class="pl-k">&gt;</span>        设置页码的起始值(默认值为0)
+    --password <span class="pl-k">&lt;</span>password<span class="pl-k">&gt;</span>         HTTP身份认证的密码
+    --disable-plugins             禁止使用插件(这是默认设置)
+    --enable-plugins              允许使用插件，但插件可能并不工作
+    --post <span class="pl-k">&lt;</span>name<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>value<span class="pl-k">&gt;</span>         添加一个POST字段，可以重复使用该参数添加多个POST字段。
+    --post-file <span class="pl-k">&lt;</span>name<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>value<span class="pl-k">&gt;</span>    添加一个POST文件，可以重复使用该参数添加多个文件。
+    --print-media-type            用显示媒体类型代替屏幕
+    --no-print-media-type         不用显示媒体类型代替屏幕
+-p, --proxy <span class="pl-k">&lt;</span>proxy<span class="pl-k">&gt;</span>               使用代理
+--radiobutton-checked-svg <span class="pl-k">&lt;</span>path<span class="pl-k">&gt;</span>  使用指定的SVG文件渲染选中的单选框
+--radiobutton-svg <span class="pl-k">&lt;</span>path<span class="pl-k">&gt;</span>          使用指定的SVG文件渲染未选中的单选框
+--run-sript <span class="pl-k">&lt;</span>js<span class="pl-k">&gt;</span>                  页面加载完成后执行一个附加的JS文件，可以重复使用此参数指定
+                                  多个要在页面加载完成后要执行的JS文件。
+--disable-smart-shrinking         不使用智能收缩策略
+--enable-smart-shrinking          使用智能收缩策略(这是默认设置)
+--stop-slow-scripts               停止运行缓慢的javascript代码(这是默认设置)
+--no-stop-slow-scripts            不停止运行缓慢的javascript代码
+--disable-toc-back-links          禁止从标题链接到目录(这是默认设置)
+--enable-toc-back-links           允许从标题链接到目录
+--user-style-sheet <span class="pl-k">&lt;</span>url<span class="pl-k">&gt;</span>          设置一个在每个页面都加载的用户自定义样式表
+--username <span class="pl-k">&lt;</span>username<span class="pl-k">&gt;</span>             HTTP身谁的用户名
+--viewport-size <span class="pl-k">&lt;&gt;</span>                设置窗口大小,需要你自定义滚动条或css属性来自适应窗口大小。
+--window-status <span class="pl-k">&lt;</span>windowStatus<span class="pl-k">&gt;</span>    Wait <span class="pl-k">until</span> window.status is equal to
+                                  this string before rendering page
+--zoom <span class="pl-k">&lt;</span>float<span class="pl-k">&gt;</span>                    设置转换成PDF时页面的缩放比例(默认为1)
+</pre></div>
+<p>上面代码段中只是对所有 页面对象参数 做了个大概的说明，下面针对个别主要参数做更详细的讲解。</p>
+<h4>--allow</h4>
+<p>这个参数只在“页面对象”是一个文件时有效，在“页面对象”是一个url时此参数无效。</p>
+<p>这个参数的作用是为HTML页面中使用相对路径引用的文件指定一个加载文件的基目录。也就是说HTML文件中所有以相对路径指定的文件都会从 <code class="notranslate">--allow</code> 参数指定的目录进行加载。其实在HTML中指定 <code class="notranslate">base</code> 标签可以达到同样的目的。如果两者(<code class="notranslate">--allow</code>参数和<code class="notranslate">base</code>标签)都没有指定，则使用当前处理的HTML文件所在的目录作为基目录加载当前处理的HTML中相对路径指定的文件。</p>
+<h4>--background AND --no-background</h4>
+<p>这两个参数是一对，用来指定是否在生成的PDF中应用网页的背景，默认 <code class="notranslate">--background</code>参数是开启的，也就是说默认生成的PDF文档中是带有HTML页面的背景图片或背景色的。如果开启 <code class="notranslate">--no-backgroupd</code> 参数，则生成的PDF文档中不会有HTML页面中的背景图片和背景色。</p>
+<h4>--debug-javascript ADN --no-debug-javascript</h4>
+<p>这两个参数用来指定是否在标准输出中输出javascript的调试信息，默认 <code class="notranslate">--no-debug-javasript</code> 参数是开启的，也就是说默认不会输出javascript的调试信息。下图是打开 <code class="notranslate">--debug-javascript</code> 参数的演示。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5db5614f3362d730b4468eec85fe31e720dd72c09a594f8157bb678c46942ca2/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f333036303031342d633961326664656537363731393832392e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430"><img src="https://camo.githubusercontent.com/5db5614f3362d730b4468eec85fe31e720dd72c09a594f8157bb678c46942ca2/687474703a2f2f75706c6f61642d696d616765732e6a69616e7368752e696f2f75706c6f61645f696d616765732f333036303031342d633961326664656537363731393832392e706e673f696d6167654d6f6772322f6175746f2d6f7269656e742f7374726970253743696d61676556696577322f322f772f31323430" alt="" data-canonical-src="http://upload-images.jianshu.io/upload_images/3060014-c9a2fdee76719829.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" style="max-width: 100%;"></a></p>
+<p>--debug-javascript</p>
+<h4>--disable-external-links AND --enable-external-links</h4>
+<p>这两个参数是用来设置在页面中的外链是否以超链接的形式出现在PDF文档中。关于“外链”的定义请移架 术语定义 。默认 <code class="notranslate">--enable-external-links</code> 参数被打开，所以默认情况是页面中的外链是以超链接的形式出现的PDF文档中的，点击可以打开指定的网页。</p>
+<h4>--exclude-from-outline AND --include-in-outline</h4>
+<p>这两个参数用来设置当前页面对象是否包含到目录和大纲中。 默认情况下 <code class="notranslate">--include-in-outline</code> 参数是打开的。也就是说默认情况下生成的PDF文档目录和大纲中是包含当前页面的，如果你不想让当前页面加到目录和大纲中可以打开 <code class="notranslate">--exclude-from-outline</code> 参数。</p>
+<h4>--post AND --post-file</h4>
+<p>当目标页面需要接受POST表单才能正确得到响应时，可以用这两个参数。这两个参数都是可以重复使用的。</p>
+<p>还有一个应用场景是，用于自动化的WEB应用测试中。可以得到PDF文档作为测试报告。</p>
+<p><code class="notranslate">--post-file</code> 也可以用于自动批量上传文件的场景。</p>
+<h4>--run-sript</h4>
+<p>当需要对页面进行一定的预处理后再生成PDF文档的场景，使用该参数再合适不过了。这个参数可以重复使用指定多个需要在页面加载完成后执行的JS代码。你可以在这些JS中对页面的结构和内容进处理，JS执行完成后才会把对应的页面生成PDF文档。</p>
+<h4>--disable-internal-links AND --enable-internal-links</h4>
+<p>这两个参数是用来设置在页面中的内链是否以超链接的形式出现在PDF文档中。关于“内链”的定义请移架 术语定义 。默认 <code class="notranslate">--enable-internal-links</code> 参数被打开，所以默认情况是页面中的内链是以超链接的形式出现的PDF文档中的，点击在当前PDF中跳转到指定锚点。</p>
+<h4>--enable-toc-back-links AND --disable-toc-back-links</h4>
+<p>这组参数用来设置，是否在PDF内容中的H标签处生成超链接。生成的超链接点击后会跳转到目录和大纲中该H标签对应的锚点位置。默认情况下 <code class="notranslate">--disable-toc-back-links</code> 参数被打开，不会在PDF文档的H标签处生成超链接。</p>
+<p>如果你需要在阅读PDF文档的内容时快速回到目录，你可以打开 <code class="notranslate">--enable-toc-back-links</code>参数。</p>
+<h4>--user-style-sheet</h4>
+<p>这个参数用来加载一个用户自定义的样式表，用来改变HTML页面原有的样式。需要高度自定义页面新式的同学可以尝试使用这个参数达到目的。</p>
+<h3>页眉和页脚参数选项</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate">    --footer-center <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>        在页脚的居中部分显示页脚文本 <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>
+    --footer-font-name <span class="pl-k">&lt;</span>name<span class="pl-k">&gt;</span>     设置页脚的字体 (默认为 Arial)
+    --footer-font-size <span class="pl-k">&lt;</span>size<span class="pl-k">&gt;</span>     设置页脚的字体大小 (默认为 12)
+    --footer-html <span class="pl-k">&lt;</span>url<span class="pl-k">&gt;</span>           添加一个html作为页脚
+    --footer-left <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>          在页脚的居左部分显示页脚文本 <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>
+    --footer-line                 在页脚上方显示一条直线分隔正文
+    --no-footer-line              不使用直线分隔页脚与正文(这是默认设置)
+    --footer-right <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>         在页脚的居右部分显示页脚文本 <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>
+    --footer-spacing <span class="pl-k">&lt;</span>real<span class="pl-k">&gt;</span>       页脚与正文之间的距离(默认为零)
+
+    --header-center <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>        在页眉的居中部分显示页眉文本 <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>
+    --header-font-name <span class="pl-k">&lt;</span>name<span class="pl-k">&gt;</span>     设置页眉的字体 (默认为 Arial)
+    --header-font-size <span class="pl-k">&lt;</span>size<span class="pl-k">&gt;</span>     设置页眉的字体大小 (默认为 12)
+    --header-html <span class="pl-k">&lt;</span>url<span class="pl-k">&gt;</span>           添加一个html作为页眉
+    --header-left <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>          在页眉的居左部分显示页眉文本 <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>
+    --header-line                 在页眉下方显示一条直线分隔正文
+    --no-header-line              不使用直线分隔页眉与正文(这是默认设置)
+    --header-right <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>         在页眉的居右部分显示页眉文本 <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>
+    --header-spacing <span class="pl-k">&lt;</span>real<span class="pl-k">&gt;</span>       页眉与正文之间的距离(默认为零)</pre></div>
+<p>页眉页脚的设置比较简单，看上述代码段中的解释已经非常明了，所以不再赘述。后面还有针对页眉与页脚的其他相关介绍。</p>
+<h3>目录对象参数</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate">    --disable-dotted-lines        在目录中不使用虚线
+    --toc-header-text <span class="pl-k">&lt;</span>text<span class="pl-k">&gt;</span>      设置目录的页眉文本
+    --toc-level-indentation <span class="pl-k">&lt;</span>width<span class="pl-k">&gt;</span> 第级标题在目录中的缩进宽度(默认为1em)
+    --disable-toc-links           在目录中不生成指向内容锚点的超链接
+    --toc-text-size-shrink <span class="pl-k">&lt;</span>real<span class="pl-k">&gt;</span> 在目录中每级标题的缩放比例(默认为0.8)
+    --xsl-style-sheet <span class="pl-k">&lt;</span>file<span class="pl-k">&gt;</span>      使用自定义的 XSL 样式表显示目录内容</pre></div>
+<p>“目录对象”我们一般用不到，上述代码段中的讲解也不难懂，所以不针对每一个具体参数再做详细的讲解。</p>
+<h2>关于页面尺寸说明</h2>
+<p>默认的页面尺寸是 A4，你可以使用 <code class="notranslate">--page-size</code> 参数指定你想要的页面尺寸，如：A3，Letter 和 Legal等。想要查看本程序支持的所有页面尺寸，请访问 <a href="http://qt-project.org/doc/qt-4.8/qprinter.html#PaperSize-enum" rel="nofollow">http://qt-project.org/doc/qt-4.8/qprinter.html#PaperSize-enum</a></p>
+<p>你还可以使用 <code class="notranslate">--page-height</code> 和 <code class="notranslate">--page-width</code> 对页面尺寸进行更精细的控制。</p>
+<h2>从标准输入获取参数</h2>
+<p>如果你需要对许多页面进行批量的处理，并且感觉 wkhtmltopdf 开启比较慢，你可以尝试使用 <code class="notranslate">--read-args-from-stdin</code> 参数。</p>
+<p>wkhtmltopdf 命令会为 <code class="notranslate">--read-args-from-stdin</code> 参数发送过来的每一行进行一次单独命令调用。也就是说此参数每读取一行都会执行一次 wkhtmltopdf 命令。而最终执行的命令中的参数是命令行中参数与此参数读取的标准输入流中参数的结合。</p>
+<p>下面的代码段是一个例子:</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>http://qt-project.org/doc/qt-4.8/qapplication.html qapplication.pdf<span class="pl-pds">"</span></span> <span class="pl-k">&gt;&gt;</span> cmds
+<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>cover google.com http://en.wikipedia.org/wiki/Qt_(software) qt.pdf<span class="pl-pds">"</span></span> <span class="pl-k">&gt;&gt;</span> cmds
+wkhtmltopdf --read-args-from-stdin --book <span class="pl-k">&lt;</span> cmds</pre></div>
+<h2>指令一个代理</h2>
+<p>默认情况下代理信息将读取环境变量:proxy、all_proxy 和 http_proxy,代理选项还可以通过指定 <code class="notranslate">-p</code> 参数开启。</p>
+<p>使用 BNF 对代理的定义如下：</p>
+<pre class="notranslate"><code class="notranslate">&lt;type&gt; := "http://" | "socks5://"
+&lt;serif&gt; := &lt;username&gt; (":" &lt;password&gt;)? "@"
+&lt;proxy&gt; := "None" | &lt;type&gt;? &lt;serif&gt;? &lt;host&gt; (":" &lt;port&gt;)?
+</code></pre>
+<p>如果你不熟悉 BNF 的话，下面的代码段中是三个例子:</p>
+<pre class="notranslate"><code class="notranslate">http://user:password@myproxyserver:8080
+socks5://myproxyserver
+None
+</code></pre>
+<h2>页眉和页脚</h2>
+<p>页眉和页脚可以使用参数 <code class="notranslate">--header-*</code> 和 <code class="notranslate">--footer-*</code> 添加到文件中。有些参数(如 <code class="notranslate">--footer-left</code>)需要提供一个字符串<code class="notranslate">text</code>作为参数值。你可以在 <code class="notranslate">text</code>中插入下述变量，他们将会被替换成对应的值。</p>
+<div class="highlight highlight-source-ini"><pre class="notranslate"><span class="pl-en">[page]</span>       当前正在被输出页面的页码
+<span class="pl-en">[frompage]</span>   第一页在文档中的页码
+<span class="pl-en">[topage]</span>     最后一面在文档中的页码
+<span class="pl-en">[webpage]</span>    当前正在被输出页面的URL
+<span class="pl-en">[section]</span>    当前正在被输出的章节的名字
+<span class="pl-en">[subsection]</span> 当前正在被输出的小节的名字
+<span class="pl-en">[date]</span>       本地系统格式的当前日期
+<span class="pl-en">[isodate]</span>    ISO 8601 格式的当前日期
+<span class="pl-en">[time]</span>       本地系统格式的当前时间
+<span class="pl-en">[title]</span>      当前对象的标题
+<span class="pl-en">[doctitle]</span>   输出文档的标题
+<span class="pl-en">[sitepage]</span>   当前正在处理的对象中当前页面的页码
+<span class="pl-en">[sitepages]</span>  当前正在处理的对象中的总页数
+</pre></div>
+<p>举一个例子来说明吧，<code class="notranslate">--header-right "Page [page] of [toPage]"</code>, 会在页面的右上角生成一个类似 <code class="notranslate">Page x of y</code> 的字符串，其中 <code class="notranslate">x</code> 是当前页面的页码， <code class="notranslate">y</code> 是当前文档最后一页的页码。</p>
+<p>页眉和页脚也可以通过 HTML文档来提供。 同样举一个例子，使用命令行参数 <code class="notranslate">--header-html header.html</code> 来生成页眉，而 header.html 的内容如下:</p>
+<div class="highlight highlight-text-html-basic"><pre class="notranslate"><span class="pl-kos">&lt;</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;</span><span class="pl-ent">script</span><span class="pl-kos">&gt;</span>
+<span class="pl-k">function</span> <span class="pl-en">subst</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">var</span> <span class="pl-s1">vars</span><span class="pl-c1">=</span><span class="pl-kos">{</span><span class="pl-kos">}</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">x</span><span class="pl-c1">=</span><span class="pl-smi">window</span><span class="pl-kos">.</span><span class="pl-c1">location</span><span class="pl-kos">.</span><span class="pl-c1">search</span><span class="pl-kos">.</span><span class="pl-en">substring</span><span class="pl-kos">(</span><span class="pl-c1">1</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">split</span><span class="pl-kos">(</span><span class="pl-s">'&amp;'</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">for</span> <span class="pl-kos">(</span><span class="pl-k">var</span> <span class="pl-s1">i</span> <span class="pl-k">in</span> <span class="pl-s1">x</span><span class="pl-kos">)</span> <span class="pl-kos">{</span><span class="pl-k">var</span> <span class="pl-s1">z</span><span class="pl-c1">=</span><span class="pl-s1">x</span><span class="pl-kos">[</span><span class="pl-s1">i</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-en">split</span><span class="pl-kos">(</span><span class="pl-s">'='</span><span class="pl-kos">,</span><span class="pl-c1">2</span><span class="pl-kos">)</span><span class="pl-kos">;</span><span class="pl-s1">vars</span><span class="pl-kos">[</span><span class="pl-s1">z</span><span class="pl-kos">[</span><span class="pl-c1">0</span><span class="pl-kos">]</span><span class="pl-kos">]</span> <span class="pl-c1">=</span> <span class="pl-en">unescape</span><span class="pl-kos">(</span><span class="pl-s1">z</span><span class="pl-kos">[</span><span class="pl-c1">1</span><span class="pl-kos">]</span><span class="pl-kos">)</span><span class="pl-kos">;</span><span class="pl-kos">}</span>
+  <span class="pl-k">var</span> <span class="pl-s1">x</span><span class="pl-c1">=</span><span class="pl-kos">[</span><span class="pl-s">'frompage'</span><span class="pl-kos">,</span><span class="pl-s">'topage'</span><span class="pl-kos">,</span><span class="pl-s">'page'</span><span class="pl-kos">,</span><span class="pl-s">'webpage'</span><span class="pl-kos">,</span><span class="pl-s">'section'</span><span class="pl-kos">,</span><span class="pl-s">'subsection'</span><span class="pl-kos">,</span><span class="pl-s">'subsubsection'</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
+  <span class="pl-k">for</span> <span class="pl-kos">(</span><span class="pl-k">var</span> <span class="pl-s1">i</span> <span class="pl-k">in</span> <span class="pl-s1">x</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-k">var</span> <span class="pl-s1">y</span> <span class="pl-c1">=</span> <span class="pl-smi">document</span><span class="pl-kos">.</span><span class="pl-en">getElementsByClassName</span><span class="pl-kos">(</span><span class="pl-s1">x</span><span class="pl-kos">[</span><span class="pl-s1">i</span><span class="pl-kos">]</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-k">for</span> <span class="pl-kos">(</span><span class="pl-k">var</span> <span class="pl-s1">j</span><span class="pl-c1">=</span><span class="pl-c1">0</span><span class="pl-kos">;</span> <span class="pl-s1">j</span><span class="pl-c1">&lt;</span><span class="pl-s1">y</span><span class="pl-kos">.</span><span class="pl-c1">length</span><span class="pl-kos">;</span> <span class="pl-c1">++</span><span class="pl-s1">j</span><span class="pl-kos">)</span> <span class="pl-s1">y</span><span class="pl-kos">[</span><span class="pl-s1">j</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-c1">textContent</span> <span class="pl-c1">=</span> <span class="pl-s1">vars</span><span class="pl-kos">[</span><span class="pl-s1">x</span><span class="pl-kos">[</span><span class="pl-s1">i</span><span class="pl-kos">]</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span>
+<span class="pl-kos">}</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">script</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;</span><span class="pl-ent">body</span> <span class="pl-c1">style</span>="<span class="pl-s">border:0; margin: 0;</span>" <span class="pl-c1">onload</span>="<span class="pl-s">subst()</span>"<span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">table</span> <span class="pl-c1">style</span>="<span class="pl-s">border-bottom: 1px solid black; width: 100%</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">tr</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">td</span> <span class="pl-c1">class</span>="<span class="pl-s">section</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">td</span> <span class="pl-c1">style</span>="<span class="pl-s">text-align:right</span>"<span class="pl-kos">&gt;</span>
+      Page <span class="pl-kos">&lt;</span><span class="pl-ent">span</span> <span class="pl-c1">class</span>="<span class="pl-s">page</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">span</span><span class="pl-kos">&gt;</span> of <span class="pl-kos">&lt;</span><span class="pl-ent">span</span> <span class="pl-c1">class</span>="<span class="pl-s">topage</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">span</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">tr</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">table</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span></pre></div>
+<h2>大纲(Outlines)</h2>
+<p>wkhtmltopdf 可以使用 <code class="notranslate">--outline</code> 命令行参数来指定在PDF就要中输出像书本中目录一样的“大纲”，“大纲”是基本HTML文档中H标签生成的，具体的大纲的层级和尝试请移步 目录</p>
+<p>如果HTML文档中的H标签等级比较多，就可以生成深层级树形结构的“大纲”，而生成“大纲”的真实深度是通过 <code class="notranslate">--outline-depth</code> 参数来控制。</p>
+<h2>目录</h2>
+<p>通过在命令行中添加 TOC对象 可以把一个目录添加到生成的PDF文档中，例如下面的代码段：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">wkhtmltopdf toc http://qt-project.org/doc/qt-4.8/qstring.html qstring.pdf</pre></div>
+<p>生成的目录也是基于HTML文档的H标签。过程是首先生成一个XML文档,然后使用XSLT转换为HTML。 生成的 XML 文档可以通过 <code class="notranslate">--dump-outline</code> 参数查看。</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">wkhtmltopdf --dump-outline toc.xml http://qt-project.org/doc/qt-4.8/qstring.html qstring.pdf</pre></div>
+<p>你如果想要使用自定义的XSLT文档可以通过 <code class="notranslate">--xsl-style-sheet</code> 参数指定</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">wkhtmltopdf toc --xsl-style-sheet my.xsl http://qt-project.org/doc/qt-4.8/qstring.html qstring.pdf</pre></div>
+<p>你可以使用 <code class="notranslate">--dump-default-toc-xsl</code> 参数把默认的 XSLT 文档打印到标准输出，然后基于它创建你的自定义 XSLT 文档。</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">wkhtmltopdf --dump-default-toc-xsl</pre></div>
+<h2>总结</h2>
+<p>以上就是有关 wkhtmltopdf 工具的所有内容，这些内容中的大部分是通过阅读 wkhtmltopdf 的 <code class="notranslate">-H</code> 参数输出的英文文档获取的。水平有限，如有不足请指正。</p>
+<h2>相关文章</h2>
+<p>[HTML 转 PDF 之 wkhtmltopdf 工具简介](<a href="http://www.jianshu.com/p/559c594678b6" rel="nofollow">http://www.jianshu.com/p/559c594678b6</a></p>
+<p>转自</p>
+<pre class="notranslate"><code class="notranslate">http://www.jianshu.com/p/4d65857ffe5e
+</code></pre></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://yangweijie.github.io/note">yangweijie's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","yangweijie/note");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>

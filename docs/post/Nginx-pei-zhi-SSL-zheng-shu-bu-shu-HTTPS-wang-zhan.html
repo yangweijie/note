@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="**一、什么是 SSL 证书，什么是 HTTPS**
+SSL 证书是一种数字证书，它使用 Secure Socket Layer 协议在浏览器和 Web 服务器之间建立一条安全通道，从而实现：
+1、数据信息在客户端和服务器之间的加密传输，保证双方传递信息的安全性，不可被第三方窃听；
+2、用户可以通过服务器证书验证他所访问的网站是否真实可靠。">
+<meta property="og:title" content="Nginx配置SSL证书部署HTTPS网站">
+<meta property="og:description" content="**一、什么是 SSL 证书，什么是 HTTPS**
+SSL 证书是一种数字证书，它使用 Secure Socket Layer 协议在浏览器和 Web 服务器之间建立一条安全通道，从而实现：
+1、数据信息在客户端和服务器之间的加密传输，保证双方传递信息的安全性，不可被第三方窃听；
+2、用户可以通过服务器证书验证他所访问的网站是否真实可靠。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://yangweijie.github.io/note/post/Nginx-pei-zhi-SSL-zheng-shu-bu-shu-HTTPS-wang-zhan.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>Nginx配置SSL证书部署HTTPS网站</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">Nginx配置SSL证书部署HTTPS网站</h1>
+<div class="title-right">
+    <a href="https://yangweijie.github.io/note" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/yangweijie/note/issues/43" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p><strong>一、什么是 SSL 证书，什么是 HTTPS</strong><br>
+SSL 证书是一种数字证书，它使用 Secure Socket Layer 协议在浏览器和 Web 服务器之间建立一条安全通道，从而实现：<br>
+1、数据信息在客户端和服务器之间的加密传输，保证双方传递信息的安全性，不可被第三方窃听；<br>
+2、用户可以通过服务器证书验证他所访问的网站是否真实可靠。</p>
+<p>HTTPS 是以安全为目标的 HTTP 通道，即 HTTP 下加入 SSL 加密层。HTTPS 不同于 HTTP 的端口，HTTP默认端口为80，HTTPS默认端口为443。</p>
+<p><strong>推荐阅读：</strong></p>
+<p>基于OpenSSL实现C/S架构中的HTTPS会话 <a href="http://www.linuxidc.com/Linux/2013-05/84477.htm" rel="nofollow">http://www.linuxidc.com/Linux/2013-05/84477.htm</a></p>
+<p>RHEL6.3下配置简单Apache HTTPS  <a href="http://www.linuxidc.com/Linux/2013-02/78874.htm" rel="nofollow">http://www.linuxidc.com/Linux/2013-02/78874.htm</a></p>
+<p>Nginx搭建HTTPS服务器 <a href="http://www.linuxidc.com/Linux/2013-01/78263.htm" rel="nofollow">http://www.linuxidc.com/Linux/2013-01/78263.htm</a></p>
+<p>Linux实现HTTPS方式访问站点 <a href="http://www.linuxidc.com/Linux/2012-08/69429.htm" rel="nofollow">http://www.linuxidc.com/Linux/2012-08/69429.htm</a></p>
+<p><strong>二、什么网站需要使用SSL证书</strong><br>
+1、购物交易类网站<br>
+不用多说，网上银行、支付宝、Paypal等肯定会全程加密以保护你的信息安全。</p>
+<p>2、注册与登陆<br>
+一些大的网站，比如电子邮箱，注册会员或者登陆的时候，会专门通过SSL通道，保证密码安全不被窃取。</p>
+<p>3、某些在线代理<br>
+这个。。。嗯哼，就不说了。</p>
+<p>4、装B<br>
+比如我……</p>
+<p><strong>三、自行颁发不受浏览器信任的SSL证书</strong><br>
+为晒晒IQ网颁发证书。ssh登陆到服务器上，终端输入以下命令，使用openssl生成RSA密钥及证书。</p>
+<h1>生成一个RSA密钥</h1>
+<p>$ openssl genrsa -des3 -out 33iq.key 1024</p>
+<h1>拷贝一个不需要输入密码的密钥文件</h1>
+<p>$ openssl rsa -in 33iq.key -out 33iq_nopass.key</p>
+<h1>生成一个证书请求</h1>
+<p>$ openssl req -new -key 33iq.key -out 33iq.csr</p>
+<h1>自己签发证书</h1>
+<p>$ openssl x509 -req -days 365 -in 33iq.csr -signkey 33iq.key -out 33iq.crt</p>
+<p>第3个命令是生成证书请求，会提示输入省份、城市、域名信息等，重要的是，email一定要是你的域名后缀的。这样就有一个 csr 文件了，提交给 ssl 提供商的时候就是这个 csr 文件。当然我这里并没有向证书提供商申请，而是在第4步自己签发了证书。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b08b1576220bd55b92563603ebbd6be8f063d448a11268104cfcbc4ea28c627b/687474703a2f2f7777772e6c696e75786964632e636f6d2f75706c6f61642f323031335f30382f3133303830333038303135353035322e706e67"><img src="https://camo.githubusercontent.com/b08b1576220bd55b92563603ebbd6be8f063d448a11268104cfcbc4ea28c627b/687474703a2f2f7777772e6c696e75786964632e636f6d2f75706c6f61642f323031335f30382f3133303830333038303135353035322e706e67" alt="" data-canonical-src="http://www.linuxidc.com/upload/2013_08/130803080155052.png" style="max-width: 100%;"></a></p>
+<p>编辑配置文件nginx.conf，给站点加上HTTPS协议</p>
+<pre class="notranslate"><code class="notranslate">server {
+    server_name YOUR_DOMAINNAME_HERE;
+    listen 443;
+    ssl on;
+    ssl_certificate /usr/local/nginx/conf/33iq.crt;
+    ssl_certificate_key /usr/local/nginx/conf/33iq_nopass.key;
+    # 若ssl_certificate_key使用33iq.key，则每次启动Nginx服务器都要求输入key的密码。
+}
+</code></pre>
+<p>重启Nginx后即可通过https访问网站了。</p>
+<p>自行颁发的SSL证书能够实现加密传输功能，但浏览器并不信任，会出现以下提示：</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3120b1308850ff3a7a638216889881c1f1ea71f2981f208ec959d21be103d160/687474703a2f2f7777772e6c696e75786964632e636f6d2f75706c6f61642f323031335f30382f3133303830333038303135353035312e706e67"><img src="https://camo.githubusercontent.com/3120b1308850ff3a7a638216889881c1f1ea71f2981f208ec959d21be103d160/687474703a2f2f7777772e6c696e75786964632e636f6d2f75706c6f61642f323031335f30382f3133303830333038303135353035312e706e67" alt="" data-canonical-src="http://www.linuxidc.com/upload/2013_08/130803080155051.png" style="max-width: 100%;"></a></p>
+<p><strong>四、受浏览器信任的证书</strong><br>
+要获取受浏览器信任的证书，则需要到证书提供商处申请。证书授证中心，又叫做CA机构，为每个使用公开密钥的用户发放一个数字证书。浏览器在默认情况下内置了一些CA机构的证书，使得这些机构颁发的证书受到信任。<a href="http://www.verisign.com/cn/" rel="nofollow">VeriSign</a>即是一个著名的国外CA机构，工行、建行、招行、支付宝、财付通等网站均使用VeriSign的证书，而网易邮箱等非金融网站采用的是中国互联网信息中心 CNNIC颁发的SSL证书。一般来说，一个证书的价格不菲，以VeriSign的证书为例，价格在每年8000元人民币左右。</p>
+<p>据说也有免费的证书可以申请。和VeriSign一样，<a href="http://www.startssl.com/" rel="nofollow">StartSSL</a>也 是一家CA机构，它的根证书很久之前就被一些具有开源背景的浏览器支持（Firefox浏览器、谷歌Chrome浏览器、苹果Safari浏览器等）。后 来StartSSL竟然搞定了微软：在升级补丁中，微软更新了通过Windows根证书认证（Windows Root Certificate Program）的厂商清单，并首次将StartCom公司列入了该认证清单。现在，在Windows 7或安装了升级补丁的Windows Vista或Windows XP操作系统中，系统会完全信任由StartCom这类免费数字认证机构认证的数字证书，从而使StartSSL也得到了IE浏览器的支持。（来源及<a href="http://www.linuxidc.com/Linux/2011-11/47478.htm" rel="nofollow">申请步骤</a>）</p>
+<p><strong>五、只针对注册、登陆进行https加密处理</strong><br>
+既然HTTPS能保证安全，为什么全世界大部分网站都仍旧在使用HTTP呢？使用HTTPS协议，对服务器来说是很大的负载开销。从性能上考虑，我 们无法做到对于每个用户的每个访问请求都进行安全加密（当然，Google这种大神除外）。作为一个普通网站，我们所追求的只是在进行交易、密码登陆等操 作时的安全。通过配置Nginx服务器，可以使用rewrite来做到这一点。</p>
+<p>在https server下加入如下配置：</p>
+<pre class="notranslate"><code class="notranslate">if ($uri !~* "/logging.php$")
+{
+    rewrite ^/(.*)$ http://$host/$1 redirect;
+}
+</code></pre>
+<p>在http server下加入如下配置：</p>
+<pre class="notranslate"><code class="notranslate">if ($uri ~* "/logging.php$")
+{
+    rewrite ^/(.*)$ https://$host/$1 redirect;
+}
+</code></pre>
+<p>这样一来，用户会且只会在访问logging.php的情况下，才会通过https访问。</p>
+<p>更新：有一些开发框架会根据 $_SERVER['HTTPS'] 这个 PHP 变量是否为 on 来判断当前的访问请求是否是使用 https。为此我们需要在 Nginx 配置文件中添加一句来设置这个变量。遇到 https 链接重定向后会自动跳到 http 问题的同学可以参考一下。</p>
+<pre class="notranslate"><code class="notranslate">server {
+    ...
+    listen 443;
+    location \.php$ {
+        ...
+        include fastcgi_params;
+        fastcgi_param HTTPS on; # 多加这一句
+    }
+}
+
+server {
+    ...
+    listen 80;
+    location \.php$ {
+        ...
+        include fastcgi_params;
+    }
+}
+</code></pre>
+<p><strong>参考链接：</strong></p>
+<p>Nginx下只针对logging.php进行https处理的重写规则 <a href="http://www.linuxidc.com/Linux/2013-08/88272.htm" rel="nofollow">http://www.linuxidc.com/Linux/2013-08/88272.htm</a></p>
+<p>全球可信并且唯一免费的HTTPS(SSL)证书颁发机构：StartSSL  <a href="http://www.linuxidc.com/Linux/2011-11/47478.htm" rel="nofollow">http://www.linuxidc.com/Linux/2011-11/47478.htm</a></p>
+<p><strong>Nginx 的详细介绍</strong>：<a href="http://www.linuxidc.com/Linux/2012-03/56786.htm" title="Nginx" rel="nofollow">请点这里</a><br>
+<strong>Nginx 的下载地址</strong>：<a href="http://www.linuxidc.com/down.aspx?id=342" rel="nofollow">请点这里</a></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://yangweijie.github.io/note">yangweijie's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","yangweijie/note");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>

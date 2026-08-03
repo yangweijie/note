@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# 速查表 新版升级
+
+## 历史回顾
+
+我感叹于laravel的生态完好，tp5的类api的缺失（以前thinkphp3时代，帮助公司用apigen NetBeans里生成过一个[3.1版本的api](http://www.thinkphp.cn/api/)）。">
+<meta property="og:title" content="php类库速查表升级">
+<meta property="og:description" content="# 速查表 新版升级
+
+## 历史回顾
+
+我感叹于laravel的生态完好，tp5的类api的缺失（以前thinkphp3时代，帮助公司用apigen NetBeans里生成过一个[3.1版本的api](http://www.thinkphp.cn/api/)）。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://yangweijie.github.io/note/post/php-lei-ku-su-cha-biao-sheng-ji.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>php类库速查表升级</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">php类库速查表升级</h1>
+<div class="title-right">
+    <a href="https://yangweijie.github.io/note" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/yangweijie/note/issues/36" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>速查表 新版升级</h1>
+<h2>历史回顾</h2>
+<p>我感叹于laravel的生态完好，tp5的类api的缺失（以前thinkphp3时代，帮助公司用apigen NetBeans里生成过一个<a href="http://www.thinkphp.cn/api/" rel="nofollow">3.1版本的api</a>）。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8558665cd65b7ef9406ac20e5e27f46bcb3366a9f41bfee31742c787b819c7e8/68747470733a2f2f626f782e6b616e636c6f75642e636e2f33363264396539623361346164663264383764303065663362383865333434615f31363334783735332e706e67"><img src="https://camo.githubusercontent.com/8558665cd65b7ef9406ac20e5e27f46bcb3366a9f41bfee31742c787b819c7e8/68747470733a2f2f626f782e6b616e636c6f75642e636e2f33363264396539623361346164663264383764303065663362383865333434615f31363334783735332e706e67" alt="" data-canonical-src="https://box.kancloud.cn/362d9e9b3a4adf2d87d00ef3b88e344a_1634x753.png" style="max-width: 100%;"></a></p>
+<p>在我走之后，估计没人用NetBeans了 所以就没人做升级。</p>
+<p>然后我觉得laravel的速查表不错，见下图：</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5f154ad08898ae140c5e2eb65c576fa387c0cd1f35376881906e7c101b474809/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30386365316231333064363065376464393163623261326138346131303662665f31383830783934322e706e67"><img src="https://camo.githubusercontent.com/5f154ad08898ae140c5e2eb65c576fa387c0cd1f35376881906e7c101b474809/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30386365316231333064363065376464393163623261326138346131303662665f31383830783934322e706e67" alt="" data-canonical-src="https://box.kancloud.cn/08ce1b130d60e7dd91cb2a2a84a106bf_1880x942.png" style="max-width: 100%;"></a></p>
+<p>于是就想到了把他移植到tp5上，作为自己回到thinkphp5开发上的第一个贡献。</p>
+<p>记得那个时候是清明前开始动手的。使用最土的，静态页面，一个个类手动去编辑。</p>
+<p>后来发现类太多了，我每次在sublime 里 先打开一个类，复制出来临时文件，处理好，粘贴到静态index.html里，太麻烦了，要处理左侧的导航，又要定位插入的位置。 于是乎在五一放假时 我换了个思路，我不搞静态了，我搞动态的。</p>
+<p>于是在海豚里建了一个插件，<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f2932933f352f668055ebe388397cad73d32dd274e5db78bbe446e1e36762d25/68747470733a2f2f626f782e6b616e636c6f75642e636e2f39653539623731376136303532303663396438353234643264663232646436385f343038783537392e706e67"><img src="https://camo.githubusercontent.com/f2932933f352f668055ebe388397cad73d32dd274e5db78bbe446e1e36762d25/68747470733a2f2f626f782e6b616e636c6f75642e636e2f39653539623731376136303532303663396438353234643264663232646436385f343038783537392e706e67" alt="" data-canonical-src="https://box.kancloud.cn/9e59b717a605206c9d8524d2df22dd68_408x579.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b91c239ec3a2cd1965537a41c9df63a4ce1262720ed65c001bd58e057aa857f2/68747470733a2f2f626f782e6b616e636c6f75642e636e2f31353165613430373762323165313962386335323733646639363161386265635f31353732783238332e706e67"><img src="https://camo.githubusercontent.com/b91c239ec3a2cd1965537a41c9df63a4ce1262720ed65c001bd58e057aa857f2/68747470733a2f2f626f782e6b616e636c6f75642e636e2f31353165613430373762323165313962386335323733646639363161386265635f31353732783238332e706e67" alt="" data-canonical-src="https://box.kancloud.cn/151ea4077b21e19b8c5273df961a8bec_1572x283.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5dce7c7def825719806bd2348830c1e3033a6fd88515b6be3ea2fc3e8a015457/68747470733a2f2f626f782e6b616e636c6f75642e636e2f61323730366238313362383631383561373735343138386539613464613032335f31353638783535352e706e67"><img src="https://camo.githubusercontent.com/5dce7c7def825719806bd2348830c1e3033a6fd88515b6be3ea2fc3e8a015457/68747470733a2f2f626f782e6b616e636c6f75642e636e2f61323730366238313362383631383561373735343138386539613464613032335f31353638783535352e706e67" alt="" data-canonical-src="https://box.kancloud.cn/a2706b813b86185a7754188e9a4da023_1568x555.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/1ca9371d9eebcac524b99ed1951ade8cc819b2b0760cabc55d1a813ae34ca32c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f61326331613134323638383530356231353631636533353464663064343638655f31353732783630332e706e67"><img src="https://camo.githubusercontent.com/1ca9371d9eebcac524b99ed1951ade8cc819b2b0760cabc55d1a813ae34ca32c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f61326331613134323638383530356231353631636533353464663064343638655f31353732783630332e706e67" alt="" data-canonical-src="https://box.kancloud.cn/a2c1a142688505b1561ce354df0d468e_1572x603.png" style="max-width: 100%;"></a></p>
+<p>以章节的形式添加。终于效率上去了，五一时候抽空把内容全补全了。</p>
+<p>发布到了 掘金上，获得了17个赞。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8b35c8e75b407faf8c49e5f56a89d08c19abcd27bb43735dd1ecf1c82057cc57/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30303434336265386239633563356537636565643465643535353235666438325f333530783230392e706e67"><img src="https://camo.githubusercontent.com/8b35c8e75b407faf8c49e5f56a89d08c19abcd27bb43735dd1ecf1c82057cc57/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30303434336265386239633563356537636565643465643535353235666438325f333530783230392e706e67" alt="" data-canonical-src="https://box.kancloud.cn/00443be8b9c5c5e7ceed4ed55525fd82_350x209.png" style="max-width: 100%;"></a></p>
+<h2>进击的速查表</h2>
+<p>本来以为完成了。结果老大们太积极7月4日又发布了5.0.10，然后在开发5.1dev版。</p>
+<p>既然老大把我的速查表都挂到了tp官网上。我也不能让用的人等，看旧的5.0.7版、</p>
+<p>可是我不想在人工去对比改了哪个类，增加还是删除了哪些方法。20多章呢。</p>
+<p>我想 “代码的问题应该由代码解决”。于是想到了php的注解、反射类。</p>
+<p>正好项目用到了一个 <strong>crada/php-apidoc</strong> 的api文档生成工具。</p>
+<p>于是我就开始动手实现这通过类反射信息获取方法的工程。</p>
+<h3>反射的资料</h3>
+<blockquote>
+<p>PHP 5 具有完整的反射 API，添加了对类、接口、函数、方法和扩展进行反向工程的能力。 此外，反射 API 提供了方法来取出函数、类和方法中的文档注释。</p>
+</blockquote>
+<p>官网手册提到了反射有这多类：</p>
+<p>Reflection<br>
+ReflectionClass<br>
+ReflectionZendExtension<br>
+ReflectionExtension<br>
+ReflectionFunction<br>
+ReflectionFunctionAbstract<br>
+ReflectionMethod<br>
+ReflectionObject<br>
+ReflectionParameter<br>
+ReflectionProperty<br>
+ReflectionType<br>
+ReflectionGenerator<br>
+Reflector<br>
+ReflectionException</p>
+<h3>实现思路</h3>
+<pre class="notranslate"><code class="notranslate">// TODO 获取待处理的类命名空间数据
+// TODO 遍历类 反射
+// TODO 获取类的信息 (名称、方法列表)
+// TODO 遍历方法列表， 获取方法的类型 和注释
+</code></pre>
+<p>我看了一遍反射是先反射类 再找到方法 再找到方法的参数</p>
+<h4>类的获取</h4>
+<p>tp5的核心类 都在一个目录</p>
+<p>于是我想到了用glob遍历</p>
+<pre class="notranslate"><code class="notranslate">	public function get_core_class(){
+		$class_path = CORE_PATH;
+		$before_cwd = getcwd();
+		chdir($class_path);
+		$names = glob('*.php');
+		$ret = [];
+		foreach ($names as $key =&gt; $name) {
+			$ret[] = 'think\\'. str_ireplace('.php', '', $name);
+		}
+		chdir($before_cwd);
+		return $ret;
+	}
+</code></pre>
+<p>反射类的初始化要传的是类的实际命名空间路径。</p>
+<p><code class="notranslate">$class= new\ReflectionClass($className);</code> 这样。然后有以下方法：</p>
+<p>ReflectionClass::__construct — 初始化 ReflectionClass 类<br>
+ReflectionClass::export — 导出一个类<br>
+ReflectionClass::getConstant — 获取定义过的一个常量<br>
+ReflectionClass::getConstants — 获取一组常量<br>
+ReflectionClass::getConstructor — 获取类的构造函数<br>
+ReflectionClass::getDefaultProperties — 获取默认属性<br>
+ReflectionClass::getDocComment — 获取文档注释<br>
+ReflectionClass::getEndLine — 获取最后一行的行数<br>
+ReflectionClass::getExtension — 根据已定义的类获取所在扩展的 ReflectionExtension 对象<br>
+ReflectionClass::getExtensionName — 获取定义的类所在的扩展的名称<br>
+ReflectionClass::getFileName — 获取定义类的文件名<br>
+ReflectionClass::getInterfaceNames — 获取接口（interface）名称<br>
+ReflectionClass::getInterfaces — 获取接口<br>
+ReflectionClass::getMethod — 获取一个类方法的 ReflectionMethod。<br>
+ReflectionClass::getMethods — 获取方法的数组<br>
+ReflectionClass::getModifiers — 获取类的修饰符<br>
+ReflectionClass::getName — 获取类名<br>
+ReflectionClass::getNamespaceName — 获取命名空间的名称<br>
+ReflectionClass::getParentClass — 获取父类<br>
+ReflectionClass::getProperties — 获取一组属性<br>
+ReflectionClass::getProperty — 获取类的一个属性的 ReflectionProperty<br>
+ReflectionClass::getShortName — 获取短名<br>
+ReflectionClass::getStartLine — 获取起始行号<br>
+ReflectionClass::getStaticProperties — 获取静态（static）属性<br>
+ReflectionClass::getStaticPropertyValue — 获取静态（static）属性的值<br>
+ReflectionClass::getTraitAliases — 返回 trait 别名的一个数组<br>
+ReflectionClass::getTraitNames — 返回这个类所使用 traits 的名称的数组<br>
+ReflectionClass::getTraits — 返回这个类所使用的 traits 数组<br>
+ReflectionClass::hasConstant — 检查常量是否已经定义<br>
+ReflectionClass::hasMethod — 检查方法是否已定义<br>
+ReflectionClass::hasProperty — 检查属性是否已定义<br>
+ReflectionClass::implementsInterface — 接口的实现<br>
+ReflectionClass::inNamespace — 检查是否位于命名空间中<br>
+ReflectionClass::isAbstract — 检查类是否是抽象类（abstract）<br>
+ReflectionClass::isAnonymous — 检查类是否是匿名类<br>
+ReflectionClass::isCloneable — 返回了一个类是否可复制<br>
+ReflectionClass::isFinal — 检查类是否声明为 final<br>
+ReflectionClass::isInstance — 检查类的实例<br>
+ReflectionClass::isInstantiable — 检查类是否可实例化<br>
+ReflectionClass::isInterface — 检查类是否是一个接口（interface）<br>
+ReflectionClass::isInternal — 检查类是否由扩展或核心在内部定义<br>
+ReflectionClass::isIterateable — 检查是否可迭代（iterateable）<br>
+ReflectionClass::isSubclassOf — 检查是否为一个子类<br>
+ReflectionClass::isTrait — 返回了是否为一个 trait<br>
+ReflectionClass::isUserDefined — 检查是否由用户定义的<br>
+ReflectionClass::newInstance — 从指定的参数创建一个新的类实例<br>
+ReflectionClass::newInstanceArgs — 从给出的参数创建一个新的类实例。<br>
+ReflectionClass::newInstanceWithoutConstructor — 创建一个新的类实例而不调用它的构造函数<br>
+ReflectionClass::setStaticPropertyValue — 设置静态属性的值<br>
+ReflectionClass::__toString — 返回 ReflectionClass 对象字符串的表示形式。</p>
+<p>这些方法看着是静态，其实可以 <strong>$class-&gt;getShortName()</strong> 直接使用。</p>
+<p>我主要需要拿到类简写名和方法。</p>
+<pre class="notranslate"><code class="notranslate">public function generate($classNames){
+		config('default_return_type', 'json');
+		// TODO 获取待处理的类命名空间数据
+		// TODO 遍历类 反射
+		// TODO 获取类的信息 (名称、方法列表)
+		// TODO 遍历方法列表， 获取方法的类型 和注释
+
+		$outputs = [];
+		foreach ($classNames as $k =&gt; $className) {
+			$class= new\ReflectionClass($className);
+			$key = $class-&gt;getShortName();
+			// dump($key);
+			$outputs[$key] = $this-&gt;getClassAnnotation($class);
+		}
+		return $outputs;
+	}
+</code></pre>
+<p>getClassAnonation 方法就是我用来获取类的全部方法的信息的方法。</p>
+<h4>方法相关</h4>
+<p>拿到反射类之后 想获取反射方法，得实例化 ReflectionMethod 类。</p>
+<pre class="notranslate"><code class="notranslate">	// 获取类的注释信息
+	public function getClassAnnotation($class){
+
+		$ret = [
+			'hasPublicMethods'=&gt;0,
+		];
+		$ret['name'] = $class-&gt;getName();
+		$methods = $class-&gt;getMethods();
+		foreach ($methods as $key =&gt; $method) {
+			$class = $method-&gt;class;
+			$method_name = $method-&gt;name;
+			$rm = new \ReflectionMethod($class, $method_name);
+			// 忽略构造和析构
+			if($rm-&gt;isConstructor() || $rm-&gt;isDestructor()){
+				continue;
+			}
+			$foo = [];
+			$foo['docComment'] = $rm-&gt;getDocComment();
+			$foo['docComment_formated'] = $this-&gt;parseMethodDoc($foo['docComment']);
+			$foo['args'] = $rm-&gt;getParameters();
+			$foo['args_formated'] = $this-&gt;parseParameters($class, $method_name, $foo['args']);
+			if($rm-&gt;isPublic()){
+				$type = $rm-&gt;isStatic()? 'public_static' : 'public_public';
+			}else{
+				$type = $rm-&gt;isStatic()? 'private_static' : 'private_public';
+			}
+			// 只在hasPublicMethods 为0时更新值，保证设置1后不会被复写为0
+			if(empty($ret['hasPublicMethods'])){
+				$ret['hasPublicMethods'] = stripos($type, '_public') !== false;
+			}
+			$foo['type'] = $type;
+			$ret['methods'][$method_name] = $foo;
+		}
+
+		return $ret;
+		// $className = 'think\\App';
+		// $class = new \ReflectionClass($className);
+		// config('default_return_type', 'json');
+
+		// 类名
+		// return $class-&gt;name;
+
+		// ReflectionClass 实例的一个字符串表示形式
+		// return $class-&gt;__toString();
+
+		// 同上
+		// return \ReflectionClass::export($className, 1);
+
+		// 获取类常量
+		// return json_encode($class-&gt;getConstants());
+
+		// 获取构造方法
+		// return $class-&gt;getConstructor();
+
+		// 类名相关
+		// var_dump($class-&gt;inNamespace());
+		// var_dump($class-&gt;getName());
+		// var_dump($class-&gt;getNamespaceName());
+		// var_dump($class-&gt;getShortName());
+
+		# 文件相关
+		// getFileName
+		// getExtensionName
+
+		// 属性相关
+		// return $class-&gt;getDefaultProperties();
+		// return $class-&gt;getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
+
+		// const integer IS_STATIC = 1 ;
+		// const integer IS_PUBLIC = 256 ;
+		// const integer IS_PROTECTED = 512 ;
+		// const integer IS_PRIVATE = 1024 ;
+
+		// return $class-&gt;getStaticProperties();
+
+		// 类注释
+		// return $class-&gt;getDocComment();
+	}
+</code></pre>
+<p>先获取全部的类方法：</p>
+<p>$class-&gt;getMethods();</p>
+<p>官网的例子：</p>
+<pre class="notranslate"><code class="notranslate">array(3) {
+  [0]=&gt;
+  &amp;object(ReflectionMethod)#2 (2) {
+    ["name"]=&gt;
+    string(11) "firstMethod"
+    ["class"]=&gt;
+    string(5) "Apple"
+  }
+  [1]=&gt;
+  &amp;object(ReflectionMethod)#3 (2) {
+    ["name"]=&gt;
+    string(12) "secondMethod"
+    ["class"]=&gt;
+    string(5) "Apple"
+  }
+  [2]=&gt;
+  &amp;object(ReflectionMethod)#4 (2) {
+    ["name"]=&gt;
+    string(11) "thirdMethod"
+    ["class"]=&gt;
+    string(5) "Apple"
+  }
+}
+</code></pre>
+<p>在获取时还可以传属性类型进行过滤：</p>
+<pre class="notranslate"><code class="notranslate">&lt;?php
+class Apple {
+    public function firstMethod() { }
+    final protected function secondMethod() { }
+    private static function thirdMethod() { }
+}
+
+$class = new ReflectionClass('Apple');
+$methods = $class-&gt;getMethods(ReflectionMethod::IS_STATIC | ReflectionMethod::IS_FINAL);
+var_dump($methods);
+?&gt;
+</code></pre>
+<p>拿到方法后，我们需要获得类的方法的公有私有、静态等属性。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/95b5a2dca29185cf91143318d8da38b26988188d5fa0859870233e9567ebb7c7/68747470733a2f2f626f782e6b616e636c6f75642e636e2f38653534323666383063356664346666393730613136373936346662333130325f323837783532392e706e67"><img src="https://camo.githubusercontent.com/95b5a2dca29185cf91143318d8da38b26988188d5fa0859870233e9567ebb7c7/68747470733a2f2f626f782e6b616e636c6f75642e636e2f38653534323666383063356664346666393730613136373936346662333130325f323837783532392e706e67" alt="" data-canonical-src="https://box.kancloud.cn/8e5426f80c5fd4ff970a167964fb3102_287x529.png" style="max-width: 100%;"></a></p>
+<p>因为我在显示时做了方法不同类型的区分演示。</p>
+<pre class="notranslate"><code class="notranslate">$rm = new \ReflectionMethod($class, $method_name);
+// 忽略构造和析构
+if($rm-&gt;isConstructor() || $rm-&gt;isDestructor()){
+	continue;
+}
+</code></pre>
+<p>先过滤掉构造和析构方法。</p>
+<pre class="notranslate"><code class="notranslate">$foo = [];
+$foo['docComment'] = $rm-&gt;getDocComment();
+$foo['docComment_formated'] = $this-&gt;parseMethodDoc($foo['docComment']);
+$foo['args'] = $rm-&gt;getParameters();
+$foo['args_formated'] = $this-&gt;parseParameters($class, $method_name, $foo['args']);
+</code></pre>
+<p>我先获取了原有方法的文档信息和参数信息，并且按照我需要的进行格式化。</p>
+<p>获取参数的要注意，返回的是参数数组</p>
+<p>官方示例：</p>
+<pre class="notranslate"><code class="notranslate">&lt;?php
+public static function fire_theme_method($class, $method)
+{
+        $fire_args=array();
+        
+        $reflection = new ReflectionMethod($class, $method);
+
+    foreach($reflection-&gt;getParameters() AS $arg)
+    {
+        if($_REQUEST[$arg-&gt;name])
+        $fire_args[$arg-&gt;name]=$_REQUEST[$arg-&gt;name];
+        else
+        $fire_args[$arg-&gt;name]=null;
+    }
+        
+    return call_user_func_array(array($class, $method), $fire_args);
+}
+?&gt;
+</code></pre>
+<p>主要咱获取到参数名称 然后结合methodName 去实例化 ReflectionParameter 来获取参数信息</p>
+<h4>类的参数信息</h4>
+<pre class="notranslate"><code class="notranslate">public function parseParameters($class, $method, $args){
+		if($args){
+			$args_str = [];
+			foreach ($args as $key =&gt; $arg) {
+				$p = new \ReflectionParameter(array($class, $method), $key);
+				// 判断是否引用参数
+				if($p-&gt;isPassedByReference()){
+					$arg_str_new = "&amp;\$".$p-&gt;getName();
+				}else{
+					$arg_str_new = "\$".$p-&gt;getName();
+				}
+				if ($p-&gt;isOptional() &amp;&amp; $p-&gt;isDefaultValueAvailable()) {
+					$a_clsss = $class;
+					// 获取某些内部类的参数会抛异常，且异常时$class会变化不是我们想知道的哪个类方法一场了
+					try{
+						$defaul = $p-&gt;getDefaultValue();
+						$arg_str_new .= is_array($defaul) ? ' = '. '[]': ' = '. var_export($defaul, 1);
+					}catch(\Exception $e){
+						trace($p-&gt;isVariadic());
+						trace($a_clsss.'/'.$method.'_'.$key);
+					}
+				}
+				$args_str[] = $arg_str_new;
+			}
+			return implode(', ', $args_str);
+		}
+		return '';
+	}
+</code></pre>
+<p>有的方法没参数直接返回空，有的有参数，咱们想拼接处 参数字符串 比如</p>
+<pre class="notranslate"><code class="notranslate">&lt;?php
+class A{
+	function foo($a){
+    	
+    }
+}
+</code></pre>
+<p>php不会返回<code class="notranslate"> foo($a)</code>这串的。得自己处理</p>
+<p>主要留意参数的 是否有默认值、是否引用</p>
+<ul>
+<li>getName</li>
+<li>isOptional</li>
+<li>isDefaultValueAvailable</li>
+<li>getDefaultValue</li>
+</ul>
+<p>在获取默认值参数的时候 我发现有的时候会抛异常，而且都报的是内部类的。</p>
+<p>所以一定要try catch 去获取默认值。</p>
+<p>至此 整个获取某些类的 方法及方法注释和参数信息 的功能全部实现。</p>
+<p>大家如果想获取某一组class的 速查表 只需 修改get_core_class返回值，只要是tp5里自动加载的类。都可以解析。</p>
+<p>整体思路，根据类数组获取方法-&gt;方法文档、获取参数-&gt;获取参数信息</p>
+<p>这样，我就可以安心的偷懒了。下次tp升级，我直接composer update一下，刷新一下首页，拿到静态html  更新到我的 gh-pages 分支。就完成了新框架速写表的更新。</p>
+<p>一劳永逸啊。</p>
+<h2>尾声</h2>
+<p>具体源码参考 ：<a href="https://github.com/yangweijie/thinkphp-lts">https://github.com/yangweijie/thinkphp-lts</a></p>
+<p>查看速查表 直接：<a href="https://yangweijie.github.io/thinkphp-lts/" rel="nofollow">https://yangweijie.github.io/thinkphp-lts/</a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/34d45db09d4b671a25d87c969ee7c8aabba6f44dd3721488d4d7954497969d04/68747470733a2f2f626f782e6b616e636c6f75642e636e2f35636331323762333031396361333937316133313037323337643935363966385f31383732783936372e706e67"><img src="https://camo.githubusercontent.com/34d45db09d4b671a25d87c969ee7c8aabba6f44dd3721488d4d7954497969d04/68747470733a2f2f626f782e6b616e636c6f75642e636e2f35636331323762333031396361333937316133313037323337643935363966385f31383732783936372e706e67" alt="" data-canonical-src="https://box.kancloud.cn/5cc127b3019ca3971a3107237d9569f8_1872x967.png" style="max-width: 100%;"></a></p>
+<p>欢迎给我提供建议。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://yangweijie.github.io/note">yangweijie's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","yangweijie/note");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>

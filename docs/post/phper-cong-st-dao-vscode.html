@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# 是什么
+
+微软出的重新定义编码的一款免费开源跨平台的文本编辑器，媲美IDE。">
+<meta property="og:title" content="phper从st到vscode">
+<meta property="og:description" content="# 是什么
+
+微软出的重新定义编码的一款免费开源跨平台的文本编辑器，媲美IDE。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://yangweijie.github.io/note/post/phper-cong-st-dao-vscode.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>phper从st到vscode</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">phper从st到vscode</h1>
+<div class="title-right">
+    <a href="https://yangweijie.github.io/note" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/yangweijie/note/issues/35" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>是什么</h1>
+<p>微软出的重新定义编码的一款免费开源跨平台的文本编辑器，媲美IDE。</p>
+<h1>优势</h1>
+<p>我用过很多文本编辑器 比如notepad、editplus、atom、bracket、sublime等。</p>
+<p>比前两个界面好，扩展多。</p>
+<p>比atom性能好，人家作者是算法大师。</p>
+<p>比bracket扩展性强，比只限于前端。</p>
+<p>比sublime来说我觉得最主要是易用性、扩展性上（开源）。</p>
+<h1>下载</h1>
+<p><a href="https://code.visualstudio.com/" rel="nofollow">https://code.visualstudio.com/</a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2f395bcbe6cc5a515ca296d4762837fb550211c0f541f8783ad5db199387a26f/68747470733a2f2f626f782e6b616e636c6f75642e636e2f37656462316634653462656538333430613739373034313137373736366534345f343937783630372e706e67"><img src="https://camo.githubusercontent.com/2f395bcbe6cc5a515ca296d4762837fb550211c0f541f8783ad5db199387a26f/68747470733a2f2f626f782e6b616e636c6f75642e636e2f37656462316634653462656538333430613739373034313137373736366534345f343937783630372e706e67" alt="" data-canonical-src="https://box.kancloud.cn/7edb1f4e4bee8340a797041177766e44_497x607.png" style="max-width: 100%;"></a></p>
+<p>注意选择版本。</p>
+<h1>安装</h1>
+<p>和正常文本编辑器一样安装，值得注意的是最好安装在C盘，因为我发现我安装在其他盘，重装系统后，每次打开编辑器更新 他都给我C盘安装一遍，然后再打开 又提示更新。</p>
+<h1>如何做php开发使用</h1>
+<h2>确保本地环境变量里有php</h2>
+<p>vscode最初是开发前端node 那一套的，其他语言的支持比较后，所以我一直没使用。直到最近更新频繁，我重装了系统，就想体验体验到底能不能用于php项目开发 替代我的sublime，才发现基本上可以了，除了一些小问题。</p>
+<p>对于php语言的支持，它是language server方式支持的。建议环境变量里有php 以后跑server、终端也方便。</p>
+<h2>国际化</h2>
+<p>装好了就是本地语言</p>
+<h2>package  control center？</h2>
+<p>自带ext 扩展管理</p>
+<h2>欢迎界面</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/48ea3b8e431bfb995542a0001e24dae4d3119f51d0c5bcc52143404dbeab2fec/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34623039613637373431393164386136303036353431313833383539326332355f3139323078313034362e706e67"><img src="https://camo.githubusercontent.com/48ea3b8e431bfb995542a0001e24dae4d3119f51d0c5bcc52143404dbeab2fec/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34623039613637373431393164386136303036353431313833383539326332355f3139323078313034362e706e67" alt="" data-canonical-src="https://box.kancloud.cn/4b09a6774191d8a60065411838592c25_1920x1046.png" style="max-width: 100%;"></a></p>
+<p>我觉得vscode 比st 良心的第一个就是欢迎界面。一目了然，信息量足啊。不像st那个空空的主界面。</p>
+<h2>使用php</h2>
+<h3>安装php extension pack</h3>
+<p>咱们点击欢迎界面-&gt;自定义-&gt;PHP</p>
+<p>然后vscode 就默默给我们装一个php集合扩展:php extension pack</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6614c9f7fe43e80f272610d8e9e037167cca21d3ba59fc83dd8d913201dc0abe/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34343231333361336336303663316532623662643135363962343232653633645f393633783633372e706e67"><img src="https://camo.githubusercontent.com/6614c9f7fe43e80f272610d8e9e037167cca21d3ba59fc83dd8d913201dc0abe/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34343231333361336336303663316532623662643135363962343232653633645f393633783633372e706e67" alt="" data-canonical-src="https://box.kancloud.cn/442133a3c606c1e2b6bd1569b422e63d_963x637.png" style="max-width: 100%;"></a></p>
+<p>包含了 php debug 和 PHP IntelliSense</p>
+<h3>配置php执行文件</h3>
+<p>装好之后，你打开一个php文件。如果你没配环境变量他会提示你php language server 无法启动之类的。</p>
+<p>你需要配置一个  “php.executablePath" 指向你的php执行文件。就像下面：</p>
+<p><code class="notranslate">"php.executablePath": "D:/wamp64/bin/php/php7.0.10/php.exe",</code></p>
+<p>vscode的配置项做的比sublime好的地方是。双栏打开，点击左侧配置值会自动复制到右侧：</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f61c28953e94dcfa187689123deac6b3c7fff2acfdd394a26e259825c94d1c8e/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30346564626130353466333264616533666662356137646134323266373433655f383239783533332e706e67"><img src="https://camo.githubusercontent.com/f61c28953e94dcfa187689123deac6b3c7fff2acfdd394a26e259825c94d1c8e/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30346564626130353466333264616533666662356137646134323266373433655f383239783533332e706e67" alt="" data-canonical-src="https://box.kancloud.cn/04edba054f32dae3ffb5a7da422f743e_829x533.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/079636021f7b0c9375865c98840cb4c027c60b0a2e8ff3e833fc5557999a204b/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34356334346436363762316132353665623866646263393961346164383235355f31333432783135332e706e67"><img src="https://camo.githubusercontent.com/079636021f7b0c9375865c98840cb4c027c60b0a2e8ff3e833fc5557999a204b/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34356334346436363762316132353665623866646263393961346164383235355f31333432783135332e706e67" alt="" data-canonical-src="https://box.kancloud.cn/45c44d667b1a256eb8fdbc99a4ad8255_1342x153.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9535a30c70ea9416ddfc2fc35128b295be6dffe5f6149f82b903f2e5f9268dad/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30643237333438396665323835306336386665666533623965353037336638375f31343831783133372e706e67"><img src="https://camo.githubusercontent.com/9535a30c70ea9416ddfc2fc35128b295be6dffe5f6149f82b903f2e5f9268dad/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30643237333438396665323835306336386665666533623965353037336638375f31343831783133372e706e67" alt="" data-canonical-src="https://box.kancloud.cn/0d273489fe2850c68fefe3b9e5073f87_1481x137.png" style="max-width: 100%;"></a></p>
+<p>太tm 人性化了。这才是我们想要的配置。</p>
+<p>而我们sublime怎么做 打开默认配置，打开用户配置，在默认配置里搜索到匹配配置，复制到用户配置。效率太低了。<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5a2cd6f7e655d1009e551b1e4b35dd40c30508ead837f6fd2d19f87100d90b4c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f38646462653964653630303234343333303361386139316362313266646164665f31353439783932342e706e67"><img src="https://camo.githubusercontent.com/5a2cd6f7e655d1009e551b1e4b35dd40c30508ead837f6fd2d19f87100d90b4c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f38646462653964653630303234343333303361386139316362313266646164665f31353439783932342e706e67" alt="" data-canonical-src="https://box.kancloud.cn/8ddbe9de6002443303a8a91cb12fdadf_1549x924.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/21354fecf4c823b8016a946088d2dba4e204d751f02bcaa0f9c80765dc646ed9/68747470733a2f2f626f782e6b616e636c6f75642e636e2f37666666363236636236663739383866323932323761356431356531333965615f31353139783636362e706e67"><img src="https://camo.githubusercontent.com/21354fecf4c823b8016a946088d2dba4e204d751f02bcaa0f9c80765dc646ed9/68747470733a2f2f626f782e6b616e636c6f75642e636e2f37666666363236636236663739383866323932323761356431356531333965615f31353139783636362e706e67" alt="" data-canonical-src="https://box.kancloud.cn/7fff626cb6f7988f29227a5d15e139ea_1519x666.png" style="max-width: 100%;"></a></p>
+<p>而且除了软件配置外 还有插件配置。给你一个插件列表。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/eb9db4fe2af673ee15c106c7338cc631d8d02c26e69ed1dc6a19a5f0e7e06621/68747470733a2f2f626f782e6b616e636c6f75642e636e2f33613965303032663234313761376436303930363135326233316561343461345f3133313778313033352e706e67"><img src="https://camo.githubusercontent.com/eb9db4fe2af673ee15c106c7338cc631d8d02c26e69ed1dc6a19a5f0e7e06621/68747470733a2f2f626f782e6b616e636c6f75642e636e2f33613965303032663234313761376436303930363135326233316561343461345f3133313778313033352e706e67" alt="" data-canonical-src="https://box.kancloud.cn/3a9e002f2417a7d60906152b31ea44a4_1317x1035.png" style="max-width: 100%;"></a></p>
+<p>插件配置是开发者开放的。往往用户配置里没有一项，默认配置里很多项。甚至很多隐藏配置在readme 和github上。</p>
+<blockquote>
+<p>总结配置的体验就可以发现  vscode做的是工程软件，sublime是极客软件，新手不友好。</p>
+</blockquote>
+<p>我觉得好的软件就是<strong>Don't make me think, Don't make me wrong</strong> 。</p>
+<h3>安装 php 相关扩展</h3>
+<p>我们先看扩展管理界面</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/931eeaac811e939c2adc9013ab7339468f7c90a43132972103a92ea00fd99f2c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f63353332653866313334393532346434396234626265363336363062616130375f343338783938322e706e67"><img src="https://camo.githubusercontent.com/931eeaac811e939c2adc9013ab7339468f7c90a43132972103a92ea00fd99f2c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f63353332653866313334393532346434396234626265363336363062616130375f343338783938322e706e67" alt="" data-canonical-src="https://box.kancloud.cn/c532e8f1349524d49b4bbe63660baa07_438x982.png" style="max-width: 100%;"></a></p>
+<p>点击“扩展”图标 出现的，在这里你就可以直接输入关键字 搜索扩展。<br>
+默认点击进来显示的已安装扩展。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/96409f6d80750698b525b48c95a97cb10226d7791e00eb720521abafcf5b379c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f63616439386530616339616130326162643334396431356264383466313263325f363335783534382e706e67"><img src="https://camo.githubusercontent.com/96409f6d80750698b525b48c95a97cb10226d7791e00eb720521abafcf5b379c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f63616439386530616339616130326162643334396431356264383466313263325f363335783534382e706e67" alt="" data-canonical-src="https://box.kancloud.cn/cad98e0ac9aa02abd349d15bd84f12c2_635x548.png" style="max-width: 100%;"></a></p>
+<p>自带的 不需要手动安装 👍。</p>
+<p>参照我以前写的那个<a href="https://pan.baidu.com/s/1nvwV7qL" rel="nofollow">sublime培训  密码: 6jyy</a>：逐一查找 安装吧</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9d089ae8e1c69d1cbaf4b1fc8255f7a40764d8b2d350a3baec84e6b378055d82/68747470733a2f2f626f782e6b616e636c6f75642e636e2f37353062653466383431343131336133326131636563386564616161353433385f31313833783832362e706e67"><img src="https://camo.githubusercontent.com/9d089ae8e1c69d1cbaf4b1fc8255f7a40764d8b2d350a3baec84e6b378055d82/68747470733a2f2f626f782e6b616e636c6f75642e636e2f37353062653466383431343131336133326131636563386564616161353433385f31313833783832362e706e67" alt="" data-canonical-src="https://box.kancloud.cn/750be4f8414113a32a1cec8edaaa5438_1183x826.png" style="max-width: 100%;"></a></p>
+<p>最终发现只需要以下几个插件就可以足够php开发了：</p>
+<ul>
+<li>CodeRunner, 非常方便的代码执行软件，支持多种语言。</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/44c73c9c3287bf6df8424d46da802a86a5b7e737136dfa31dab6cb2da478de58/68747470733a2f2f626f782e6b616e636c6f75642e636e2f31396330663133643134666432303934303364663333633633333264383664655f31353339783639362e706e67"><img src="https://camo.githubusercontent.com/44c73c9c3287bf6df8424d46da802a86a5b7e737136dfa31dab6cb2da478de58/68747470733a2f2f626f782e6b616e636c6f75642e636e2f31396330663133643134666432303934303364663333633633333264383664655f31353339783639362e706e67" alt="" data-canonical-src="https://box.kancloud.cn/19c0f13d14fd209403df33c6332d86de_1539x696.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/74a8d8893173d4b37d854285cd70b2f98f9f05fdff6b564674f2571e39c61e88/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34303937356532623933623366616462636331303366326637383934616235385f393337783134332e706e67"><img src="https://camo.githubusercontent.com/74a8d8893173d4b37d854285cd70b2f98f9f05fdff6b564674f2571e39c61e88/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34303937356532623933623366616462636331303366326637383934616235385f393337783134332e706e67" alt="" data-canonical-src="https://box.kancloud.cn/40975e2b93b3fadbcc103f2f7894ab58_937x143.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>Composer 现在php包管理工具<br>
+要配置执行路径</li>
+</ul>
+<p><code class="notranslate">"composer.executablePath": "C:/ProgramData/ComposerSetup/bin/composer.bat",</code></p>
+<ul>
+<li>php debug<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3c0560593b02b4d5e8125800e167b21d46f1fd370988a4e43e8240b6275520cb/68747470733a2f2f626f782e6b616e636c6f75642e636e2f32623338663336363638336433303964666565663336323165636264633361335f31323739783632372e706e67"><img src="https://camo.githubusercontent.com/3c0560593b02b4d5e8125800e167b21d46f1fd370988a4e43e8240b6275520cb/68747470733a2f2f626f782e6b616e636c6f75642e636e2f32623338663336363638336433303964666565663336323165636264633361335f31323739783632372e706e67" alt="" data-canonical-src="https://box.kancloud.cn/2b38f366683d309dfeef3621ecbdc3a3_1279x627.png" style="max-width: 100%;"></a></li>
+</ul>
+<p>比sublime界面好看多了</p>
+<ul>
+<li>
+<p>PHP DocBlocker<br>
+写注释的人都知道</p>
+</li>
+<li>
+<p>SonarLint<br>
+代码质量管理工具，需要Java 支持JavaScript、php 就是报错有点严格。</p>
+</li>
+</ul>
+<p>这个强烈建议装一下：<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6e19bc7988275a42187902d122e80f06ab8d0d856c6fd65d291ee7b781182ebc/68747470733a2f2f626f782e6b616e636c6f75642e636e2f32626264313862616566616165333465663565343333336163663733383266335f31303838783434362e706e67"><img src="https://camo.githubusercontent.com/6e19bc7988275a42187902d122e80f06ab8d0d856c6fd65d291ee7b781182ebc/68747470733a2f2f626f782e6b616e636c6f75642e636e2f32626264313862616566616165333465663565343333336163663733383266335f31303838783434362e706e67" alt="" data-canonical-src="https://box.kancloud.cn/2bbd18baefaae34ef5e4333acf7382f3_1088x446.png" style="max-width: 100%;"></a></p>
+<p>有了它你可以获得错误提示和优化建议，甚至可以提示未定义的变量，其他文本编辑器可做不到。</p>
+<h3>安装增强插件</h3>
+<ul>
+<li>
+<p>advance new file<br>
+高级新建文件</p>
+</li>
+<li>
+<p>Alignment<br>
+代码 “=” 对齐插件和st的像但是 必须选中区域对齐，不能自动识别一大段=号的，有时候还对不齐</p>
+</li>
+<li>
+<p>All Autocomplete<br>
+自动完成插件</p>
+</li>
+<li>
+<p>Apache conf<br>
+apache 语法高亮插件</p>
+</li>
+<li>
+<p>AutoFileName<br>
+路径补全插件</p>
+</li>
+<li>
+<p>Change Case<br>
+用于转换命名方式，如驼峰转下划线</p>
+</li>
+<li>
+<p>Chinese Translation<br>
+中文繁体转换 支持香港 、台湾等。</p>
+</li>
+<li>
+<p>Clipboard History<br>
+剪切板管理软件，方便找多次复制里的内容</p>
+</li>
+<li>
+<p>Close tag<br>
+闭合最后的标签</p>
+</li>
+<li>
+<p>Docker<br>
+以后可能会用上吧</p>
+</li>
+<li>
+<p>expand-selection-to-scope<br>
+扩大所选范围</p>
+</li>
+<li>
+<p>File Utils<br>
+文件操作插件（重命名、移动、删除等）</p>
+</li>
+<li>
+<p>Generic Remote Debugger<br>
+远程调试插件，看起来很牛逼的样子，可以调试线上项目</p>
+</li>
+<li>
+<p>Markdown All in one<br>
+markdown一篮子</p>
+</li>
+<li>
+<p>Markdown Preview Enhanced<br>
+markdown 预览增强 支持公式 导出啥的</p>
+</li>
+<li>
+<p>Markdown Theme Kit<br>
+markdown编辑时文件主题</p>
+</li>
+<li>
+<p>markdownlint<br>
+markdown语法错误检测</p>
+</li>
+<li>
+<p>NGINX syntax<br>
+Nginx服务器配置语法支持</p>
+</li>
+<li>
+<p>paste image to qiniu<br>
+粘贴截屏图片直接上传七牛</p>
+</li>
+<li>
+<p>Path Autocomplete<br>
+路径补全工具</p>
+</li>
+<li>
+<p>Python<br>
+蟒蛇支持</p>
+</li>
+<li>
+<p>Settings Sync<br>
+配置同步插件，说实话我是被这个插件吸引过来的，我st重装系统后，忘了备份好多东西没了。<br>
+这个可以同步到github上的</p>
+</li>
+<li>
+<p>Sublime Commands<br>
+支持一些sublime的命令 如分割成多行，合并单行等</p>
+</li>
+<li>
+<p>Sublime Text Keymap<br>
+支持sublime的键盘设置习惯（不是完全支持）</p>
+</li>
+<li>
+<p>Sublime Text Extension Pack<br>
+包括了Sublime Text Keymap 、Expand Selection To Scope、Close HTML / XML Tag、Sublime Commands 几个插件</p>
+</li>
+<li>
+<p>Tranpose<br>
+交换光标插件 一般是两个</p>
+</li>
+</ul>
+<h3>安装编码插件</h3>
+<p>vscode中文支持良好不需要插件</p>
+<h3>前端</h3>
+<ul>
+<li>
+<p>Color Highlight<br>
+css 颜色高亮</p>
+</li>
+<li>
+<p>Color Picker<br>
+拾色器</p>
+</li>
+<li>
+<p>ESLint<br>
+前端报错检测</p>
+</li>
+<li>
+<p>Image Preview<br>
+图片预览，直接显示在css 当前行前面</p>
+</li>
+<li>
+<p>jQuery Code Snippets<br>
+写jquery的都想要</p>
+</li>
+</ul>
+<h3>编码</h3>
+<ul>
+<li>
+<p>Codelf<br>
+命名变量搜索插件</p>
+</li>
+<li>
+<p>Live Server<br>
+直接在浏览器里同步预览项目</p>
+</li>
+<li>
+<p>Live Server Preview<br>
+在侧栏列同步预览项目</p>
+</li>
+<li>
+<p>Local History<br>
+本地文件历史</p>
+</li>
+<li>
+<p>Log File Highlighter<br>
+日志文件高亮</p>
+</li>
+<li>
+<p>Partial Diff<br>
+选择文本进行可视化比较</p>
+</li>
+<li>
+<p>Typewriter Noises<br>
+打字机效果，倍爽</p>
+</li>
+<li>
+<p>VS Code database<br>
+vscode 中管理数据库</p>
+</li>
+</ul>
+<h3>项目管理</h3>
+<ul>
+<li>
+<p>EditorConfig<br>
+项目风格统一神器</p>
+</li>
+<li>
+<p>Gist Extension<br>
+代码片段管理</p>
+</li>
+<li>
+<p>Git Project Manager<br>
+git项目管理器，可以搜索本地git项目</p>
+</li>
+<li>
+<p>Project Manager<br>
+项目管理工具</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5616e2579a91752b5cd7925cd3cf492b78d777447b901846b7d6caa3db5efc07/68747470733a2f2f626f782e6b616e636c6f75642e636e2f31666332373662396234326434356630383031303430623965626666393732325f393939783537302e706e67"><img src="https://camo.githubusercontent.com/5616e2579a91752b5cd7925cd3cf492b78d777447b901846b7d6caa3db5efc07/68747470733a2f2f626f782e6b616e636c6f75642e636e2f31666332373662396234326434356630383031303430623965626666393732325f393939783537302e706e67" alt="" data-canonical-src="https://box.kancloud.cn/1fc276b9b42d45f0801040b9ebff9722_999x570.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/fa22902ab6c1196392b28417936dc00423f49df84b4825a3b5c5968f08626f38/68747470733a2f2f626f782e6b616e636c6f75642e636e2f64376664303764313863393730356332353961336234373731353966613662385f393539783233372e706e67"><img src="https://camo.githubusercontent.com/fa22902ab6c1196392b28417936dc00423f49df84b4825a3b5c5968f08626f38/68747470733a2f2f626f782e6b616e636c6f75642e636e2f64376664303764313863393730356332353961336234373731353966613662385f393539783233372e706e67" alt="" data-canonical-src="https://box.kancloud.cn/d7fd07d18c9705c259a3b477159fa6b8_959x237.png" style="max-width: 100%;"></a></p>
+<p>保存项目后就可以来回切换了。</p>
+<ul>
+<li>
+<p>sftp<br>
+sftp管理</p>
+</li>
+<li>
+<p>TortoiseSVN<br>
+没有svn 插件，不高兴</p>
+</li>
+<li>
+<p>WakaTime<br>
+程序员编程时间管理插件 能精确统计一周内每个项目花了多少时间，跨编辑器跨IDE，大神必备哦。</p>
+</li>
+</ul>
+<h2>一些问题</h2>
+<h3>自动完成不支持try catch补全</h3>
+<p>已报issue</p>
+<h3>符号链接 ctrl+r不起作用</h3>
+<p>去键盘快捷方式里 干掉其他占用ctrl+r的命令<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7e348366dfac05e56458e6382a87b65dc13ee15b9a801c57a81262adb0562389/68747470733a2f2f626f782e6b616e636c6f75642e636e2f38323163626535373163343539393836303765653262323333663765343230345f333633783330372e706e67"><img src="https://camo.githubusercontent.com/7e348366dfac05e56458e6382a87b65dc13ee15b9a801c57a81262adb0562389/68747470733a2f2f626f782e6b616e636c6f75642e636e2f38323163626535373163343539393836303765653262323333663765343230345f333633783330372e706e67" alt="" data-canonical-src="https://box.kancloud.cn/821cbe571c45998607ee2b233f7e4204_363x307.png" style="max-width: 100%;"></a></p>
+<p>保留至：<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e5731d9e9dc3c82b55b4755fce64f9e6e1ec114d9fa7d5dfedbf4cb87368ff5a/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34656233653432623337356438386233626138396432303638633365643031395f31343939783238322e706e67"><img src="https://camo.githubusercontent.com/e5731d9e9dc3c82b55b4755fce64f9e6e1ec114d9fa7d5dfedbf4cb87368ff5a/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34656233653432623337356438386233626138396432303638633365643031395f31343939783238322e706e67" alt="" data-canonical-src="https://box.kancloud.cn/4eb3e42b375d88b3ba89d2068c3ed019_1499x282.png" style="max-width: 100%;"></a></p>
+<p>默认会是打开最近浏览文件，我才不稀罕</p>
+<h3>打开文件夹是切换当前工作空间</h3>
+<p>我也不知道怎么配 但是我知道先新开一个窗口就好啦</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/63237633a6219846b2aabbfa878e7c9c2f4c2c4b4f9cb2d53a1161d9de904a03/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34626333303539343534373563396264313931386564396164383565643832365f3539327836352e706e67"><img src="https://camo.githubusercontent.com/63237633a6219846b2aabbfa878e7c9c2f4c2c4b4f9cb2d53a1161d9de904a03/68747470733a2f2f626f782e6b616e636c6f75642e636e2f34626333303539343534373563396264313931386564396164383565643832365f3539327836352e706e67" alt="" data-canonical-src="https://box.kancloud.cn/4bc305945475c9bd1918ed9ad85ed826_592x65.png" style="max-width: 100%;"></a></p>
+<h2>终端</h2>
+<p>vscode另外一个优于sublime的功能就是终端，<em>ctrl+~</em> 打开</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/aaead1fd092945f4b1a2595ecdcecd4a4b21547a414d25cb9e6e57f8e94600bc/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30366563623531353330613166376439646631343438363366326634343665335f31353035783234342e706e67"><img src="https://camo.githubusercontent.com/aaead1fd092945f4b1a2595ecdcecd4a4b21547a414d25cb9e6e57f8e94600bc/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30366563623531353330613166376439646631343438363366326634343665335f31353035783234342e706e67" alt="" data-canonical-src="https://box.kancloud.cn/06ecb51530a1f7d9df144863f2f446e3_1505x244.png" style="max-width: 100%;"></a></p>
+<p>我用他多开 多执行cli 就相当于多进程了。</p>
+<h2>我的配置</h2>
+<p>我的是基于win的，关键处打码，嘿嘿：</p>
+<pre class="notranslate"><code class="notranslate">// 将设置放入此文件中以覆盖默认设置
+{
+    "php.executablePath": "D:/wamp64/bin/php/php7.0.10/php.exe",
+    "php.validate.executablePath": "D:/wamp64/bin/php/php7.0.10/php.exe",
+    "php.validate.run": "onType",
+    "window.zoomLevel": 1,
+    "window.restoreWindows": "one",
+    "window.openFoldersInNewWindow": "off",
+    "files.autoSave": "off",
+    "window.openFilesInNewWindow": "on",
+    "composer.executablePath": "C:/ProgramData/ComposerSetup/bin/composer.bat",
+    "extensions.ignoreRecommendations": false,
+    "sonarlint.ls.javaHome": "C:/Program Files/Java/jre1.8.0_141",
+    "sync.gist": "XXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "sync.lastUpload": "2017-07-23T13:32:53.762Z",
+    "sync.autoDownload": false,
+    "sync.autoUpload": false,
+    "sync.lastDownload": "",
+    "sync.forceDownload": false,
+    "sync.anonymousGist": false,
+    "sync.host": "",
+    "sync.pathPrefix": "",
+    "sync.quietSync": false,
+    "sync.askGistName": false,
+    "gist.oauth_token": "XXXXXXXXXXXXXXXXXXXXXX",
+    "local-history.path": "",
+    "search.useIgnoreFilesByDefault": true,
+    "projectManager.svn.ignoredFolders": [
+        "node_modules",
+        "out",
+        "typings",
+        "test",
+        ".history"
+    ],
+    "projectManager.git.ignoredFolders": [
+        "node_modules",
+        "out",
+        "typings",
+        "test",
+        ".history"
+    ],
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        ".history": true
+    },
+    "php.suggest.basic":false
+}
+
+</code></pre>
+<h1>后记：</h1>
+<p>基本使用和sublime差不多，php主要用到语法报错、自动完成、快速切换文件，查看当前类的所有方法符号链接，切换定义等，还能行内看定义和使用了多少个地方。</p>
+<p>查看定义：<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/df8b0b44a567c220991068ec756e37ace1482b51ef76421cfbe127a614093e70/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30626661636361333038646334313865396162333434646236376433666131615f31313434783432372e706e67"><img src="https://camo.githubusercontent.com/df8b0b44a567c220991068ec756e37ace1482b51ef76421cfbe127a614093e70/68747470733a2f2f626f782e6b616e636c6f75642e636e2f30626661636361333038646334313865396162333434646236376433666131615f31313434783432372e706e67" alt="查看定义" data-canonical-src="https://box.kancloud.cn/0bfacca308dc418e9ab344db67d3fa1a_1144x427.png" style="max-width: 100%;"></a></p>
+<p>跳转定义：<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b029da395f2f0a545e34e89bbb45976c81aa1ae983639e824fc185e7f5182b60/68747470733a2f2f626f782e6b616e636c6f75642e636e2f32306236623738313830346339326236646239383034346363306430323135635f353534783131322e706e67"><img src="https://camo.githubusercontent.com/b029da395f2f0a545e34e89bbb45976c81aa1ae983639e824fc185e7f5182b60/68747470733a2f2f626f782e6b616e636c6f75642e636e2f32306236623738313830346339326236646239383034346363306430323135635f353534783131322e706e67" alt="" data-canonical-src="https://box.kancloud.cn/20b6b781804c92b6db98044cc0d0215c_554x112.png" style="max-width: 100%;"></a></p>
+<p>查看所有引用：<br>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/de2a12b7a5fca69e6ce6d45da1cfa30254c9e18ac29c2e78407b8f4f83c43a6c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f37373235346635363339366238396132616366366561396133373837663563375f3534327836312e706e67"><img src="https://camo.githubusercontent.com/de2a12b7a5fca69e6ce6d45da1cfa30254c9e18ac29c2e78407b8f4f83c43a6c/68747470733a2f2f626f782e6b616e636c6f75642e636e2f37373235346635363339366238396132616366366561396133373837663563375f3534327836312e706e67" alt="" data-canonical-src="https://box.kancloud.cn/77254f56396b89a2acf6ea9a3787f5c7_542x61.png" style="max-width: 100%;"></a></p>
+<p>格式化代码</p>
+<p>欢迎给我提供建议。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://yangweijie.github.io/note">yangweijie's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","yangweijie/note");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>

@@ -1,0 +1,31 @@
+- ai ide
+  - phpstorm or jetbrans 
+  - vscode
+  - visual studio
+  - xcode
+  - zed
+- ai cli agent
+  -  opencode
+  -  mimocode
+  -  zcode 
+- mcp
+  - qoder-composer-use windows 上 在 `c:\Users\xxxx\.qoder\plugins\.cache\qoder-bundler\qoder-computer-use\QoderComputerUse.exe`。mac上在 `/Users/XXX/.qoder/plugins/cache/qoder-bundler/qoder-computer-use/Qoder Computer Use`
+- skills
+  - pr-takeover 用于你fork github 仓库源码 后修改了提交了pr 对方提要求继续修改 后续 ai自动接入讨论直至合并的技能
+~~~
+bunx skills add https://github.com/nexu-io/looper --skill pr-takeover
+~~~
+- tools
+  - [xget-cli](https://github.com/yangweijie/xget-cli)  用于命令行获取git、docker、model 镜像地址和加速的工具
+  - [opencode-ReadMediaFile](https://github.com/yangweijie/opencode-ReadMediaFile) 从 kimicode 借鉴
+  - skill market 国内github 不可用 那些命令行安装不行，codebuddy 自带了两个市场
+- agent
+  - linus
+  - php-pro
+-  local model runtime 本地 ai 模型运行时
+  - ollama 有免费模型 
+  - lmstudio 支持lm link 可远程访问
+  - omlx mac 上 m芯片运行 利器 自带量化
+  - lemonade 跨平台 amd gpu 友好的 支持 各种模型 文本、图片、推理 分类好了
+- 小模型
+  - minicpm-v-4.6 1B 多模态模型 配合 [opencode-ReadMediaFile](https://github.com/yangweijie/opencode-ReadMediaFile) 可以分析视频

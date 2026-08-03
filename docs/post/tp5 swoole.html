@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="  swoole的资料：
+https://wiki.swoole.com
+
+主要看了 环境依赖、编译安装、快速起步
+
+2. 起步 聊天室 websocket 参见ws.zip。">
+<meta property="og:title" content="tp5 swoole">
+<meta property="og:description" content="  swoole的资料：
+https://wiki.swoole.com
+
+主要看了 环境依赖、编译安装、快速起步
+
+2. 起步 聊天室 websocket 参见ws.zip。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://yangweijie.github.io/note/post/tp5%20swoole.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>tp5 swoole</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">tp5 swoole</h1>
+<div class="title-right">
+    <a href="https://yangweijie.github.io/note" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/yangweijie/note/issues/55" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>  swoole的资料：<br>
+<a href="https://wiki.swoole.com" rel="nofollow">https://wiki.swoole.com</a></p>
+<p>主要看了 环境依赖、编译安装、快速起步</p>
+<ol start="2">
+<li>起步 聊天室 websocket 参见ws.zip。</li>
+</ol>
+<p>开始遇到的问题：<br>
+如何重载<br>
+Swoole提供了柔性终止/重启的机制，管理员只需要向SwooleServer发送特定的信号，Server的worker进程可以安全的结束。<br>
+•	SIGTERM: 向主进程/管理进程发送此信号服务器将安全终止<br>
+•	在PHP代码中可以调用$serv-&gt;shutdown()完成此操作<br>
+•	SIGUSR1: 向主进程/管理进程发送SIGUSR1信号，将平稳地restart所有worker进程<br>
+•	在PHP代码中可以调用$serv-&gt;reload()完成此操作<br>
+•	swoole的reload有保护机制，当一次reload正在进行时，收到新的重启信号会丢弃<br>
+•	如果设置了user/group，Worker进程可能没有权限向master进程发送信息，这种情况下必须使用root账户，在shell中执行kill指令进行重启<br>
+由于swoole 是常驻内存的，如果修改了代码 直接继续发送包代码是不生效的。需要reload</p>
+<ol>
+<li>设置进程标题，通过ps grep 查找来kill</li>
+</ol>
+<pre class="notranslate"><code class="notranslate">cli_set_process_title('chat_process'); 这个mac  不支持
+kill -15 pid
+</code></pre>
+<ol start="2">
+<li>将进程pid 写入脚本，root用户手动重启</li>
+</ol>
+<pre class="notranslate"><code class="notranslate">ps -efH|grep swoole mac上 是 ps -efh|grep php
+$server-&gt;on('start',function($serv ) {
+    // cli_set_process_title('chat_process');
+    $managerPid = $serv-&gt;manager_pid;
+
+    $shString = &lt;&lt;&lt;SH
+echo "Reloading..."
+
+kill -USR1 {$managerPid}
+
+echo "Reloaded"
+SH;
+	$sh_file = '.reload_manager.sh';
+    file_put_contents($sh_file, $shString);
+});
+</code></pre>
+<ol start="3">
+<li>
+<p>安装inotify 扩展 监听文件，将文件 在onWorkStart 回调中require_once. 监听到文件变化了，自动重启<br>
+参考sd框架</p>
+</li>
+<li>
+<p>链接的fd 不好感知是哪个设备，如何将针对不同设备形成定向广播<br>
+$server-&gt;connection_list()  获取全部在线链接</p>
+</li>
+<li>
+<p>数据库超时<br>
+暂时设置了数据库的重连参数<br>
+'break_reconnect' =&gt; true,</p>
+</li>
+<li>
+<p>引入tp框架后，调试输出的不显示了<br>
+介入其他项目里的 alert dlert 函数</p>
+</li>
+<li>
+<p>报错在终端不方便追踪bug，<br>
+接管异常<br>
+设计同步方案<br>
+针对重载，在根目录建立server_function.php workStart里 require_once</p>
+</li>
+</ol>
+<pre class="notranslate"><code class="notranslate">&lt;?php
+function onMessage($server, $frame){
+	\Think\App::invokeClass('\app\index\controller\Message', [])-&gt;receive($server, $frame);
+}
+
+function onTask($server, $task_id, $src_worker_id, $data){
+	\Think\App::invokeClass('\app\index\controller\Task', [])-&gt;run($server, $task_id, $src_worker_id, $data);
+}
+
+function onClose($server, $fd){
+    $data = json_encode([
+        'op'      =&gt; 'after_close',
+        'data'    =&gt; '',
+        'from_fd' =&gt; $fd,
+    ], JSON_UNESCAPED_UNICODE);
+    $server-&gt;task($data);
+}
+
+function onRequest ($server, $request, $response) {
+    //请求过滤
+    if ($request-&gt;server['path_info'] == '/favicon.ico' || $request-&gt;server['request_uri'] == '/favicon.ico') {
+        return $response-&gt;end();
+    }
+	// 环境常量
+    $response-&gt;header('Access-Control-Allow-Origin', "*");
+	$_SERVER = [
+        'argv' =&gt; [],
+    ];
+    $_GET    = $request-&gt;get?:[];
+    $_POST   = $request-&gt;post;
+    foreach ($request-&gt;server as $key=&gt;$value) {
+    	$_SERVER[strtoupper($key)] = $value;
+    }
+    $_COOKIE = $request-&gt;cookie;
+    $_FILES  = $request-&gt;files;
+    $ret = \Think\App::invokeClass('\app\index\controller\Index', [$server, $request, $response])-&gt;request();
+    $response-&gt;end($ret);
+    exit();
+}
+</code></pre>
+<p>主文件index.php</p>
+<pre class="notranslate"><code class="notranslate">&lt;?php
+namespace think;
+global $server;
+$server = new \swoole_websocket_server("0.0.0.0", 9501);
+$server-&gt;set(
+	['task_worker_num'=&gt;10]
+);
+
+$server-&gt;on('start',function($serv ) {
+    // cli_set_process_title('chat_process');
+    $managerPid = $serv-&gt;manager_pid;
+
+    $shString = &lt;&lt;&lt;SH
+echo "Reloading..."
+
+kill -USR1 {$managerPid}
+
+echo "Reloaded"
+SH;
+	$sh_file = '.reload_manager.sh';
+    file_put_contents($sh_file, $shString);
+});
+
+$server-&gt;on('WorkerStart',function($serv , $worker_id) {
+	define('ERROR_LOG_TYPE', 'ws_error_log');
+	define('APP_PATH', __DIR__ . '/application/');
+	define('THINK_PATH', __DIR__ . '/thinkphp/');
+	// 加载框架引导文件
+	require_once __DIR__ . '/base.php';
+	$_SERVER = [
+		'REQUEST_METHOD' =&gt; 'GET',
+		'argv'           =&gt; [],
+	];
+});
+
+
+$server-&gt;on('open', function (\swoole_websocket_server $server, $request) {
+    echo "server: handshake success with fd{$request-&gt;fd}\n";
+});
+
+$server-&gt;on('message', function (\swoole_websocket_server $server, $frame) {
+	echo "receive from {$frame-&gt;fd}:{$frame-&gt;data},opcode:{$frame-&gt;opcode},fin:{$frame-&gt;finish}\n";
+	$_SERVER['REQUEST_TIME'] = time();
+	App::initCommon();
+	require_once __DIR__. '/server_function.php';
+    onMessage($server, $frame);
+});
+
+$server-&gt;on('close', function ($ser, $fd) {
+    echo "client {$fd} closed\n";
+	require_once __DIR__. '/server_function.php';
+    onClose($ser, $fd);
+});
+
+$server-&gt;on('finish', function ($ser, $fd) {
+    return true;
+});
+
+$server-&gt;on('task', function(\swoole_websocket_server $server, $task_id, $src_worker_id, $data){
+	App::initCommon();
+	require_once __DIR__. '/server_function.php';
+	onTask($server, $task_id, $src_worker_id, $data);
+	return true;
+});
+
+$server-&gt;start();
+</code></pre>
+<p>首先，参考 <a href="https://www.tuicool.com/articles/emY3Ar%C2%A0" rel="nofollow">https://www.tuicool.com/articles/emY3Ar </a> 有了思路 ，然后阅读tp5源码 app 发现可以用静态方法将 映射调用某个类，因此。<br>
+将task message 映射到Task 的run  和 Message控制器 的 receive 方法里。</p>
+<p>然后 定义数据格式为json 然后 反json后 动态op 参数调用内部方法。</p>
+<p>消息的处理<br>
+经过讨论，为了方便客户端离线后台看到消息，我们设计了数据表 ws_message表。</p>
+<p>业务消息必然和shop_id table_id 相关，然后保存 发送方from_client_id 和接受方to_client_id 并记录 发送消息设备类型 主还是副</p>
+<p>经过讨论，主设备发送消息 无需记录， 消息 中data 和user_info 为序列化字段。</p>
+<p>Message 类的组成</p>
+<pre class="notranslate"><code class="notranslate">&lt;?php
+namespace app\index\controller;
+
+use app\common\lib\SystemLog;
+use app\index\model\WsDevices;
+use app\index\model\WsMessage;
+use app\index\model\WsOnlineClients;
+
+class Message
+{
+
+    public function __construct()
+    {
+        config('default_return_type', 'json');
+    }
+
+    public $from_fd;
+    public $server;
+    public $date_format = 'Y-m-d H:i:s';
+
+    public function success($info, $data = [])
+    {
+        debug('api_end');
+        $push_data = [
+            'code'      =&gt; 0,
+            'msg'       =&gt; $info,
+            'time'      =&gt; date($this-&gt;date_format, $_SERVER['REQUEST_TIME']),
+            'data'      =&gt; $data,
+            'ttfb_time' =&gt; debug('api_begin', 'api_end', 6) . 's',
+        ];
+        return $this-&gt;server-&gt;push($this-&gt;from_fd, json_encode($push_data, JSON_UNESCAPED_UNICODE));
+    }
+
+    public function error($info, $data = [])
+    {
+        debug('api_end');
+        $push_data = [
+            'code'      =&gt; 1,
+            'msg'       =&gt; $info,
+            'time'      =&gt; date($this-&gt;date_format, $_SERVER['REQUEST_TIME']),
+            'data'      =&gt; $data,
+            'ttfb_time' =&gt; debug('api_begin', 'api_end', 6) . 's',
+        ];
+        return $this-&gt;server-&gt;push($this-&gt;from_fd, json_encode($push_data, JSON_UNESCAPED_UNICODE));
+    }
+
+    public function receive($server, $frame)
+    {
+        debug('api_begin');
+        $data = $frame-&gt;data;
+        $this-&gt;from_fd = $frame-&gt;fd;
+        $this-&gt;server = $server;
+        echo $data . '\n';
+        $data = json_decode($data, 1);
+        if (is_array($data)) {
+            if (method_exists($this, $data['op'])) {
+                $call = $data['op'];
+                unset($data['op']);
+                $this-&gt;$call($server, $frame, $data);
+            } else {
+                goto rawMsg;
+            }
+        } else {
+            rawMsg:
+            $this-&gt;rawMsg($server, $frame, $frame-&gt;data);
+        }
+    }
+
+    // 登录
+    public function login($server, $frame, $data)
+    {
+        // dlert2("fd:#{$frame-&gt;fd}|shop_id:{$data['shop_id']}|client_id:{$data['client_id']}|type:{$data['type']}的设备登录了，".datetime());
+        WsDevices::login($frame-&gt;fd, $data['shop_id'], $data['client_id'], $data['type']);
+        if($data['type'] == '主'){
+            // 登录后重发数据， 客户端重新链接后会重新拉去列表
+            // $data = json_encode([
+            //     'op'        =&gt; 'after_login',
+            //     'client_id' =&gt; $data['client_id'],
+            //     'from_fd'   =&gt; $frame-&gt;fd,
+            // ], JSON_UNESCAPED_UNICODE);
+            // $server-&gt;task($data);
+        }
+    }
+
+    // 登出
+    public function logout($server, $frame, $data)
+    {
+        $server-&gt;close($frame-&gt;fd);
+    }
+
+    // 加菜 退菜 打折 赠送 结账
+    public function notify($server, $frame, $data)
+    {
+        if ($data['from_client_type'] == '主') {
+            $sub_clients = WsDevices::getSubClientByShopId($data['shop_id']);
+            if ($sub_clients) {
+                $sub_client_ids = array_column($sub_clients, 'client_id');
+                $fds = WsOnlineClients::where('client_id', 'in', $sub_client_ids)-&gt;column('fd');
+                foreach ($fds as $fd) {
+                    $server-&gt;push($fd, $data);
+                }
+            }
+        } else {
+            $main_clients = WsDevices::getMainClientByShopId($data['shop_id']);
+            if ($main_clients) {
+            	$ws_message_client_ids = [];
+                foreach ($main_clients as $main_client) {
+                    $id = WsMessage::add($data['shop_id'], $data['table_id'], $data['type'], $data['data'], $data['user_info'], $data['from_client_id'], $main_client['client_id'], '副', $data['status']);
+                	$ws_message_client_ids[$main_client['client_id']] = $id;
+                }
+                $main_client_ids = array_column($main_clients, 'client_id');
+              
+                if ($main_client_ids) {
+                    $fds = WsOnlineClients::where('client_id', 'in', $main_client_ids)-&gt;column('client_id,fd');
+                    $online_messages = array_intersect_key($ws_message_client_ids, $fds);
+                    foreach ($fds as $client_id=&gt;$fd) {
+                    	if(isset($online_messages[$client_id])){
+                    		$msg_id = $online_messages[$client_id];
+                    		$push_data = [
+                                'id'       =&gt; $msg_id, 
+                                'status'   =&gt; $data['status'], 
+                                'table_id' =&gt; $data['table_id'], 
+                                'type'     =&gt; $data['type'],
+                                'title'    =&gt; "桌id：{$data['table_id']} {$data['type']}",
+                            ];
+                            $info = $server-&gt;connection_info($fd);
+                            if($info['websocket_status'] == 3){
+                                $ret = $server-&gt;push($fd, json_encode($push_data, JSON_UNESCAPED_UNICODE));
+                                if($ret){
+                                    WsMessage::where('id', $msg_id)-&gt;update(['is_delivered'=&gt;1]);
+                                }else{
+                                    $fail_msg = sprintf('时间：%s，店铺id:%d下子设备 client_id:%s 向主设备client_id %s发送 【桌号id：%s，类型：%s，消息id：%d】的消息失败', datetime(),$data['shop_id'], $data['from_client_id'], $client_id, $data['table_id'], $data['type'], $msg_id);
+                                    alert(__CLASS__.':'.__FUNCTION__.':L'.__LINE__.PHP_EOL.$fail_msg);
+                                    dlert(__CLASS__.':'.__FUNCTION__.':L'.__LINE__.PHP_EOL.$fail_msg);
+                                    SystemLog::error_log($fail_msg, __CLASS__.':'.__FUNCTION__.':L'.__LINE__, ERROR_LOG_TYPE);
+                                }
+                            }
+                    	}
+                    }
+                }
+            } else {
+                $this-&gt;error('店铺主设备未记录，请先联系商家完成主设备初始化');
+            }
+        }
+    }
+
+    // 处理非序列化消息
+    public function rawMsg($server, $frame, $msg)
+    {
+        $server-&gt;push($frame-&gt;fd, "{$frame-&gt;data}");
+        // dlert2($msg);
+        if (stripos($msg, '说') !== false) {
+            $data = json_encode([
+                'op' =&gt; 'say',
+                'data' =&gt; $msg,
+                'from_fd' =&gt; $frame-&gt;fd,
+            ], JSON_UNESCAPED_UNICODE);
+            $server-&gt;task($data);
+        }
+
+        // 获取特殊管理的消息
+        if (stripos($msg, 'from_admin') !== false) {
+            parse_str($msg, $params);
+            dump($params);
+            $op = $params['op'];
+            switch ($op) {
+                case 'reload':
+                    echo 'reloading server';
+                    $server-&gt;reload();
+                    break;
+                case 'get_connections':
+                    $server-&gt;push($frame-&gt;fd, json_encode($server-&gt;connection_list() ?: [], JSON_UNESCAPED_UNICODE));
+                    break;
+                case 'send_messages':
+                    $data = json_encode([
+                        'op'      =&gt; 'admin_say',
+                        'data'    =&gt; $params['content'],
+                        'from_fd' =&gt; $frame-&gt;fd,
+                        'to_fds'  =&gt; $params['to_fds'],
+                    ], JSON_UNESCAPED_UNICODE);
+                    $server-&gt;task($data);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+</code></pre>
+<p>rawMsg  是用于不是json 格式的字符串，处理消息。用于客户端测试 echo服务器。和其他特殊命令<br>
+login  用于自定义登录消息，记录在线设备，更新设备状态<br>
+logout 下线（设备-删除ws_online_clients）记录。通过手动close fd 抓onClose里的 task 异步任务。</p>
+<p>notify 主要逻辑 主要用于 产生消息记录，并广播至同店铺主设备（多个主设备比较复杂，需要二次同步，不实现）。push成功后更新is_delived 字段</p>
+<p>http接口<br>
+1.获取消息列表（待处理-shop_id）ws.weiwoju.com/api.php/index/index/messageList/shop_id/{shop_id}<br>
+直接查询</p>
+<ol start="2">
+<li>
+<p>处理标记消息<br>
+ws.weiwoju.com/api.php/index/index/deal/{id:1,status}</p>
+</li>
+<li>
+<p>获取主设备在线状态<br>
+ws.weiwoju.com/api.php/index/index/check_online_main/shop_id/{shop_id}<br>
+其实就是查询online表和devices 表的</p>
+</li>
+<li>
+<p>http 内请求websocket<br>
+ws.weiwoju.com/api.php/index/index/notify_main/ 参数见代码</p>
+</li>
+</ol>
+<p>和web端请求格式一致。</p>
+<p>进程模型</p>
+<p>ssl开启<br>
+生成证书：<br>
+SSL支持</p>
+<p>本章将详细讲解如何制作证书以及如何开启Swoole的SSL的单向、双向认证。<br>
+准备工作<br>
+选择任意路径，执行如下命令创建文件夹结构</p>
+<pre class="notranslate"><code class="notranslate">mkdir ca
+cd ca
+mkdir private
+mkdir server
+mkdir newcerts
+</code></pre>
+<p>在ca目录下创建openssl.conf文件，文件内容如下</p>
+<pre class="notranslate"><code class="notranslate">[ ca ]  
+default_ca      = foo                   # The default ca section  
+
+[ foo ]  
+dir            = /path/to/ca         # top dir  
+database       = /path/to/ca/index.txt          # index file.  
+new_certs_dir  = /path/to/ca/newcerts           # new certs dir  
+
+certificate    = /path/to/ca/private/ca.crt         # The CA cert  
+serial         = /path/to/ca/serial             # serial no file  
+private_key    = /path/to/ca/private/ca.key  # CA private key  
+RANDFILE       = /path/to/ca/private/.rand      # random number file  
+
+default_days   = 365                     # how long to certify for  
+default_crl_days= 30                     # how long before next CRL  
+default_md     = md5                     # message digest method to use  
+unique_subject = no                      # Set to 'no' to allow creation of  
+                                         # several ctificates with same subject.  
+policy         = policy_any              # default policy  
+
+[ policy_any ]  
+countryName = match  
+stateOrProvinceName = match  
+organizationName = match  
+organizationalUnitName = match  
+localityName            = optional  
+commonName              = optional  
+emailAddress            = optional
+</code></pre>
+<p>其中，/path/to/ca/是ca目录的绝对路径。<br>
+创建ca证书<br>
+在ca目录下创建一个shell脚本，命名为new_ca.sh。文件内容如下：</p>
+<pre class="notranslate"><code class="notranslate">#!/bin/sh  
+openssl genrsa -out private/ca.key  
+openssl req -new -key private/ca.key -out private/ca.csr  
+openssl x509 -req -days 365 -in private/ca.csr -signkey private/ca.key -out private/ca.crt  
+echo FACE &gt; serial  
+touch index.txt  
+openssl ca -gencrl -out private/ca.crl -crldays 7 -config "./openssl.conf"
+</code></pre>
+<p>执行sh new_ca.sh命令，创建ca证书。生成的证书存放于private目录中。<br>
+注意 在创建ca证书的过程中，需要输入一些信息。其中，countryName、stateOrProvinceName、organizationName、organizationalUnitName这四个选项的内容必须要填写，并且需要记住。在生成后续的证书过程中，要保证这四个选项的内容一致。<br>
+创建服务端证书<br>
+在ca目录下创建一个shell脚本，命名为new_server.sh。文件内容如下：</p>
+<pre class="notranslate"><code class="notranslate">#!/bin/sh  
+openssl genrsa -out server/server.key  
+openssl req -new -key server/server.key -out server/server.csr  
+openssl ca -in server/server.csr -cert private/ca.crt -keyfile private/ca.key -out server/server.crt -config "./openssl.conf"
+</code></pre>
+<p>执行sh new_ca.sh命令，创建ca证书。生成的证书存放于server目录中。<br>
+创建客户端证书<br>
+在ca目录下创建一个shell脚本，命名为new_client.sh。文件内容如下：</p>
+<pre class="notranslate"><code class="notranslate">#!/bin/sh  
+
+base="./"  
+mkdir -p $base/users/  
+openssl genrsa -des3 -out $base/users/client.key 1024  
+openssl req -new -key $base/users/client.key -out $base/users/client.csr  
+openssl ca -in $base/users/client.csr -cert $base/private/ca.crt -keyfile $base/private/ca.key -out $base/users/client.crt -config "./openssl.conf"  
+openssl pkcs12 -export -clcerts -in $base/users/client.crt -inkey $base/users/client.key -out $base/users/client.p12
+</code></pre>
+<p>执行sh new_ca.sh命令，创建ca证书。生成的证书存放于users目录中。 进入users目录，可以看到有一个client.p12文件，这个就是客户端可用的证书了，但是这个证书是不能在php中使用的，因此需要做一次转换。命令如下：</p>
+<pre class="notranslate"><code class="notranslate">openssl pkcs12 -clcerts -nokeys -out cer.pem -in client.p12
+openssl pkcs12 -nocerts -out key.pem -in client.p12
+</code></pre>
+<p>以上两个命令会生成cer.pem和key.pem两个文件。其中，生成key.pem时会要求设置密码，这里记为client_pwd<br>
+注意 如果在创建客户端证书时，就已经给client.p12设置了密码，那么在转换格式的时候，需要输入密码进行转换<br>
+最终结果<br>
+以上步骤执行结束后，会得到不少文件，其中需要用的文件如下表所示：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>文件名</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ca.crt</td>
+<td>ca/private/</td>
+<td>ca证书</td>
+</tr>
+<tr>
+<td>server.crt</td>
+<td>ca/server/</td>
+<td>服务器端证书</td>
+</tr>
+<tr>
+<td>server.key</td>
+<td>ca/server/</td>
+<td>服务器端秘钥</td>
+</tr>
+<tr>
+<td>cer.pem</td>
+<td>ca/client/</td>
+<td>客户端证书</td>
+</tr>
+<tr>
+<td>key.pem</td>
+<td>ca/client/</td>
+<td>客户端秘钥</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>SSL单向认证<br>
+Swoole开启SSL<br>
+Swoole开启SSL功能需要如下参数：</p>
+<pre class="notranslate"><code class="notranslate">$server = new swoole_server("127.0.0.1", "9501" , SWOOLE_PROCESS, SWOOLE_SOCK_TCP | SWOOLE_SSL );
+$server = new swoole_http_server("127.0.0.1", "9501" , SWOOLE_PROCESS, SWOOLE_SOCK_TCP | SWOOLE_SSL );
+</code></pre>
+<p>并在swoole的配置选项中增加如下两个选项：</p>
+<pre class="notranslate"><code class="notranslate">$server-&gt;set(array(
+    'ssl_cert_file' =&gt; '/path/to/server.crt',
+    'ssl_key_file' =&gt;  '/path/to/server.key',
+));
+</code></pre>
+<p>这时，swoole服务器就已经开启了单向SSL认证，可以通过<a href="https://127.0.0.1:9501/%E8%BF%9B%E8%A1%8C%E8%AE%BF%E9%97%AE%E3%80%82" rel="nofollow">https://127.0.0.1:9501/进行访问。</a><br>
+SSL双向认证<br>
+服务器端设置<br>
+双向认证指服务器也要对发起请求的客户端进行认证，只有通过认证的客户端才能进行访问。 为了开启SSL双向认证，swoole需要额外的配置参数如下：</p>
+<pre class="notranslate"><code class="notranslate">$server-&gt;set(array(
+    'ssl_cert_file' =&gt; '/path/to/server.crt',
+    'ssl_key_file' =&gt;  '/path/to/server.key',
+    'ssl_client_cert_file' =&gt; '/path/to/ca.crt',
+    'ssl_verify_depth' =&gt; 10,
+));
+</code></pre>
+<p>客户端设置<br>
+这里我们使用CURL进行https请求的发起。 首先，需要配置php.ini,增加如下配置：<br>
+<code class="notranslate">curl.cainfo=/path/to/ca.crt</code><br>
+发起curl请求时，增加如下配置项：</p>
+<pre class="notranslate"><code class="notranslate">$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '2'); 
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);   // 只信任CA颁布的证书
+curl_setopt($ch, CURLOPT_SSLCERT, "/path/to/cer.pem");
+curl_setopt($ch, CURLOPT_SSLKEY,  "/path/to/key.pem");
+curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
+curl_setopt($ch, CURLOPT_SSLCERTPASSWD, '******'); // 创建客户端证书时标记的client_pwd密码
+</code></pre>
+<p>这时，就可以发起一次https请求，并且被swoole服务器验证通过了。</p>
+<p>服务端域名 要开启那个ssl：</p>
+<pre class="notranslate"><code class="notranslate">listen       443 ssl;
+    ssl_certificate      server.crt;
+    ssl_certificate_key  server.key;
+    ssl_session_cache    shared:SSL:1m;
+    ssl_session_timeout  5m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers  HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers  on;
+</code></pre>
+<p>这样 443 后ssl  去掉ssl on  可以 混合访问</p>
+<p>生成配置中的一些设置，经过测试不填host可以任意域名：</p>
+<pre class="notranslate"><code class="notranslate">Country Name (2 letter code) []:CN
+State or Province Name (full name) []:Zhejiang
+Locality Name (eg, city) []:Hangzhou
+Organization Name (eg, company) []:weiwoju
+Organizational Unit Name (eg, section) []:ws
+password = weiwoju
+
+</code></pre></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://yangweijie.github.io/note">yangweijie's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","yangweijie/note");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
