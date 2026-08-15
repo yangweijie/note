@@ -124,9 +124,25 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </li>
 <li>mcp
 <ul>
-<li>qoder-composer-use windows 上 在 <code class="notranslate">c:\Users\xxxx\.qoder\plugins\.cache\qoder-bundler\qoder-computer-use\QoderComputerUse.exe</code>。mac上在 <code class="notranslate">/Users/XXX/.qoder/plugins/cache/qoder-bundler/qoder-computer-use/Qoder Computer Use</code></li>
+<li>
+<p>qoder-composer-use windows 上 在 <code class="notranslate">c:\Users\xxxx\.qoder\plugins\.cache\qoder-bundler\qoder-computer-use\QoderComputerUse.exe</code>。mac上在 <code class="notranslate">/Users/XXX/.qoder/plugins/cache/qoder-bundler/qoder-computer-use/Qoder Computer Use</code></p>
+</li>
+<li>
+<p>unfetch 支持mcp的下载工具 方便下载模型</p>
+</li>
 </ul>
 </li>
+</ul>
+<pre class="notranslate"><code class="notranslate">{
+  "mcpServers": {
+    "unfetch": {
+      "command": "/Applications/unfetch.app/Contents/MacOS/unfetch",
+      "args": ["--mcp"]
+    }
+  }
+}
+</code></pre>
+<ul>
 <li>skills
 <ul>
 <li>pr-takeover 用于你fork github 仓库源码 后修改了提交了pr 对方提要求继续修改 后续 ai自动接入讨论直至合并的技能</li>

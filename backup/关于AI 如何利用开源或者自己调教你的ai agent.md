@@ -10,6 +10,18 @@
   -  zcode 
 - mcp
   - qoder-composer-use windows 上 在 `c:\Users\xxxx\.qoder\plugins\.cache\qoder-bundler\qoder-computer-use\QoderComputerUse.exe`。mac上在 `/Users/XXX/.qoder/plugins/cache/qoder-bundler/qoder-computer-use/Qoder Computer Use`
+
+   - unfetch 支持mcp的下载工具 方便下载模型
+~~~
+{
+  "mcpServers": {
+    "unfetch": {
+      "command": "/Applications/unfetch.app/Contents/MacOS/unfetch",
+      "args": ["--mcp"]
+    }
+  }
+}
+~~~
 - skills
   - pr-takeover 用于你fork github 仓库源码 后修改了提交了pr 对方提要求继续修改 后续 ai自动接入讨论直至合并的技能
 ~~~
