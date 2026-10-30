@@ -226,13 +226,13 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <h1>RSA</h1>
 <div class="highlight highlight-text-html-php"><pre class="notranslate"><span class="pl-c"># 加密</span>
   <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">function</span> <span class="pl-en">RsaEncode</span>(<span class="pl-s1"><span class="pl-c1">$</span>publicKey</span>, <span class="pl-s1"><span class="pl-c1">$</span>data</span>, <span class="pl-s1"><span class="pl-c1">$</span>padding</span> = <span class="pl-c1">RSA</span>::<span class="pl-c1">ENCRYPTION_OAEP</span>){
-      <span class="pl-s1"><span class="pl-c1">$</span>key</span> = PublicKeyLoader::<span class="pl-en">load</span>(<span class="pl-en">file_get_contents</span>(<span class="pl-s1"><span class="pl-c1">$</span>publicKey</span>), <span class="pl-s1"><span class="pl-c1">$</span>password</span>);
+      <span class="pl-s1"><span class="pl-c1">$</span>key</span> = <span class="pl-smi">PublicKeyLoader</span>::<span class="pl-en">load</span>(<span class="pl-en">file_get_contents</span>(<span class="pl-s1"><span class="pl-c1">$</span>publicKey</span>), <span class="pl-s1"><span class="pl-c1">$</span>password</span>);
       <span class="pl-s1"><span class="pl-c1">$</span>key</span>-&gt;<span class="pl-en">withPadding</span>(<span class="pl-s1"><span class="pl-c1">$</span>padding</span>);
       <span class="pl-k">return</span> <span class="pl-en">base64_encode</span>(<span class="pl-s1"><span class="pl-c1">$</span>key</span>-&gt;<span class="pl-en">encrypt</span>(<span class="pl-s1"><span class="pl-c1">$</span>data</span>));
   }
 
   <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">function</span> <span class="pl-en">RsaDecode</span>(<span class="pl-s1"><span class="pl-c1">$</span>privateKey</span>, <span class="pl-s1"><span class="pl-c1">$</span>data</span>, <span class="pl-s1"><span class="pl-c1">$</span>padding</span> = <span class="pl-c1">RSA</span>::<span class="pl-c1">ENCRYPTION_OAEP</span>){
-      <span class="pl-s1"><span class="pl-c1">$</span>key</span> = PublicKeyLoader::<span class="pl-en">load</span>(<span class="pl-en">file_get_contents</span>(<span class="pl-s1"><span class="pl-c1">$</span>privateKey</span>), <span class="pl-s1"><span class="pl-c1">$</span>password</span>);
+      <span class="pl-s1"><span class="pl-c1">$</span>key</span> = <span class="pl-smi">PublicKeyLoader</span>::<span class="pl-en">load</span>(<span class="pl-en">file_get_contents</span>(<span class="pl-s1"><span class="pl-c1">$</span>privateKey</span>), <span class="pl-s1"><span class="pl-c1">$</span>password</span>);
       <span class="pl-s1"><span class="pl-c1">$</span>key</span>-&gt;<span class="pl-en">withPadding</span>(<span class="pl-s1"><span class="pl-c1">$</span>padding</span>);
       <span class="pl-k">return</span> <span class="pl-s1"><span class="pl-c1">$</span>key</span>-&gt;<span class="pl-en">decrypt</span>(<span class="pl-en">base64_decode</span>(<span class="pl-s1"><span class="pl-c1">$</span>data</span>));
   }
