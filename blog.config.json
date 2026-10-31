@@ -1,0 +1,14 @@
+{
+  "title": "Jay的实验室",
+  "author": "Jay的实验室",
+  "description": "进来了，你发现大秘宝了吗？",
+  "url": "",
+  "theme": "nocturne",
+  "postsPerPage": 10,
+  "language": "zh-CN",
+  "publish": {
+    "mode": "workflow",
+    "remote": "origin",
+    "branch": "main"
+  }
+}
