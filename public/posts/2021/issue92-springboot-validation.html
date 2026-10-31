@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>springboot整合validation统一参数检查 · Jay的实验室</title>
+<meta name="description" content="1.背景">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">springboot整合validation统一参数检查</h1>
+    <div class="post-meta">
+      <time>2021-01-07</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/java.html">#java</a></span>
+    </div>
+    <div class="post-content"><h1>1.背景</h1>
+<p>实际开发中对参数进行检查,是常见</p>
+<p>比如如下代码</p>
+<p>~~~<br>
+/**</p>
+<ul>
+<ul>
+<li>参数检查测试(传统做法)</li>
+</ul>
+</ul>
+<p>     *</p>
+<ul>
+<ul>
+<li>@param dto</li>
+<li>@return</li>
+</ul>
+</ul>
+<p>     */<br>
+    @GetMapping(&quot;/paramCheckOld&quot;)<br>
+    public BaseResponse paramCheckOld(@RequestBody UserDTO dto) {<br>
+        // 参数检查<br>
+        if (StrUtil.isEmpty(dto.getWeChat())) {<br>
+            return ResponseBuilder.failed(&quot;微信号为空&quot;);<br>
+        }<br>
+        if (StrUtil.isEmpty(dto.getName())) {<br>
+            return ResponseBuilder.failed(&quot;姓名为空&quot;);<br>
+        }</p>
+<p>        if (dto.getStatus() != null<br>
+                || dto.getStatus() != -1<br>
+                || dto.getStatus() != 0<br>
+                || dto.getStatus() != 1) {<br>
+            return ResponseBuilder.failed(&quot;状态为-1,0,1或者null&quot;);<br>
+        }<br>
+        // .....如果参数很多这里必然后崩溃..........<br>
+        // 调用业务方法<br>
+        // 响应结果<br>
+        System.out.println(&quot;dto=&quot; + dto);<br>
+        return ResponseBuilder.success(&quot;统一参数检查.....&quot;);<br>
+    }<br>
+~~~</p>
+<p>但是正确的做法应该是,这里其实只使用了一个@Validated注解就搞定了,太方便了.....</p>
+<p>~~~<br>
+ /**</p>
+<ul>
+<ul>
+<li>统一参数检查(牛逼的做法)</li>
+</ul>
+</ul>
+<p>     *</p>
+<ul>
+<ul>
+<li>@param dto</li>
+<li>@return</li>
+</ul>
+</ul>
+<p>     */<br>
+    @GetMapping(&quot;/paramCheck&quot;)<br>
+    public BaseResponse paramCheck(@RequestBody @Validated UserDTO dto) {<br>
+        // 参数检查(已检查)<br>
+        // 调用业务方法<br>
+        // 响应结果<br>
+        System.out.println(&quot;dto=&quot; + dto);<br>
+        return ResponseBuilder.success(&quot;统一参数检查.....&quot;);<br>
+    }<br>
+~~~</p>
+<h1>2.步骤</h1>
+<p>步骤一:引入jar包</p>
+<p>~~~<br>
+ &lt;!--  统一参数校验--&gt;<br>
+        &lt;dependency&gt;<br>
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>
+            &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;<br>
+        &lt;/dependency&gt;<br>
+~~~</p>
+<p>步骤二:参数上贴标签</p>
+<p>~~~<br>
+package com.ldp.user.entity.dto;</p>
+<p>import com.ldp.user.common.validation.EnumValue;<br>
+import lombok.Data;</p>
+<p>import javax.validation.constraints.NotBlank;</p>
+<p>/**</p>
+<ul>
+<li>@author 姿势帝-博客园</li>
+<li>@address <a href="https://www.cnblogs.com/newAndHui/">https://www.cnblogs.com/newAndHui/</a></li>
+<li>@WeChat 851298348</li>
+<li>@create 01/01 4:00</li>
+<li>@description</li>
+</ul>
+<p> */<br>
+@Data<br>
+public class UserDTO {<br>
+    @NotBlank(message = &quot;微信号不能为空&quot;)<br>
+    private String weChat;</p>
+<p>    @NotBlank(message = &quot;姓名不能为空&quot;)<br>
+    private String name;<br>
+    /**</p>
+<ul>
+<ul>
+<li>年龄</li>
+</ul>
+</ul>
+<p>     */<br>
+    private Integer age;<br>
+    /**</p>
+<ul>
+<ul>
+<li>状态</li>
+<li>-1:冻结用户 ,0:正常用户, 1:没有实名认证</li>
+</ul>
+</ul>
+<p>     */<br>
+    @EnumValue(intValues = {-1, 0, 1}, message = &quot;状态为-1,0,1或者null&quot;)<br>
+    private Integer status;<br>
+    /**</p>
+<ul>
+<ul>
+<li>地址</li>
+</ul>
+</ul>
+<p>     */<br>
+    private String address;<br>
+}<br>
+~~~</p>
+<p>步骤三:控制层方法上贴标签(当然在其他方法上也可以用的,只是一般我们用在控制层上)</p>
+<p>~~~<br>
+/**</p>
+<ul>
+<ul>
+<li>统一参数检查(牛逼的做法)</li>
+</ul>
+</ul>
+<p>     *</p>
+<ul>
+<ul>
+<li>@param dto</li>
+<li>@return</li>
+</ul>
+</ul>
+<p>     */<br>
+    @GetMapping(&quot;/paramCheck&quot;)<br>
+    public BaseResponse paramCheck(@RequestBody @Validated UserDTO dto) {<br>
+        // 参数检查(已检查)<br>
+        // 调用业务方法<br>
+        // 响应结果<br>
+        System.out.println(&quot;dto=&quot; + dto);<br>
+        return ResponseBuilder.success(&quot;统一参数检查.....&quot;);<br>
+    }<br>
+~~~</p>
+<p>步骤四:统一参数检查不通过时提示消息获取</p>
+<p>~~~<br>
+  /**</p>
+<ul>
+<ul>
+<li>参数异常捕获</li>
+</ul>
+</ul>
+<p>     *</p>
+<ul>
+<ul>
+<li>@param ex</li>
+<li>@return</li>
+</ul>
+</ul>
+<p>     */<br>
+    @ResponseBody<br>
+    @ExceptionHandler(value = ConstraintViolationException.class)<br>
+    public Object constraintViolationExceptionHandler(ConstraintViolationException ex) {<br>
+        Set&lt;ConstraintViolation&lt;?&gt;&gt; constraintViolations = ex.getConstraintViolations();<br>
+        Iterator&lt;ConstraintViolation&lt;?&gt;&gt; iterator = constraintViolations.iterator();<br>
+        List&lt;String&gt; msgList = new ArrayList&lt;&gt;();<br>
+        while (iterator.hasNext()) {<br>
+            ConstraintViolation&lt;?&gt; cvl = iterator.next();<br>
+            msgList.add(cvl.getMessageTemplate());<br>
+        }<br>
+        return ResponseBuilder.failed(msgList.toString());<br>
+    }</p>
+<p>    @ExceptionHandler(BindException.class)<br>
+    @ResponseBody<br>
+    public Object getBindException(BindException ex) {<br>
+        List&lt;ObjectError&gt; objectErrors = ex.getBindingResult().getAllErrors();<br>
+        if (!CollectionUtils.isEmpty(objectErrors)) {<br>
+            StringBuilder msgBuilder = new StringBuilder();<br>
+            for (ObjectError objectError : objectErrors) {<br>
+                msgBuilder.append(objectError.getDefaultMessage()).append(&quot;,&quot;);<br>
+            }<br>
+            String errorMessage = msgBuilder.toString();<br>
+            if (errorMessage.length() &gt; 1) {<br>
+                errorMessage = errorMessage.substring(0, errorMessage.length() - 1);<br>
+            }<br>
+            return ResponseBuilder.failed(errorMessage);<br>
+        }<br>
+        return ResponseBuilder.failed(ex.getMessage());<br>
+    }<br>
+~~~</p>
+<p>步骤五测试</p>
+<p>~~~<br>
+  @Test<br>
+    void paramCheck() {<br>
+        String url = urlLocal + &quot;/userOrder/paramCheck&quot;;<br>
+        System.out.println(&quot;请求地址:&quot; + url);<br>
+        HttpRequest request = HttpUtil.createRequest(Method.GET, url);<br>
+        Map&lt;String, Object&gt; map = new TreeMap&lt;&gt;();<br>
+        // 业务参数<br>
+      //  map.put(&quot;weChat&quot;, &quot;851298348&quot;);<br>
+       // map.put(&quot;name&quot;, &quot;李东平&quot;);<br>
+        map.put(&quot;age&quot;, &quot;18&quot;);<br>
+        map.put(&quot;status&quot;, &quot;0&quot;);<br>
+        map.put(&quot;address&quot;, &quot;四川成都&quot;);</p>
+<p>        // 公用参数<br>
+        map.put(&quot;appid&quot;, &quot;1001&quot;);<br>
+        map.put(&quot;sequenceId&quot;, &quot;seq&quot; + System.currentTimeMillis());<br>
+        map.put(&quot;timeStamp&quot;, System.currentTimeMillis());<br>
+        map.put(&quot;sign&quot;, signApi(map, &quot;123456&quot;));<br>
+        String param = JSON.toJSONString(map);<br>
+        request.body(param);<br>
+        System.out.println(&quot;请求参数:&quot; + param);<br>
+        request.header(&quot;Authorization&quot;, token);<br>
+        request.setConnectionTimeout(60 * 1000);<br>
+        String response = request.execute().body();<br>
+        System.out.println(&quot;请求结果:&quot; + response);<br>
+    }<br>
+~~~</p>
+<p>测试结果:</p>
+<p>~~~<br>
+{&quot;message&quot;:&quot;微信号不能为空,姓名不能为空&quot;,&quot;code&quot;:900}<br>
+~~~</p>
+<h1>3.常用检查规则注解</h1>
+<p><img src="https://img2020.cnblogs.com/blog/858186/202101/858186-20210101170015191-387263373.png" alt="" loading="lazy"></p>
+<p>~~~<br>
+JSR提供的校验注解：         <br>
+@Null   被注释的元素必须为 null    <br>
+@NotNull    被注释的元素必须不为 null    <br>
+@AssertTrue     被注释的元素必须为 true    <br>
+@AssertFalse    被注释的元素必须为 false    <br>
+@Min(value)     被注释的元素必须是一个数字，其值必须大于等于指定的最小值    <br>
+@Max(value)     被注释的元素必须是一个数字，其值必须小于等于指定的最大值    <br>
+@DecimalMin(value)  被注释的元素必须是一个数字，其值必须大于等于指定的最小值    <br>
+@DecimalMax(value)  被注释的元素必须是一个数字，其值必须小于等于指定的最大值    <br>
+@Size(max=, min=)   被注释的元素的大小必须在指定的范围内    <br>
+@Digits (integer, fraction)     被注释的元素必须是一个数字，其值必须在可接受的范围内    <br>
+@Past   被注释的元素必须是一个过去的日期    <br>
+@Future     被注释的元素必须是一个将来的日期    <br>
+@Pattern(regex=,flag=)  被注释的元素必须符合指定的正则表达式    </p>
+<p>Hibernate Validator提供的校验注解：  <br>
+@NotBlank(message =)   验证字符串非null，且trim后长度必须大于0    <br>
+@Email  被注释的元素必须是电子邮箱地址    <br>
+@Length(min=,max=)  被注释的字符串的大小必须在指定的范围内    <br>
+@NotEmpty   被注释的字符串的必须非空    <br>
+@Range(min=,max=,message=)  被注释的元素必须在合适的范围内<br>
+~~~</p>
+<h1>4.自定义检查规则注解</h1>
+<p>如果这些注解还不能满足我们的需求,那么我么可以自己定义满足自己业务规则的注解</p>
+<p>这里以自定义一个枚举值检查的注解,这个在实际生产中用的非常普遍</p>
+<p>比如在传入用户状态时,只嗯传入-1,0,1或者null,其都是参数不合法的检查注解</p>
+<p><a href="https://www.cnblogs.com/newAndHui/p/14185807.html">https://www.cnblogs.com/newAndHui/p/14185807.html</a></p>
+<h1>完美!</h1></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2020/issue91-sql-mysql.html">← sql查看mysql中各数据库大小</a>
+    <a class="next" href="../../posts/2021/issue93-phpword.html">phpword 合并单元格的坑 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>centos 安装最新libreoffice6.2 来进行word转pdf · Jay的实验室</title>
+<meta name="description" content="源码安装python3.6">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">centos 安装最新libreoffice6.2 来进行word转pdf</h1>
+    <div class="post-meta">
+      <time>2019-04-09</time>
+      
+    </div>
+    <div class="post-content"><h1>源码安装python3.6</h1>
+<h2>安装setuptools 和pip3</h2>
+<p>python3 setup.py build<br>
+python3 setup.py install</p>
+<p><a href="https://www.cnblogs.com/wenchengxiaopenyou/p/5709218.html">https://www.cnblogs.com/wenchengxiaopenyou/p/5709218.html</a></p>
+<h1>卸载旧版本libreoffice</h1>
+<p>1、卸载系统当前的libreoffice<br>
+执行如下命令：sudo yum erase libreoffice\*（centos、ubuntu均有效）<br>
+或者尝试：sudo yum remove libreoffice-*（未能成功）</p>
+<ol>
+<li>libreoffice 下载</li>
+</ol>
+<p>LibreOffice_6.2.2_Linux_x86-64_rpm.tar.gz<br>
+LibreOffice_6.2.2_Linux_x86-64_rpm_sdk.tar.gz<br>
+LibreOffice_6.2.2_Linux_x86-64_rpm_langpack_zh-CN.tar.gz<br>
+cd /usr/libreoffice/LibreOffice_6.0.3_Linux_x86-64_rpm/RPMS</p>
+<p>yum localinstall *.rpm</p>
+<ol>
+<li>安装一些库</li>
+</ol>
+<p>yum -y groupinstall Development tools<br>
+yum -y install cairo <br>
+yum -y install libSM <br>
+yum install ibus<br>
+yum install libreoffice-headless</p>
+<p> version `GLIBC_2.14' not found (required by /opt/libreoffice6.2/program/libpython3.5m.so.1.0</p>
+<p>参考 ：<a href="http://get.ftqq.com/9143.get">http://get.ftqq.com/9143.get</a></p>
+<p>linux系统下的缺失 libstdc++.so.6: version’GLIBCXX_3.4.20’的问题<br>
+参考：<a href="http://get.ftqq.com/9144.get">http://get.ftqq.com/9144.get</a></p>
+<p>/lib64/libdbus-1.so.3: no version information available<br>
+同上：<br>
+Connector : couldn't connect to socket (Connection refused)</p>
+<p> libsystemd.so.0: cannot open shared object file</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue72.html">← 技术周刊收集</a>
+    <a class="next" href="../../posts/2019/issue74-git.html">git提取出两个版本之间的差异文件并打包 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

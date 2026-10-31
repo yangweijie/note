@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小米笔记本安装 ubuntu 后，wifi 无法使用的解决方案： · Jay的实验室</title>
+<meta name="description" content="~~~ shell">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">小米笔记本安装 ubuntu 后，wifi 无法使用的解决方案：</h1>
+    <div class="post-meta">
+      <time>2017-07-10</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p>~~~ shell<br>
+vi /etc/modprobe.d/blacklist.conf<br>
+~~~</p>
+<p>最后一行加入</p>
+<p>~~~ conf<br>
+blacklist acer-wmi<br>
+~~~</p>
+<p>保存退出重启就好了。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue3.html">← 查找端口占用进程</a>
+    <a class="next" href="../../posts/2017/issue28-javascript.html">Javascript  取模运算、取商、取整方法 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

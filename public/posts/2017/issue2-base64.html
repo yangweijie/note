@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>base64格式 如何获取图片大小 · Jay的实验室</title>
+<meta name="description" content="今天 微信群友问了一句 base64格式 如何获取图片大小，我想了下 有个getimagesizefromstring 函数 可以获取，让他看手册，结果他说能不…">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">base64格式 如何获取图片大小</h1>
+    <div class="post-meta">
+      <time>2017-07-10</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a></span>
+    </div>
+    <div class="post-content"><p>今天 微信群友问了一句 base64格式 如何获取图片大小，我想了下 有个<code>getimagesizefromstring</code> 函数 可以获取，让他看手册，结果他说能不能不存获取。我想可以啊，就自己封装了个函数 实验了下。可以</p>
+<p>~~~php<br>
+function get_img_info_from_base64($base64_image_content){<br>
+    if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)){<br>
+        $file_content = base64_decode(str_replace($result[1], '', $base64_image_content));<br>
+        return getimagesizefromstring($file_content);<br>
+    }else{<br>
+        return false;<br>
+    }<br>
+}</p>
+<p>~~~</p>
+<p>测试</p>
+<p>~~~php<br>
+ public function test_base64_img_info(){<br>
+        $image_file = 'https://www.baidu.com/img/bd_logo1.png';<br>
+        $image_info = getimagesize($image_file);<br>
+        $base64_image_content = &quot;data:{$image_info['mime']};base64,&quot; . chunk_split(base64_encode(file_get_contents($image_file)));<br>
+        $ret = get_img_info_from_base64($base64_image_content);<br>
+        return json($ret);<br>
+    }</p>
+<p>~~~</p>
+<p>如果是文件存储大小，strlen一下个那个file_content 就行了，我拿百度logo测试了一下 7877 一样的。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue20-mubu-com.html">← mubu.com－颠覆法律人工作方式（动图演示）</a>
+    <a class="next" href="../../posts/2017/issue19-mysql.html">MySQL按照汉字的拼音排序、按照首字母分类 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

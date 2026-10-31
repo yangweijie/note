@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThinkPhp5 数据迁移(think-migration) · Jay的实验室</title>
+<meta name="description" content="在thinkphp5中提供了数据迁移工具(think-migration),它是机遇phinx开发(文档地址：http://docs.phinx.org/en/…">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">ThinkPhp5 数据迁移(think-migration)</h1>
+    <div class="post-meta">
+      <time>2018-02-01</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/thinkphp.html">#thinkphp</a><a class="tag" href="../../tags/mysql.html">#mysql</a></span>
+    </div>
+    <div class="post-content"><p>在thinkphp5中提供了数据迁移工具(think-migration),它是机遇phinx开发(文档地址：<a href="http://docs.phinx.org/en/latest/">http://docs.phinx.org/en/latest/</a>)</p>
+<p>一：配置think-migration</p>
+<p>在commond.php 中添加</p>
+<p>~~~<br>
+&lt;?php <br>
+return [ &quot;think\\migration\\command\\migrate\\Create&quot;,<br>
+    &quot;think\\migration\\command\\migrate\\Run&quot;,<br>
+    &quot;think\\migration\\command\\migrate\\Rollback&quot;,<br>
+    &quot;think\\migration\\command\\migrate\\Status&quot;,<br>
+    &quot;think\\migration\\command\\seed\\Create&quot;,<br>
+    &quot;think\\migration\\command\\seed\\Run&quot;, ]; <br>
+~~~</p>
+<p>注意由于think-migration存放在thinkphp/vendor中 所以在think中需要将vendor加入auoload</p>
+<p><code>require __DIR__.'/../thinkphp/vendor/autoload.php';</code></p>
+<p>二：命令行运行</p>
+<p> 在命令行输入php think 可以看见</p>
+<p><img src="https://images2015.cnblogs.com/blog/447797/201703/447797-20170323101103877-508042847.png" alt="" loading="lazy"></p>
+<p>migrate:数据库迁移工具 seed:数据库填充工具</p>
+<p>主要讨论migrate:</p>
+<p>  migrate:create : 创建一个新的数据迁移类,php think migrate:create ,文件名须采用驼峰命名法</p>
+<p>  forexample:php think migrate:create ScProductImage 文件会在制定目录下生成一个php文件</p>
+<p><img src="https://images2015.cnblogs.com/blog/447797/201703/447797-20170323102133361-523470162.png" alt="" loading="lazy"></p>
+<p>＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊</p>
+<p>migrate:run : 完成数据迁移工作 <code>php think migrate:run</code></p>
+<p>＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊</p>
+<p>migrate:status:查看migrate工作状态 <code>php think migrate:status</code></p>
+<p><img src="https://images2015.cnblogs.com/blog/447797/201703/447797-20170323102649471-1084055119.png" alt="" loading="lazy"></p>
+<hr>
+<p>  migrate:rollback : 回滚数据到指定的一个数据迁移版本 <code>php think migrate:rollback -t </code></p>
+<p>   就是我们上图上面红框表示的值</p>
+<p>三：migrate文件编写</p>
+<p>     在migrate中有三个方法</p>
+<p>     up:在migrate:run时执行(前提是文件中不存在change方法)</p>
+<p>    down:在migrate:rollback时执行(前提是文件中不存在change方法)</p>
+<p>    change:migrate:run 和migrate:rollback时执行 (如果存在该方法 则不会去执行up 与down)</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue48.html">← 阻止用户离开页面时确认的正确姿势</a>
+    <a class="next" href="../../posts/2018/issue50-mac-jdk.html">Mac系统下安装及卸载JDK →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

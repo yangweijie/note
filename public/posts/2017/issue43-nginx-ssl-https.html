@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nginx配置SSL证书部署HTTPS网站 · Jay的实验室</title>
+<meta name="description" content="一、什么是 SSL 证书，什么是 HTTPS">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">Nginx配置SSL证书部署HTTPS网站</h1>
+    <div class="post-meta">
+      <time>2017-10-24</time>
+      <span class="tags"><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/shell.html">#shell</a><a class="tag" href="../../tags/nginx.html">#nginx</a></span>
+    </div>
+    <div class="post-content"><p><strong>一、什么是 SSL 证书，什么是 HTTPS</strong><br>
+SSL 证书是一种数字证书，它使用 Secure Socket Layer 协议在浏览器和 Web 服务器之间建立一条安全通道，从而实现：<br>
+1、数据信息在客户端和服务器之间的加密传输，保证双方传递信息的安全性，不可被第三方窃听；<br>
+2、用户可以通过服务器证书验证他所访问的网站是否真实可靠。</p>
+<p>HTTPS 是以安全为目标的 HTTP 通道，即 HTTP 下加入 SSL 加密层。HTTPS 不同于 HTTP 的端口，HTTP默认端口为80，HTTPS默认端口为443。</p>
+<p><strong>推荐阅读：</strong></p>
+<p>基于OpenSSL实现C/S架构中的HTTPS会话 <a href="http://www.linuxidc.com/Linux/2013-05/84477.htm">http://www.linuxidc.com/Linux/2013-05/84477.htm</a></p>
+<p>RHEL6.3下配置简单Apache HTTPS  <a href="http://www.linuxidc.com/Linux/2013-02/78874.htm">http://www.linuxidc.com/Linux/2013-02/78874.htm</a></p>
+<p>Nginx搭建HTTPS服务器 <a href="http://www.linuxidc.com/Linux/2013-01/78263.htm">http://www.linuxidc.com/Linux/2013-01/78263.htm</a></p>
+<p>Linux实现HTTPS方式访问站点 <a href="http://www.linuxidc.com/Linux/2012-08/69429.htm">http://www.linuxidc.com/Linux/2012-08/69429.htm</a></p>
+<p><strong>二、什么网站需要使用SSL证书</strong><br>
+1、购物交易类网站<br>
+不用多说，网上银行、支付宝、Paypal等肯定会全程加密以保护你的信息安全。</p>
+<p>2、注册与登陆<br>
+一些大的网站，比如电子邮箱，注册会员或者登陆的时候，会专门通过SSL通道，保证密码安全不被窃取。</p>
+<p>3、某些在线代理<br>
+这个。。。嗯哼，就不说了。</p>
+<p>4、装B<br>
+比如我……</p>
+<p><strong>三、自行颁发不受浏览器信任的SSL证书</strong><br>
+为晒晒IQ网颁发证书。ssh登陆到服务器上，终端输入以下命令，使用openssl生成RSA密钥及证书。</p>
+<h1>生成一个RSA密钥</h1>
+<p>$ openssl genrsa -des3 -out 33iq.key 1024</p>
+<h1>拷贝一个不需要输入密码的密钥文件</h1>
+<p>$ openssl rsa -in 33iq.key -out 33iq_nopass.key</p>
+<h1>生成一个证书请求</h1>
+<p>$ openssl req -new -key 33iq.key -out 33iq.csr</p>
+<h1>自己签发证书</h1>
+<p>$ openssl x509 -req -days 365 -in 33iq.csr -signkey 33iq.key -out 33iq.crt</p>
+<p>第3个命令是生成证书请求，会提示输入省份、城市、域名信息等，重要的是，email一定要是你的域名后缀的。这样就有一个 csr 文件了，提交给 ssl 提供商的时候就是这个 csr 文件。当然我这里并没有向证书提供商申请，而是在第4步自己签发了证书。</p>
+<p><img src="http://www.linuxidc.com/upload/2013_08/130803080155052.png" alt="" loading="lazy"></p>
+<p>编辑配置文件nginx.conf，给站点加上HTTPS协议<br>
+~~~<br>
+server {<br>
+    server_name YOUR_DOMAINNAME_HERE;<br>
+    listen 443;<br>
+    ssl on;<br>
+    ssl_certificate /usr/local/nginx/conf/33iq.crt;<br>
+    ssl_certificate_key /usr/local/nginx/conf/33iq_nopass.key;<br>
+    # 若ssl_certificate_key使用33iq.key，则每次启动Nginx服务器都要求输入key的密码。<br>
+}<br>
+~~~<br>
+重启Nginx后即可通过https访问网站了。</p>
+<p>自行颁发的SSL证书能够实现加密传输功能，但浏览器并不信任，会出现以下提示：</p>
+<p><img src="http://www.linuxidc.com/upload/2013_08/130803080155051.png" alt="" loading="lazy"></p>
+<p><strong>四、受浏览器信任的证书</strong><br>
+要获取受浏览器信任的证书，则需要到证书提供商处申请。证书授证中心，又叫做CA机构，为每个使用公开密钥的用户发放一个数字证书。浏览器在默认情况下内置了一些CA机构的证书，使得这些机构颁发的证书受到信任。<a href="http://www.verisign.com/cn/">VeriSign</a>即是一个著名的国外CA机构，工行、建行、招行、支付宝、财付通等网站均使用VeriSign的证书，而网易邮箱等非金融网站采用的是中国互联网信息中心 CNNIC颁发的SSL证书。一般来说，一个证书的价格不菲，以VeriSign的证书为例，价格在每年8000元人民币左右。</p>
+<p>据说也有免费的证书可以申请。和VeriSign一样，<a href="http://www.startssl.com/">StartSSL</a>也 是一家CA机构，它的根证书很久之前就被一些具有开源背景的浏览器支持（Firefox浏览器、谷歌Chrome浏览器、苹果Safari浏览器等）。后 来StartSSL竟然搞定了微软：在升级补丁中，微软更新了通过Windows根证书认证（Windows Root Certificate Program）的厂商清单，并首次将StartCom公司列入了该认证清单。现在，在Windows 7或安装了升级补丁的Windows Vista或Windows XP操作系统中，系统会完全信任由StartCom这类免费数字认证机构认证的数字证书，从而使StartSSL也得到了IE浏览器的支持。（来源及<a href="http://www.linuxidc.com/Linux/2011-11/47478.htm">申请步骤</a>）</p>
+<p><strong>五、只针对注册、登陆进行https加密处理</strong><br>
+既然HTTPS能保证安全，为什么全世界大部分网站都仍旧在使用HTTP呢？使用HTTPS协议，对服务器来说是很大的负载开销。从性能上考虑，我 们无法做到对于每个用户的每个访问请求都进行安全加密（当然，Google这种大神除外）。作为一个普通网站，我们所追求的只是在进行交易、密码登陆等操 作时的安全。通过配置Nginx服务器，可以使用rewrite来做到这一点。</p>
+<p>在https server下加入如下配置：</p>
+<p>~~~<br>
+if ($uri !~* &quot;/logging.php$&quot;)<br>
+{<br>
+    rewrite ^/(.*)$ <a href="http://$host/$1">http://$host/$1</a> redirect;<br>
+}<br>
+~~~</p>
+<p>在http server下加入如下配置：</p>
+<p>~~~<br>
+if ($uri ~* &quot;/logging.php$&quot;)<br>
+{<br>
+    rewrite ^/(.*)$ <a href="https://$host/$1">https://$host/$1</a> redirect;<br>
+}<br>
+~~~</p>
+<p>这样一来，用户会且只会在访问logging.php的情况下，才会通过https访问。</p>
+<p>更新：有一些开发框架会根据 $_SERVER['HTTPS'] 这个 PHP 变量是否为 on 来判断当前的访问请求是否是使用 https。为此我们需要在 Nginx 配置文件中添加一句来设置这个变量。遇到 https 链接重定向后会自动跳到 http 问题的同学可以参考一下。</p>
+<p>~~~<br>
+server {<br>
+    ...<br>
+    listen 443;<br>
+    location \.php$ {<br>
+        ...<br>
+        include fastcgi_params;<br>
+        fastcgi_param HTTPS on; # 多加这一句<br>
+    }<br>
+}</p>
+<p>server {<br>
+    ...<br>
+    listen 80;<br>
+    location \.php$ {<br>
+        ...<br>
+        include fastcgi_params;<br>
+    }<br>
+}<br>
+~~~</p>
+<p><strong>参考链接：</strong></p>
+<p>Nginx下只针对logging.php进行https处理的重写规则 <a href="http://www.linuxidc.com/Linux/2013-08/88272.htm">http://www.linuxidc.com/Linux/2013-08/88272.htm</a></p>
+<p>全球可信并且唯一免费的HTTPS(SSL)证书颁发机构：StartSSL  <a href="http://www.linuxidc.com/Linux/2011-11/47478.htm">http://www.linuxidc.com/Linux/2011-11/47478.htm</a></p>
+<p><strong>Nginx 的详细介绍</strong>：[请点这里](<a href="http://www.linuxidc.com/Linux/2012-03/56786.htm">http://www.linuxidc.com/Linux/2012-03/56786.htm</a> &quot;Nginx&quot;)<br>
+<strong>Nginx 的下载地址</strong>：<a href="http://www.linuxidc.com/down.aspx?id=342">请点这里</a></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue42-php-aes-cbc-pkcs5padding.html">← php实现AES/CBC/PKCS5Padding加密解密（又叫：对称加密）</a>
+    <a class="next" href="../../posts/2017/issue44-basic-php.html">basic 认证 php 获取失效问题 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

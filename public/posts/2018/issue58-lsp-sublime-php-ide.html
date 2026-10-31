@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使用LSP插件将 sublime 变成 PHP IDE · Jay的实验室</title>
+<meta name="description" content="安装LSP">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">使用LSP插件将 sublime 变成 PHP IDE</h1>
+    <div class="post-meta">
+      <time>2018-05-12</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/sublime.html">#sublime</a><a class="tag" href="../../tags/ide.html">#ide</a><a class="tag" href="../../tags/editor.html">#editor</a></span>
+    </div>
+    <div class="post-content"><h1>安装LSP</h1>
+<p>``<code>npm install -g ocaml-language-server</code>``</p>
+<h1>st 安装 LSP</h1>
+<p>``<code>pac install  package </code>`` 搜 LSP 就行</p>
+<h1>本地composer 安装 php的LSP</h1>
+<p>修改 ~/.composer/composer.json 设置</p>
+<pre><code>&quot;minimum-stability&quot;: &quot;dev&quot;,
+&quot;prefer-stable&quot;: true,</code></pre>
+<blockquote><p>ps win 在 C:/Users/jay/AppData/Roaming/Composer</p></blockquote>
+<p>run <code>composer global require felixfbecker/language-server</code></p>
+<p>run  <code>composer run-script --working-dir=/PATH-TO-HOME-DIR/.composer/vendor/felixfbecker/language-server parse-stubs</code></p>
+<p>修改 <strong>LSP.sublime-settings - User</strong></p>
+<pre><code>{
+  &quot;clients&quot;: {
+    &quot;phpls&quot;: {
+      &quot;command&quot;: [&quot;php&quot;, &quot;/PATH-TO-HOME-DIR/.composer/vendor/felixfbecker/language-server/bin/php-language-server.php&quot;],
+      &quot;scopes&quot;: [&quot;source.php&quot;],
+      &quot;syntaxes&quot;: [&quot;Packages/PHP/PHP.sublime-syntax&quot;],
+      &quot;languageId&quot;: &quot;php&quot;
+    }
+  }
+}</code></pre>
+<p>Preferences.sublime-settings - User 里添加触发器</p>
+<pre><code>&quot;auto_complete_triggers&quot;:
+[
+  {
+    &quot;characters&quot;: &quot;$&gt;:\\&quot;,
+    &quot;selector&quot;: &quot;source.php&quot;
+  }</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue55-tp5-swoole.html">← tp5 swoole</a>
+    <a class="next" href="../../posts/2018/issue59-php-inotify.html">php inotify 扩展的安装 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

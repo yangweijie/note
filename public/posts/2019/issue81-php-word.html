@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>php word 执行宏 · Jay的实验室</title>
+<meta name="description" content="try {">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">php word 执行宏</h1>
+    <div class="post-meta">
+      <time>2019-12-05</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/windows.html">#windows</a><a class="tag" href="../../tags/word.html">#word</a><a class="tag" href="../../tags/com.html">#com</a></span>
+    </div>
+    <div class="post-content"><pre><code>try {
+        $word = new \COM(&quot;word.application&quot;) or die(&quot;Can't start Word!&quot;);
+        $word-&gt;Visible = 0;
+        $word-&gt;Documents-&gt;Open($srcfilename, false, false, false, &quot;1&quot;, &quot;1&quot;, true);
+        $word-&gt;ActiveDocument-&gt;final = false;
+        $word-&gt;ActiveDocument-&gt;Saved = true;
+        $word-&gt;Application-&gt;run('getPageCount');
+        // $word-&gt;Documents[1]-&gt;SaveAs($destfilename);
+		$word-&gt;ActiveDocument-&gt;ExportAsFixedFormat(
+			$destfilename,
+			17, // wdExportFormatPDF
+			false, // open file after export
+			0, // wdExportOptimizeForPrint
+			3, // wdExportFromTo
+			1, // begin page
+			5000, // end page
+			7, // wdExportDocumentWithMarkup
+			true, // IncludeDocProps
+			true, // KeepIRM
+			1// WdExportCreateBookmarks
+		);
+		$word-&gt;ActiveDocument-&gt;Close();
+        $end = time();
+        $word-&gt;Quit();
+    } catch (\Exception $e) {
+        if (method_exists($word, &quot;Quit&quot;)) {
+            $word-&gt;Quit();
+        }
+        $error = $e-&gt;getCode().PHP_EOL.$e-&gt;getMessage().PHP_EOL.$e-&gt;getTraceAsString();
+        // ptrace($e-&gt;getCode());
+        // ptrace($error);
+        $end = time();
+    }</code></pre>
+<p>名称为word中定义的宏，测试可以把 Visible  = 1 和加 sleep 来看是否执行成功</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2019/issue79-windows-php-java.html">← 在windows下php执行java命令无反应</a>
+    <a class="next" href="../../posts/2019/issue82-unraid-vm-5257.html">unraid vm-5257主机原始配置 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>unraid amd 3600x mac 配置 · Jay的实验室</title>
+<meta name="description" content="&lt;?xml version='1.0' encoding='UTF-8'?">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">unraid amd 3600x mac 配置</h1>
+    <div class="post-meta">
+      <time>2020-01-01</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/mac.html">#mac</a></span>
+    </div>
+    <div class="post-content"><pre><code>&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'&gt;
+  &lt;name&gt;MacinaboxCatalina&lt;/name&gt;
+  &lt;uuid&gt;06a15c6e-8c82-4fa1-aae6-694e6301cac1&lt;/uuid&gt;
+  &lt;description&gt;MacOS Catalina&lt;/description&gt;
+  &lt;metadata&gt;
+    &lt;vmtemplate xmlns=&quot;unraid&quot; name=&quot;MacOS&quot; icon=&quot;/mnt/user/domains/MacinaboxCatalina/icon/catalina.png&quot; os=&quot;Catalina&quot;/&gt;
+  &lt;/metadata&gt;
+  &lt;memory unit='KiB'&gt;8388608&lt;/memory&gt;
+  &lt;currentMemory unit='KiB'&gt;8388608&lt;/currentMemory&gt;
+  &lt;memoryBacking&gt;
+    &lt;nosharepages/&gt;
+  &lt;/memoryBacking&gt;
+  &lt;vcpu placement='static'&gt;12&lt;/vcpu&gt;
+  &lt;cputune&gt;
+    &lt;vcpupin vcpu='0' cpuset='0'/&gt;
+    &lt;vcpupin vcpu='1' cpuset='1'/&gt;
+    &lt;vcpupin vcpu='2' cpuset='2'/&gt;
+    &lt;vcpupin vcpu='3' cpuset='3'/&gt;
+    &lt;vcpupin vcpu='4' cpuset='4'/&gt;
+    &lt;vcpupin vcpu='5' cpuset='5'/&gt;
+    &lt;vcpupin vcpu='6' cpuset='6'/&gt;
+    &lt;vcpupin vcpu='7' cpuset='7'/&gt;
+    &lt;vcpupin vcpu='8' cpuset='8'/&gt;
+    &lt;vcpupin vcpu='9' cpuset='9'/&gt;
+    &lt;vcpupin vcpu='10' cpuset='10'/&gt;
+    &lt;vcpupin vcpu='11' cpuset='11'/&gt;
+  &lt;/cputune&gt;
+  &lt;os&gt;
+    &lt;type arch='x86_64' machine='pc-q35-3.1'&gt;hvm&lt;/type&gt;
+    &lt;loader readonly='yes' type='pflash'&gt;/mnt/user/domains/MacinaboxCatalina/ovmf/OVMF_CODE.fd&lt;/loader&gt;
+    &lt;nvram&gt;/mnt/user/domains/MacinaboxCatalina/ovmf/OVMF_VARS.fd&lt;/nvram&gt;
+  &lt;/os&gt;
+  &lt;features&gt;
+    &lt;acpi/&gt;
+    &lt;apic/&gt;
+  &lt;/features&gt;
+  &lt;cpu mode='host-passthrough' check='none'/&gt;
+  &lt;clock offset='utc'&gt;
+    &lt;timer name='rtc' tickpolicy='catchup'/&gt;
+    &lt;timer name='pit' tickpolicy='delay'/&gt;
+    &lt;timer name='hpet' present='no'/&gt;
+  &lt;/clock&gt;
+  &lt;on_poweroff&gt;destroy&lt;/on_poweroff&gt;
+  &lt;on_reboot&gt;restart&lt;/on_reboot&gt;
+  &lt;on_crash&gt;restart&lt;/on_crash&gt;
+  &lt;devices&gt;
+    &lt;emulator&gt;/usr/local/sbin/qemu&lt;/emulator&gt;
+    &lt;disk type='file' device='disk'&gt;
+      &lt;driver name='qemu' type='qcow2' cache='writeback'/&gt;
+      &lt;source file='/mnt/user/domains/MacinaboxCatalina/Clover.qcow2'/&gt;
+      &lt;target dev='hdc' bus='sata'/&gt;
+      &lt;boot order='1'/&gt;
+      &lt;address type='drive' controller='0' bus='0' target='0' unit='2'/&gt;
+    &lt;/disk&gt;
+    &lt;disk type='file' device='disk'&gt;
+      &lt;driver name='qemu' type='raw' cache='writeback'/&gt;
+      &lt;source file='/mnt/user/domains/MacinaboxCatalina/Catalina-install.img'/&gt;
+      &lt;target dev='hdd' bus='sata'/&gt;
+      &lt;address type='drive' controller='0' bus='0' target='0' unit='3'/&gt;
+    &lt;/disk&gt;
+    &lt;disk type='file' device='disk'&gt;
+      &lt;driver name='qemu' type='raw' cache='writeback'/&gt;
+      &lt;source file='/mnt/user/domains/MacinaboxCatalina/macos_disk.img'/&gt;
+      &lt;target dev='hde' bus='sata'/&gt;
+      &lt;address type='drive' controller='0' bus='0' target='0' unit='4'/&gt;
+    &lt;/disk&gt;
+    &lt;controller type='usb' index='0' model='ich9-ehci1'&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x7'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='usb' index='0' model='ich9-uhci1'&gt;
+      &lt;master startport='0'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0' multifunction='on'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='usb' index='0' model='ich9-uhci2'&gt;
+      &lt;master startport='2'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x1'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='usb' index='0' model='ich9-uhci3'&gt;
+      &lt;master startport='4'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x2'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='sata' index='0'&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='pci' index='0' model='pcie-root'/&gt;
+    &lt;controller type='pci' index='1' model='pcie-root-port'&gt;
+      &lt;model name='pcie-root-port'/&gt;
+      &lt;target chassis='1' port='0x10'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0' multifunction='on'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='pci' index='2' model='pcie-root-port'&gt;
+      &lt;model name='pcie-root-port'/&gt;
+      &lt;target chassis='2' port='0x11'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x1'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='pci' index='3' model='pcie-root-port'&gt;
+      &lt;model name='pcie-root-port'/&gt;
+      &lt;target chassis='3' port='0x12'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x2'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='pci' index='4' model='pcie-root-port'&gt;
+      &lt;model name='pcie-root-port'/&gt;
+      &lt;target chassis='4' port='0x13'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/&gt;
+    &lt;/controller&gt;
+    &lt;controller type='virtio-serial' index='0'&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/&gt;
+    &lt;/controller&gt;
+    &lt;interface type='bridge'&gt;
+      &lt;mac address='52:54:00:d4:a7:77'/&gt;
+      &lt;source bridge='br0'/&gt;
+      &lt;model type='vmxnet3'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/&gt;
+    &lt;/interface&gt;
+    &lt;serial type='pty'&gt;
+      &lt;target type='isa-serial' port='0'&gt;
+        &lt;model name='isa-serial'/&gt;
+      &lt;/target&gt;
+    &lt;/serial&gt;
+    &lt;console type='pty'&gt;
+      &lt;target type='serial' port='0'/&gt;
+    &lt;/console&gt;
+    &lt;channel type='unix'&gt;
+      &lt;target type='virtio' name='org.qemu.guest_agent.0'/&gt;
+      &lt;address type='virtio-serial' controller='0' bus='0' port='1'/&gt;
+    &lt;/channel&gt;
+    &lt;input type='tablet' bus='usb'&gt;
+      &lt;address type='usb' bus='0' port='1'/&gt;
+    &lt;/input&gt;
+    &lt;input type='mouse' bus='ps2'/&gt;
+    &lt;input type='keyboard' bus='ps2'/&gt;
+    &lt;graphics type='vnc' port='-1' autoport='yes' websocket='-1' listen='0.0.0.0' keymap='en-us'&gt;
+      &lt;listen type='address' address='0.0.0.0'/&gt;
+    &lt;/graphics&gt;
+    &lt;video&gt;
+      &lt;model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/&gt;
+    &lt;/video&gt;
+    &lt;memballoon model='virtio'&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/&gt;
+    &lt;/memballoon&gt;
+  &lt;/devices&gt;
+  &lt;qemu:commandline&gt;
+    &lt;qemu:arg value='-usb'/&gt;
+    &lt;qemu:arg value='-device'/&gt;
+    &lt;qemu:arg value='usb-kbd,bus=usb-bus.0'/&gt;
+    &lt;qemu:arg value='-device'/&gt;
+    &lt;qemu:arg value='isa-applesmc,osk=ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc'/&gt;
+    &lt;qemu:arg value='-smbios'/&gt;
+    &lt;qemu:arg value='type=2'/&gt;
+    &lt;qemu:arg value='-cpu'/&gt;
+    &lt;qemu:arg value='Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,+pcid,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check'/&gt;
+  &lt;/qemu:commandline&gt;
+&lt;/domain&gt;
+</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2019/issue82-unraid-vm-5257.html">← unraid vm-5257主机原始配置</a>
+    <a class="next" href="../../posts/2020/issue85.html">阿里云系统盘扩容 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

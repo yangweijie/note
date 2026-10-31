@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>yar使用 · Jay的实验室</title>
+<meta name="description" content="每个服务器上都安装yar扩展">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">yar使用</h1>
+    <div class="post-meta">
+      <time>2018-04-27</time>
+      <span class="tags"><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/yar.html">#yar</a></span>
+    </div>
+    <div class="post-content"><p>每个服务器上都安装yar扩展</p>
+<p>然后要被访问的服务器上写一段代码，开启rpc 服务器<br>
+index控制器index方法里：<br>
+~~~<br>
+  if($_SERVER['PHP_SELF'] == '/nmp_remote.php'){<br>
+            $this-&gt;yar();<br>
+            return '';<br>
+        }</p>
+<p>public function yar(){<br>
+        $server = new \Yar_Server(new YarApi);<br>
+        return $server-&gt;handle();<br>
+}<br>
+~~~</p>
+<p>~~~<br>
+namespace app\index\controller;<br>
+Class YarApi{</p>
+<p>	/**</p>
+<ul>
+<ul>
+<li>调用内部函数</li>
+<li>@param  string $name   函数名</li>
+<li>@param  array  $params 参数 没有传[]</li>
+<li>@return mixed         返回结果</li>
+</ul>
+</ul>
+<p>	 */<br>
+	public function function_call($name, $params=[]){<br>
+		if(function_exists($name)){<br>
+			return call_user_func_array($name, $params);<br>
+		}else{<br>
+			return 'function not exists';<br>
+		}<br>
+	}</p>
+<p>	/**</p>
+<ul>
+<ul>
+<li>调用类方法</li>
+<li>@param  string $className 类命名空间</li>
+<li>@param  string $method    方法名</li>
+<li>@param  array  $params    参数 没有传[]</li>
+<li>@return mixed            返回结果</li>
+</ul>
+</ul>
+<p>	 */<br>
+	public function class_call($className, $method, $params=[]){<br>
+		if(method_exists($className, $method)){<br>
+			return call_user_func_array([$className, $method], $params);<br>
+		}else{<br>
+			return 'method not exists';<br>
+		}<br>
+	}</p>
+<p>	/**</p>
+<ul>
+<ul>
+<li>实列话类</li>
+<li>@param  string $className 类命名空间</li>
+<li>@param  array  $params    参数</li>
+<li>@return mixed            返回结果</li>
+</ul>
+</ul>
+<p>	 */<br>
+	public function instance_class($className, $params=[]){<br>
+        if(class_exists($className, false)){<br>
+            $class = new \ReflectionClass($className);<br>
+            $ret = $class-&gt;newInstanceArgs($params);<br>
+            return $ret;<br>
+        }else{<br>
+            return 'class not exists';<br>
+        }<br>
+    }</p>
+<p>    public function constant($name){<br>
+    	if(defined($name)){<br>
+    		return constant($name);<br>
+    	}else{<br>
+    		return 'constant no defined';<br>
+    	}<br>
+    }</p>
+<p>}</p>
+<p>~~~<br>
+暴露的是 server里传入的类 的方法</p>
+<p>这两个方法其实用于调用函数和类方法 、 类方法支持静态。<br>
+然后 其他模块里访问：</p>
+<p>~~~<br>
+$client = new \yar_client(&quot;<a href="http://nmp.cn/nmp_remote.php&quot;);">http://nmp.cn/nmp_remote.php&quot;);</a></p>
+<p>$ret = $client-&gt;function_call('build_part_commission_table', [['user_id'=&gt;1, 'finish_time'=&gt;'2017-10-28 10:00:00']]);<br>
+$data = [];<br>
+$ret2 = $client-&gt;class_call('\aa', 'sel', ['a']);<br>
+}<br>
+~~~</p>
+<p><img src="https://user-images.githubusercontent.com/1614114/39366390-61adb604-4a66-11e8-97a3-3f34fe3a5eb0.png" alt="image" loading="lazy"><br>
+暴露的是 server里传入的类 的方法</p>
+<p>这两个方法其实用于调用函数和类方法 、 类方法支持静态。<br>
+然后 其他模块里访问：</p>
+<p>~~~<br>
+$client = new \yar_client(&quot;<a href="http://nmp.cn/nmp_remote.php&quot;);">http://nmp.cn/nmp_remote.php&quot;);</a></p>
+<p>$ret = $client-&gt;function_call('build_part_commission_table', [['user_id'=&gt;1, 'finish_time'=&gt;'2017-10-28 10:00:00']]);<br>
+$data = [];<br>
+$ret2 = $client-&gt;class_call('\aa', 'sel', ['a']);</p>
+<p>~~~</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue54-geo.html">← geo扩展库安装</a>
+    <a class="next" href="../../posts/2018/issue56-git.html">自建git →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

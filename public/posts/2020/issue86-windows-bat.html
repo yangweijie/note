@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【Windows】自带提权的bat脚本 · Jay的实验室</title>
+<meta name="description" content="Windows下的开发不可避免的会用到bat脚本来做一些重复的工作，尤其是需要注册的插件dll这块。现在大家的开发机一般都是win7或win10，为了和用户环境…">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">【Windows】自带提权的bat脚本</h1>
+    <div class="post-meta">
+      <time>2020-02-01</time>
+      <span class="tags"><a class="tag" href="../../tags/windows.html">#windows</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p>Windows下的开发不可避免的会用到bat脚本来做一些重复的工作，尤其是需要注册的插件dll这块。现在大家的开发机一般都是win7或win10，为了和用户环境比较一致，一般都不会关掉UAC的功能。<br>
+双击bat脚本执行自动注册或自动运行服务会很方便开发，但是在vista以上的系统经常需要以管理员权限来启动这个脚本，一般都是右键选择管理员权限运行，要是分发给其他人员测试的时候还要特地叮嘱下，要是bat能实现自动检测需要管理员权限，然后弹出这个提权的申请框，在提权完成之后再进行工作就好了。<br>
+抱着这个需求，找到了stackoverflow，果然不负众望，有人给出了一个解决方案，这里把这个bat脚本贴出来，给有需要的人士。</p>
+<pre><code>::::::::::::::::::::::::::::::::::::::::::::
+:: Elevate.cmd - Version 2
+:: Automatically check &amp; get admin rights
+::::::::::::::::::::::::::::::::::::::::::::
+@echo off
+CLS
+ECHO.
+ECHO =============================
+ECHO Running Admin shell
+ECHO =============================
+
+:init
+setlocal DisableDelayedExpansion
+set &quot;batchPath=%~0&quot;
+for %%k in (%0) do set batchName=%%~nk
+set &quot;vbsGetPrivileges=%temp%\OEgetPriv_%batchName%.vbs&quot;
+setlocal EnableDelayedExpansion
+
+:checkPrivileges
+NET FILE 1&gt;NUL 2&gt;NUL
+if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( goto getPrivileges )
+
+:getPrivileges
+if '%1'=='ELEV' (echo ELEV &amp; shift /1 &amp; goto gotPrivileges)
+ECHO.
+ECHO **************************************
+ECHO Invoking UAC for Privilege Escalation
+ECHO **************************************
+
+ECHO Set UAC = CreateObject^(&quot;Shell.Application&quot;^) &gt; &quot;%vbsGetPrivileges%&quot;
+ECHO args = &quot;ELEV &quot; &gt;&gt; &quot;%vbsGetPrivileges%&quot;
+ECHO For Each strArg in WScript.Arguments &gt;&gt; &quot;%vbsGetPrivileges%&quot;
+ECHO args = args ^&amp; strArg ^&amp; &quot; &quot;  &gt;&gt; &quot;%vbsGetPrivileges%&quot;
+ECHO Next &gt;&gt; &quot;%vbsGetPrivileges%&quot;
+ECHO UAC.ShellExecute &quot;!batchPath!&quot;, args, &quot;&quot;, &quot;runas&quot;, 1 &gt;&gt; &quot;%vbsGetPrivileges%&quot;
+&quot;%SystemRoot%\System32\WScript.exe&quot; &quot;%vbsGetPrivileges%&quot; %*
+exit /B
+
+:gotPrivileges
+setlocal &amp; pushd .
+cd /d %~dp0
+if '%1'=='ELEV' (del &quot;%vbsGetPrivileges%&quot; 1&gt;nul 2&gt;nul  &amp;  shift /1)
+
+::::::::::::::::::::::::::::
+::START
+::::::::::::::::::::::::::::
+REM Run shell as admin (example) - put here code as you like
+ECHO %batchName% Arguments: %1 %2 %3 %4 %5 %6 %7 %8 %9</code></pre>
+<p>作者：mercurygear<br>
+链接：<a href="https://www.jianshu.com/p/81a140d3c8d7">https://www.jianshu.com/p/81a140d3c8d7</a><br>
+来源：简书<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2020/issue84.html">← 阿里云扩容</a>
+    <a class="next" href="../../posts/2020/issue87-git-commit.html">Git回滚代码到某个commit →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

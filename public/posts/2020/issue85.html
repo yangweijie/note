@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>阿里云系统盘扩容 · Jay的实验室</title>
+<meta name="description" content="0.如果yum出问题则更换aliyun的源">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">阿里云系统盘扩容</h1>
+    <div class="post-meta">
+      <time>2020-01-20</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/linux.html">#linux</a></span>
+    </div>
+    <div class="post-content"><p>0.如果yum出问题则更换aliyun的源<br>
+cd /etc/yum.repos.d<br>
+mv CentOS-Base.repo CentOS-Base.repo.bak<br>
+wget -O CentOS-Base.repo <a href="http://mirrors.aliyun.com/repo/Centos-7.repo">http://mirrors.aliyun.com/repo/Centos-7.repo</a></p>
+<p>1.安装软件<br>
+yum install cloud-utils-growpart<br>
+yum install xfsprogs</p>
+<p>2.Check磁盘<br>
+df -h<br>
+fdisk -l</p>
+<p>3.执行（根据阿里云硬盘特性，参数为1 vda1为系统盘）<br>
+growpart /dev/[设备] 1 (sda)   如果这个命令报错了，可执行LANG=en_US.UTF-8命令<br>
+growpart /dev/vda 1<br>
+4.更新<br>
+resize2fs /dev/[分区] (sda1)<br>
+resize2fs /dev/vda1<br>
+5.完成确认<br>
+df -h<br>
+reboot</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2020/issue83-unraid-amd-3600x-mac.html">← unraid amd 3600x mac 配置</a>
+    <a class="next" href="../../posts/2020/issue84.html">阿里云扩容 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

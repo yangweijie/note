@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>swoole+inotify实现异步实时文件监控 · Jay的实验室</title>
+<meta name="description" content="inotify扩展介绍">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">swoole+inotify实现异步实时文件监控</h1>
+    <div class="post-meta">
+      <time>2018-01-17</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/swoole.html">#swoole</a></span>
+    </div>
+    <div class="post-content"><h2>inotify扩展介绍</h2>
+<p>inotify是Linux内核提供的一组系统调用，它可以监控文件系统操作，比如文件或者目录的创建、读取、写入、权限修改和删除等。</p>
+<p>inotify使用也很简单，使用inotify_init创建一个句柄，然后通过inotify_add_watch/inotify_rm_watch增加/删除对文件和目录的监听。</p>
+<p>PHP中提供了inotify扩展，支持了inotify系统调用。inotify本身也是一个文件描述符，可以加入到事件循环中，配合使用swoole扩展，就可以异步非阻塞地实时监听文件/目录变化。</p>
+<h2>安装inotify/swoole扩展</h2>
+<p>如果已经安装了inotify/swoole可以跳过此步骤。</p>
+<p>~~~<br>
+pecl install swoole<br>
+pecl install inotify<br>
+~~~</p>
+<p>操作成功后，修改php.ini，加入</p>
+<p>~~~<br>
+extension=swoole.so<br>
+extension=inotify.so<br>
+~~~</p>
+<p>查看扩展是否加载成功：</p>
+<p>~~~<br>
+php -m | grep swoole<br>
+php -m | grep inotify<br>
+~~~</p>
+<h2>inotify的使用</h2>
+<p>首先在当前目录创建一个inotify.data文件，示例就用来监听此文件。</p>
+<p>~~~<br>
+//创建一个inotify句柄<br>
+$fd = inotify_init();</p>
+<p>//监听文件，仅监听修改操作，如果想要监听所有事件可以使用IN_ALL_EVENTS<br>
+$watch_descriptor = inotify_add_watch($fd, __DIR__.'/inotify.data', IN_MODIFY); </p>
+<p>while (true) {<br>
+    //阻塞地读取数据<br>
+    $events = inotify_read($fd);<br>
+    if ($events) {<br>
+        foreach ($events as $event) {<br>
+            echo &quot;inotify Event :&quot;.var_export($event, 1).&quot;\n&quot;;<br>
+        }<br>
+    }<br>
+}</p>
+<p>//释放inotify句柄<br>
+inotify_rm_watch($fd, $watch_descriptor);<br>
+fclose($fd);<br>
+~~~</p>
+<p>修改inotify.data，就可以看到程序输出了信息。</p>
+<p>~~~<br>
+echo &quot;hello world&quot; &gt; inotify.data</p>
+<p>inotify Event :array (<br>
+  'wd' =&gt; 1,<br>
+  'mask' =&gt; 2,<br>
+  'cookie' =&gt; 0,<br>
+  'name' =&gt; '',<br>
+)<br>
+~~~</p>
+<h2>swoole+inotify异步非阻塞监听文件</h2>
+<p>~~~<br>
+//创建一个inotify句柄<br>
+$fd = inotify_init();</p>
+<p>//监听文件，仅监听修改操作，如果想要监听所有事件可以使用IN_ALL_EVENTS<br>
+$watch_descriptor = inotify_add_watch($fd, __DIR__.'/inotify.data', IN_MODIFY);</p>
+<p>//加入到swoole的事件循环中<br>
+swoole_event_add($fd, function ($fd) {<br>
+    $events = inotify_read($fd);<br>
+    if ($events) {<br>
+        foreach ($events as $event) {<br>
+            echo &quot;inotify Event :&quot; . var_export($event, 1) . &quot;\n&quot;;<br>
+        }<br>
+    }<br>
+});<br>
+~~~</p>
+<p>这里使用了swoole扩展提供swoole_event_add函数，将inotify句柄设置为非阻塞，并加入到epoll事件循环中。程序变成异步非阻塞模式。当有事件发生时才会执行inotify_read获取事件。没有事件发生时，程序可以执行其他的逻辑。</p>
+<p>此程序与上一个同步阻塞例子的逻辑是相同的，向inotify写入内容时也会打印事件信息。区别在于swoole+inotify的程序是异步的。可以支持并发监听大量文件和目录，并且除了inotify操作之外还可以执行其他的IO操作。</p>
+<ul>
+<li>关于inotify更多的信息可以到PHP官方网站中查看 <a href="http://php.net/inotify">http://php.net/inotify</a></li>
+</ul>
+<ul>
+<li>关于swoole更多信息，请到swoole官方网站取了解 <a href="http://www.swoole.com/">http://www.swoole.com/</a></li>
+</ul></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue46-http-499-nginx-499.html">← HTTP 499 状态码 nginx下 499错误</a>
+    <a class="next" href="../../posts/2018/issue48.html">阻止用户离开页面时确认的正确姿势 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>phpcustom_mysql.ini · Jay的实验室</title>
+<meta name="description" content="client">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">phpcustom_mysql.ini</h1>
+    <div class="post-meta">
+      <time>2020-05-28</time>
+      
+    </div>
+    <div class="post-content"><pre><code>[client]
+port = 3304
+
+[mysql]
+no-auto-rehash
+default-character-set = utf8
+
+[mysqld]
+port = 3304
+server_id = 1
+character-set-server = utf8
+
+explicit_defaults_for_timestamp = on
+skip-ssl
+
+table_open_cache = 256
+
+
+#标记为Error，Warning和Note将写入到事件日志
+log-error=&quot;D:/PHPCUSTOM_Pack/PHPCUSTOM_lib/mariadb-10.4.11/logs/mysql.log&quot;
+
+
+max_connections=500
+query_cache_size=91M
+tmp_table_size=54M
+thread_cache_size=23
+key_buffer_size=15M
+innodb_flush_log_at_trx_commit=1
+innodb_log_buffer_size=6M
+innodb_buffer_pool_size=522M
+innodb_log_file_size=105M
+innodb_thread_concurrency=26
+
+
+[mysqldump]
+quick
+max_allowed_packet = 512M
+</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2020/issue88-windows-2019-ltsc.html">← windows 2019 ltsc 激活</a>
+    <a class="next" href="../../posts/2020/issue90-linux.html">Linux找回缺少的命令 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

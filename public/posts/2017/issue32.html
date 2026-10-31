@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>国内开发提速 · Jay的实验室</title>
+<meta name="description" content="腾讯源 https://mirrors.cloud.tencent.com/">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">国内开发提速</h1>
+    <div class="post-meta">
+      <time>2017-07-22</time>
+      
+    </div>
+    <div class="post-content"><p>腾讯源 <a href="https://mirrors.cloud.tencent.com/">https://mirrors.cloud.tencent.com/</a></p>
+<h1>linux</h1>
+<h2>修改apt 源  <a href="https://www.sunzhongwei.com/modify-the-wsl-ubuntu-1804-default-source-for-ali-cloud-images?from=sidebar_new">https://www.sunzhongwei.com/modify-the-wsl-ubuntu-1804-default-source-for-ali-cloud-images?from=sidebar_new</a></h2>
+<h3>清华开源 软件源</h3>
+<p><a href="https://mirror.tuna.tsinghua.edu.cn/">https://mirror.tuna.tsinghua.edu.cn/</a></p>
+<h2>apt-fast</h2>
+<h2>修改yum源为阿里源</h2>
+<h3>1、备份</h3>
+<p><code>mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</code></p>
+<h3>2、下载新的CentOS-Base.repo 到/etc/yum.repos.d/</h3>
+<h4>CentOS 5</h4>
+<p><code>wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo</code></p>
+<p><code>或者</code></p>
+<p><code>curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo</code></p>
+<h4>CentOS 6</h4>
+<p><code>wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo</code></p>
+<p><code>或者</code></p>
+<p><code>curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo</code></p>
+<h4>CentOS 7</h4>
+<p><code>wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</code></p>
+<p><code>或者</code></p>
+<p><code>curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</code></p>
+<h3>3、之后运行yum makecache生成缓存</h3>
+<h2>相关链接</h2>
+<ul>
+<li><a href="http://www.centos.org/">官方主页: <a href="http://www.centos.org/">http://www.centos.org/</a></a></li>
+<li><a href="http://www.centos.org/modules/tinycontent/index.php?id=16">邮件列表: <a href="http://www.centos.org/modules/tinycontent/index.php?id=16">http://www.centos.org/modules/tinycontent/index.php?id=16</a></a></li>
+<li><a href="http://www.centos.org/modules/newbb/">论坛: <a href="http://www.centos.org/modules/newbb/">http://www.centos.org/modules/newbb/</a></a></li>
+<li><a href="http://www.centos.org/docs/">文档: <a href="http://www.centos.org/docs/">http://www.centos.org/docs/</a></a></li>
+<li><a href="http://wiki.centos.org/">Wiki: <a href="http://wiki.centos.org/">http://wiki.centos.org/</a></a></li>
+</ul>
+<h2>brew加速</h2>
+<p>brew cast<br>
+<a href="https://caskroom.github.io/">https://caskroom.github.io/</a></p>
+<p><a href="https://gitee.com/cunkai/HomebrewCN">https://gitee.com/cunkai/HomebrewCN</a></p>
+<h3>加速助手</h3>
+<p><a href="https://brew.idayer.com/guide/change-source/">https://brew.idayer.com/guide/change-source/</a></p>
+<h2>brew 添加php 源</h2>
+<p>brew tap kyslik/php<br>
+brew tap shivammathur/php<br>
+brew tap exolnet/homebrew-deprecated</p>
+<h2>bbr 提速</h2>
+<p><a href="https://github.com/yangweijie/note/issues/30">https://github.com/yangweijie/note/issues/30</a></p>
+<h1>node</h1>
+<p>nrm<br>
+yarn config set registry <a href="https://registry.npmmirror.com">https://registry.npmmirror.com</a></p>
+<p>npm config set registry 'https://registry.npmmirror.com'<br>
+export ELECTRON_MIRROR='https://registry.npmmirror.com/mirrors/electron/'<br>
+export SASS_BINARY_SITE='https://registry.npmmirror.com/mirrors/node-sass'</p>
+<h1>php</h1>
+<h2>composer</h2>
+<p><a href="https://github.com/hirak/prestissimo">多线程下载插件</a></p>
+<h2>opcache</h2>
+<h1>国内 PHP Composer 镜像列表</h1>
+<h2>Composer 是什么？</h2>
+<p>Composer 是一个 PHP 包管理的系统，现在越来越多的 PHP 使用 Composer 来管理包。  <br>
+比如 FastAdmin、 ThinkPHP、Laravel 等都是用 Composer 进行 php 包的管理。</p>
+<h2>镜像列表</h2>
+<p>国内也很多开发者使用 Composer，但由于不可控因素，官方的服务器常常连接不上。  <br>
+所以这里收集了一下国内镜像列表。（先后次序会不定期调整）</p>
+<table><thead><tr><th>镜像名</th><th>地址</th><th>赞助商</th><th>更新频率</th><th>状态</th></tr></thead><tbody>
+<tr><td>Laravel 中文社 Composer 镜像</td><td><a href="https://packagist.laravel-china.org/">https://packagist.laravel-china.org</a></td><td>又拍云</td><td>24 小时</td><td></td></tr>
+<tr><td>php.cnpkg.org Composer 镜像</td><td><a href="https://php.cnpkg.org/">https://php.cnpkg.org</a></td><td>安畅网络</td><td>60 秒</td><td></td></tr>
+<tr><td>阿里云 Composer 镜像</td><td><a href="https://mirrors.aliyun.com/composer/">https://mirrors.aliyun.com/composer/</a></td><td>阿里云</td><td>5秒</td><td></td></tr>
+<tr><td>华为云 Composer 镜像</td><td><a href="https://repo.huaweicloud.com/repository/php/">https://repo.huaweicloud.com/repository/php/</a></td><td>华为云</td><td>未知</td><td></td></tr>
+<tr><td>腾讯云 Composer 镜像</td><td><a href="https://mirrors.cloud.tencent.com/composer/">https://mirrors.cloud.tencent.com/composer/</a></td><td>腾讯云</td><td>未知</td><td></td></tr>
+<tr><td>PHP 国内 Composer 镜像</td><td><a href="https://www.phpcomposer.com/">https://www.phpcomposer.com/</a></td><td>又拍云</td><td>未知</td><td>不稳定</td></tr>
+<tr><td>Composer 官方</td><td><a href="https://packagist.phpcomposer.com/">https://packagist.phpcomposer.com</a></td><td></td><td></td><td>不稳定</td></tr>
+</tbody></table>
+<h3>镜像管理工具</h3>
+<p><a href="crm">https://github.com/slince/composer-registry-manager/blob/master/README-zh_CN.md</a></p>
+<h1>pip加速</h1>
+<h2>在Linux系统中：</h2>
+<p>设置阿里云pip源，加速pip更新速度<br>
+mkdir ~/.pip<br>
+cat &gt; ~/.pip/pip.conf &lt;&lt; EOF<br>
+[global]<br>
+trusted-host=mirrors.aliyun.com<br>
+index-url=http://mirrors.aliyun.com/pypi/simple/<br>
+EOF</p>
+<p>pip config set global.index-url <a href="https://pypi.tuna.tsinghua.edu.cn/simple">https://pypi.tuna.tsinghua.edu.cn/simple</a></p>
+<h2>在windows系统中:</h2>
+<p>windows下，直接在user目录中创建一个pip目录，如：C:\Users\xx\pip，新建文件pip.ini。内容同上。</p>
+<p>如果安装包慢，可以添加国内镜像，清华的源：<br>
+conda config --add channels <a href="https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/">https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</a></p>
+<p>#cmd代理</p>
+<h2>linux</h2>
+<p>~~~<br>
+http_proxy=http://hx.gy:1080<br>
+export http_proxy<br>
+~~~</p>
+<h2>win</h2>
+<p>设置好ie代理<br>
+<code>netsh winhttp import proxy source=ie</code></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue30-bbr.html">← 亲测，免费 “ 锐速 ” ，BBR 网络加速 可用！</a>
+    <a class="next" href="../../posts/2017/issue31.html">提问的智慧（转） →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

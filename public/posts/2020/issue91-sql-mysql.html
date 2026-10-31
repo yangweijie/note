@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sql查看mysql中各数据库大小 · Jay的实验室</title>
+<meta name="description" content="用SQL命令查看Mysql数据库大小">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">sql查看mysql中各数据库大小</h1>
+    <div class="post-meta">
+      <time>2020-11-05</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/sql.html">#sql</a><a class="tag" href="../../tags/mysql.html">#mysql</a></span>
+    </div>
+    <div class="post-content"><p>用SQL命令查看Mysql数据库大小<br>
+要想知道每个数据库的大小的话，步骤如下：</p>
+<p>1、进入information_schema 数据库（存放了其他的数据库的信息）</p>
+<p><code>use information_schema;</code></p>
+<p>2、查询所有数据的大小：</p>
+<p><code>select concat(round(sum(data_length/1024/1024),2),'MB') as data from tables;</code></p>
+<p>3、查看指定数据库的大小：</p>
+<p>比如查看数据库home的大小</p>
+<p><code>select concat(round(sum(data_length/1024/1024),2),'MB') as data from tables where table_schema='home';</code></p>
+<p>4、查看指定数据库的某个表的大小</p>
+<p>比如查看数据库home中 members 表的大小</p>
+<p><code>select concat(round(sum(data_length/1024/1024),2),'MB') as data from tables where table_schema='home' and table_name='members';</code></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2020/issue90-linux.html">← Linux找回缺少的命令</a>
+    <a class="next" href="../../posts/2021/issue92-springboot-validation.html">springboot整合validation统一参数检查 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

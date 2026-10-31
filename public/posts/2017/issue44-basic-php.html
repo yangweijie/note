@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>basic 认证 php 获取失效问题 · Jay的实验室</title>
+<meta name="description" content="用的php apidoc  有一个basic 认证 之前一直好好的，突然同事说 判断沙盒方式的错了。">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">basic 认证 php 获取失效问题</h1>
+    <div class="post-meta">
+      <time>2017-11-07</time>
+      <span class="tags"><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/apache.html">#apache</a></span>
+    </div>
+    <div class="post-content"><p>用的php apidoc  有一个basic 认证 之前一直好好的，突然同事说 判断沙盒方式的错了。</p>
+<p>百度了一下</p>
+<blockquote><p>Run phpinfo(). if &quot;Server API&quot; is CGI/FCGI, you can pretty much forget it as there is no sensible way to use HTTP auth from PHP.</p></blockquote>
+<p>通过.htaccess 文件 添加路由 可以解决</p>
+<pre><code>&lt;IfModule mod_rewrite.c&gt;
+RewriteEngine on
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+&lt;/IfModule&gt;</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue43-nginx-ssl-https.html">← Nginx配置SSL证书部署HTTPS网站</a>
+    <a class="next" href="../../posts/2017/issue45-mysql-float-double.html">mysql float和double类型的区别 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>php类库速查表升级 · Jay的实验室</title>
+<meta name="description" content="速查表 新版升级">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">php类库速查表升级</h1>
+    <div class="post-meta">
+      <time>2017-07-31</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/thinkphp.html">#thinkphp</a></span>
+    </div>
+    <div class="post-content"><h1>速查表 新版升级</h1>
+<h2>历史回顾</h2>
+<p>我感叹于laravel的生态完好，tp5的类api的缺失（以前thinkphp3时代，帮助公司用apigen NetBeans里生成过一个<a href="http://www.thinkphp.cn/api/">3.1版本的api</a>）。</p>
+<p><img src="https://box.kancloud.cn/362d9e9b3a4adf2d87d00ef3b88e344a_1634x753.png" alt="" loading="lazy"></p>
+<p>在我走之后，估计没人用NetBeans了 所以就没人做升级。</p>
+<p>然后我觉得laravel的速查表不错，见下图：</p>
+<p><img src="https://box.kancloud.cn/08ce1b130d60e7dd91cb2a2a84a106bf_1880x942.png" alt="" loading="lazy"></p>
+<p>于是就想到了把他移植到tp5上，作为自己回到thinkphp5开发上的第一个贡献。</p>
+<p>记得那个时候是清明前开始动手的。使用最土的，静态页面，一个个类手动去编辑。</p>
+<p>后来发现类太多了，我每次在sublime 里 先打开一个类，复制出来临时文件，处理好，粘贴到静态index.html里，太麻烦了，要处理左侧的导航，又要定位插入的位置。 于是乎在五一放假时 我换了个思路，我不搞静态了，我搞动态的。</p>
+<p>于是在海豚里建了一个插件，<br>
+<img src="https://box.kancloud.cn/9e59b717a605206c9d8524d2df22dd68_408x579.png" alt="" loading="lazy"></p>
+<p><img src="https://box.kancloud.cn/151ea4077b21e19b8c5273df961a8bec_1572x283.png" alt="" loading="lazy"></p>
+<p><img src="https://box.kancloud.cn/a2706b813b86185a7754188e9a4da023_1568x555.png" alt="" loading="lazy"></p>
+<p><img src="https://box.kancloud.cn/a2c1a142688505b1561ce354df0d468e_1572x603.png" alt="" loading="lazy"></p>
+<p>以章节的形式添加。终于效率上去了，五一时候抽空把内容全补全了。</p>
+<p>发布到了 掘金上，获得了17个赞。</p>
+<p><img src="https://box.kancloud.cn/00443be8b9c5c5e7ceed4ed55525fd82_350x209.png" alt="" loading="lazy"></p>
+<h2>进击的速查表</h2>
+<p>本来以为完成了。结果老大们太积极7月4日又发布了5.0.10，然后在开发5.1dev版。</p>
+<p>既然老大把我的速查表都挂到了tp官网上。我也不能让用的人等，看旧的5.0.7版、</p>
+<p>可是我不想在人工去对比改了哪个类，增加还是删除了哪些方法。20多章呢。</p>
+<p>我想 “代码的问题应该由代码解决”。于是想到了php的注解、反射类。</p>
+<p>正好项目用到了一个 <strong>crada/php-apidoc</strong> 的api文档生成工具。</p>
+<p>于是我就开始动手实现这通过类反射信息获取方法的工程。</p>
+<h3>反射的资料</h3>
+<blockquote><p>PHP 5 具有完整的反射 API，添加了对类、接口、函数、方法和扩展进行反向工程的能力。 此外，反射 API 提供了方法来取出函数、类和方法中的文档注释。</p></blockquote>
+<p>官网手册提到了反射有这多类：</p>
+<p>Reflection<br>
+ReflectionClass<br>
+ReflectionZendExtension<br>
+ReflectionExtension<br>
+ReflectionFunction<br>
+ReflectionFunctionAbstract<br>
+ReflectionMethod<br>
+ReflectionObject<br>
+ReflectionParameter<br>
+ReflectionProperty<br>
+ReflectionType<br>
+ReflectionGenerator<br>
+Reflector<br>
+ReflectionException</p>
+<h3>实现思路</h3>
+<p>~~~<br>
+// TODO 获取待处理的类命名空间数据<br>
+// TODO 遍历类 反射<br>
+// TODO 获取类的信息 (名称、方法列表)<br>
+// TODO 遍历方法列表， 获取方法的类型 和注释<br>
+~~~</p>
+<p>我看了一遍反射是先反射类 再找到方法 再找到方法的参数</p>
+<h4>类的获取</h4>
+<p>tp5的核心类 都在一个目录</p>
+<p>于是我想到了用glob遍历</p>
+<p>~~~<br>
+	public function get_core_class(){<br>
+		$class_path = CORE_PATH;<br>
+		$before_cwd = getcwd();<br>
+		chdir($class_path);<br>
+		$names = glob('*.php');<br>
+		$ret = [];<br>
+		foreach ($names as $key =&gt; $name) {<br>
+			$ret[] = 'think\\'. str_ireplace('.php', '', $name);<br>
+		}<br>
+		chdir($before_cwd);<br>
+		return $ret;<br>
+	}<br>
+~~~</p>
+<p>反射类的初始化要传的是类的实际命名空间路径。</p>
+<p><code>$class= new\ReflectionClass($className);</code> 这样。然后有以下方法：</p>
+<p>ReflectionClass::__construct — 初始化 ReflectionClass 类<br>
+ReflectionClass::export — 导出一个类<br>
+ReflectionClass::getConstant — 获取定义过的一个常量<br>
+ReflectionClass::getConstants — 获取一组常量<br>
+ReflectionClass::getConstructor — 获取类的构造函数<br>
+ReflectionClass::getDefaultProperties — 获取默认属性<br>
+ReflectionClass::getDocComment — 获取文档注释<br>
+ReflectionClass::getEndLine — 获取最后一行的行数<br>
+ReflectionClass::getExtension — 根据已定义的类获取所在扩展的 ReflectionExtension 对象<br>
+ReflectionClass::getExtensionName — 获取定义的类所在的扩展的名称<br>
+ReflectionClass::getFileName — 获取定义类的文件名<br>
+ReflectionClass::getInterfaceNames — 获取接口（interface）名称<br>
+ReflectionClass::getInterfaces — 获取接口<br>
+ReflectionClass::getMethod — 获取一个类方法的 ReflectionMethod。<br>
+ReflectionClass::getMethods — 获取方法的数组<br>
+ReflectionClass::getModifiers — 获取类的修饰符<br>
+ReflectionClass::getName — 获取类名<br>
+ReflectionClass::getNamespaceName — 获取命名空间的名称<br>
+ReflectionClass::getParentClass — 获取父类<br>
+ReflectionClass::getProperties — 获取一组属性<br>
+ReflectionClass::getProperty — 获取类的一个属性的 ReflectionProperty<br>
+ReflectionClass::getShortName — 获取短名<br>
+ReflectionClass::getStartLine — 获取起始行号<br>
+ReflectionClass::getStaticProperties — 获取静态（static）属性<br>
+ReflectionClass::getStaticPropertyValue — 获取静态（static）属性的值<br>
+ReflectionClass::getTraitAliases — 返回 trait 别名的一个数组<br>
+ReflectionClass::getTraitNames — 返回这个类所使用 traits 的名称的数组<br>
+ReflectionClass::getTraits — 返回这个类所使用的 traits 数组<br>
+ReflectionClass::hasConstant — 检查常量是否已经定义<br>
+ReflectionClass::hasMethod — 检查方法是否已定义<br>
+ReflectionClass::hasProperty — 检查属性是否已定义<br>
+ReflectionClass::implementsInterface — 接口的实现<br>
+ReflectionClass::inNamespace — 检查是否位于命名空间中<br>
+ReflectionClass::isAbstract — 检查类是否是抽象类（abstract）<br>
+ReflectionClass::isAnonymous — 检查类是否是匿名类<br>
+ReflectionClass::isCloneable — 返回了一个类是否可复制<br>
+ReflectionClass::isFinal — 检查类是否声明为 final<br>
+ReflectionClass::isInstance — 检查类的实例<br>
+ReflectionClass::isInstantiable — 检查类是否可实例化<br>
+ReflectionClass::isInterface — 检查类是否是一个接口（interface）<br>
+ReflectionClass::isInternal — 检查类是否由扩展或核心在内部定义<br>
+ReflectionClass::isIterateable — 检查是否可迭代（iterateable）<br>
+ReflectionClass::isSubclassOf — 检查是否为一个子类<br>
+ReflectionClass::isTrait — 返回了是否为一个 trait<br>
+ReflectionClass::isUserDefined — 检查是否由用户定义的<br>
+ReflectionClass::newInstance — 从指定的参数创建一个新的类实例<br>
+ReflectionClass::newInstanceArgs — 从给出的参数创建一个新的类实例。<br>
+ReflectionClass::newInstanceWithoutConstructor — 创建一个新的类实例而不调用它的构造函数<br>
+ReflectionClass::setStaticPropertyValue — 设置静态属性的值<br>
+ReflectionClass::__toString — 返回 ReflectionClass 对象字符串的表示形式。</p>
+<p>这些方法看着是静态，其实可以 <strong>$class-&gt;getShortName()</strong> 直接使用。</p>
+<p>我主要需要拿到类简写名和方法。</p>
+<p>~~~<br>
+public function generate($classNames){<br>
+		config('default_return_type', 'json');<br>
+		// TODO 获取待处理的类命名空间数据<br>
+		// TODO 遍历类 反射<br>
+		// TODO 获取类的信息 (名称、方法列表)<br>
+		// TODO 遍历方法列表， 获取方法的类型 和注释</p>
+<p>		$outputs = [];<br>
+		foreach ($classNames as $k =&gt; $className) {<br>
+			$class= new\ReflectionClass($className);<br>
+			$key = $class-&gt;getShortName();<br>
+			// dump($key);<br>
+			$outputs[$key] = $this-&gt;getClassAnnotation($class);<br>
+		}<br>
+		return $outputs;<br>
+	}<br>
+~~~</p>
+<p>getClassAnonation 方法就是我用来获取类的全部方法的信息的方法。</p>
+<h4>方法相关</h4>
+<p>拿到反射类之后 想获取反射方法，得实例化 ReflectionMethod 类。</p>
+<p>~~~<br>
+	// 获取类的注释信息<br>
+	public function getClassAnnotation($class){</p>
+<p>		$ret = [<br>
+			'hasPublicMethods'=&gt;0,<br>
+		];<br>
+		$ret['name'] = $class-&gt;getName();<br>
+		$methods = $class-&gt;getMethods();<br>
+		foreach ($methods as $key =&gt; $method) {<br>
+			$class = $method-&gt;class;<br>
+			$method_name = $method-&gt;name;<br>
+			$rm = new \ReflectionMethod($class, $method_name);<br>
+			// 忽略构造和析构<br>
+			if($rm-&gt;isConstructor() || $rm-&gt;isDestructor()){<br>
+				continue;<br>
+			}<br>
+			$foo = [];<br>
+			$foo['docComment'] = $rm-&gt;getDocComment();<br>
+			$foo['docComment_formated'] = $this-&gt;parseMethodDoc($foo['docComment']);<br>
+			$foo['args'] = $rm-&gt;getParameters();<br>
+			$foo['args_formated'] = $this-&gt;parseParameters($class, $method_name, $foo['args']);<br>
+			if($rm-&gt;isPublic()){<br>
+				$type = $rm-&gt;isStatic()? 'public_static' : 'public_public';<br>
+			}else{<br>
+				$type = $rm-&gt;isStatic()? 'private_static' : 'private_public';<br>
+			}<br>
+			// 只在hasPublicMethods 为0时更新值，保证设置1后不会被复写为0<br>
+			if(empty($ret['hasPublicMethods'])){<br>
+				$ret['hasPublicMethods'] = stripos($type, '_public') !== false;<br>
+			}<br>
+			$foo['type'] = $type;<br>
+			$ret['methods'][$method_name] = $foo;<br>
+		}</p>
+<p>		return $ret;<br>
+		// $className = 'think\\App';<br>
+		// $class = new \ReflectionClass($className);<br>
+		// config('default_return_type', 'json');</p>
+<p>		// 类名<br>
+		// return $class-&gt;name;</p>
+<p>		// ReflectionClass 实例的一个字符串表示形式<br>
+		// return $class-&gt;__toString();</p>
+<p>		// 同上<br>
+		// return \ReflectionClass::export($className, 1);</p>
+<p>		// 获取类常量<br>
+		// return json_encode($class-&gt;getConstants());</p>
+<p>		// 获取构造方法<br>
+		// return $class-&gt;getConstructor();</p>
+<p>		// 类名相关<br>
+		// var_dump($class-&gt;inNamespace());<br>
+		// var_dump($class-&gt;getName());<br>
+		// var_dump($class-&gt;getNamespaceName());<br>
+		// var_dump($class-&gt;getShortName());</p>
+<p>		# 文件相关<br>
+		// getFileName<br>
+		// getExtensionName</p>
+<p>		// 属性相关<br>
+		// return $class-&gt;getDefaultProperties();<br>
+		// return $class-&gt;getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);</p>
+<p>		// const integer IS_STATIC = 1 ;<br>
+		// const integer IS_PUBLIC = 256 ;<br>
+		// const integer IS_PROTECTED = 512 ;<br>
+		// const integer IS_PRIVATE = 1024 ;</p>
+<p>		// return $class-&gt;getStaticProperties();</p>
+<p>		// 类注释<br>
+		// return $class-&gt;getDocComment();<br>
+	}<br>
+~~~</p>
+<p>先获取全部的类方法：</p>
+<p>$class-&gt;getMethods();</p>
+<p>官网的例子：<br>
+~~~<br>
+array(3) {<br>
+  [0]=&gt;<br>
+  &amp;object(ReflectionMethod)#2 (2) {<br>
+    [&quot;name&quot;]=&gt;<br>
+    string(11) &quot;firstMethod&quot;<br>
+    [&quot;class&quot;]=&gt;<br>
+    string(5) &quot;Apple&quot;<br>
+  }<br>
+  [1]=&gt;<br>
+  &amp;object(ReflectionMethod)#3 (2) {<br>
+    [&quot;name&quot;]=&gt;<br>
+    string(12) &quot;secondMethod&quot;<br>
+    [&quot;class&quot;]=&gt;<br>
+    string(5) &quot;Apple&quot;<br>
+  }<br>
+  [2]=&gt;<br>
+  &amp;object(ReflectionMethod)#4 (2) {<br>
+    [&quot;name&quot;]=&gt;<br>
+    string(11) &quot;thirdMethod&quot;<br>
+    [&quot;class&quot;]=&gt;<br>
+    string(5) &quot;Apple&quot;<br>
+  }<br>
+}<br>
+~~~<br>
+在获取时还可以传属性类型进行过滤：</p>
+<p>~~~<br>
+&lt;?php<br>
+class Apple {<br>
+    public function firstMethod() { }<br>
+    final protected function secondMethod() { }<br>
+    private static function thirdMethod() { }<br>
+}</p>
+<p>$class = new ReflectionClass('Apple');<br>
+$methods = $class-&gt;getMethods(ReflectionMethod::IS_STATIC | ReflectionMethod::IS_FINAL);<br>
+var_dump($methods);<br>
+?&gt;<br>
+~~~</p>
+<p>拿到方法后，我们需要获得类的方法的公有私有、静态等属性。</p>
+<p><img src="https://box.kancloud.cn/8e5426f80c5fd4ff970a167964fb3102_287x529.png" alt="" loading="lazy"></p>
+<p>因为我在显示时做了方法不同类型的区分演示。</p>
+<p>~~~<br>
+$rm = new \ReflectionMethod($class, $method_name);<br>
+// 忽略构造和析构<br>
+if($rm-&gt;isConstructor() || $rm-&gt;isDestructor()){<br>
+	continue;<br>
+}<br>
+~~~</p>
+<p>先过滤掉构造和析构方法。</p>
+<p>~~~<br>
+$foo = [];<br>
+$foo['docComment'] = $rm-&gt;getDocComment();<br>
+$foo['docComment_formated'] = $this-&gt;parseMethodDoc($foo['docComment']);<br>
+$foo['args'] = $rm-&gt;getParameters();<br>
+$foo['args_formated'] = $this-&gt;parseParameters($class, $method_name, $foo['args']);<br>
+~~~<br>
+我先获取了原有方法的文档信息和参数信息，并且按照我需要的进行格式化。</p>
+<p>获取参数的要注意，返回的是参数数组</p>
+<p>官方示例：<br>
+~~~<br>
+&lt;?php<br>
+public static function fire_theme_method($class, $method)<br>
+{<br>
+        $fire_args=array();</p>
+<p>        $reflection = new ReflectionMethod($class, $method);</p>
+<p>    foreach($reflection-&gt;getParameters() AS $arg)<br>
+    {<br>
+        if($_REQUEST[$arg-&gt;name])<br>
+        $fire_args[$arg-&gt;name]=$_REQUEST[$arg-&gt;name];<br>
+        else<br>
+        $fire_args[$arg-&gt;name]=null;<br>
+    }</p>
+<p>    return call_user_func_array(array($class, $method), $fire_args);<br>
+}<br>
+?&gt;<br>
+~~~<br>
+主要咱获取到参数名称 然后结合methodName 去实例化 ReflectionParameter 来获取参数信息</p>
+<h4>类的参数信息</h4>
+<p>~~~<br>
+public function parseParameters($class, $method, $args){<br>
+		if($args){<br>
+			$args_str = [];<br>
+			foreach ($args as $key =&gt; $arg) {<br>
+				$p = new \ReflectionParameter(array($class, $method), $key);<br>
+				// 判断是否引用参数<br>
+				if($p-&gt;isPassedByReference()){<br>
+					$arg_str_new = &quot;&amp;\$&quot;.$p-&gt;getName();<br>
+				}else{<br>
+					$arg_str_new = &quot;\$&quot;.$p-&gt;getName();<br>
+				}<br>
+				if ($p-&gt;isOptional() &amp;&amp; $p-&gt;isDefaultValueAvailable()) {<br>
+					$a_clsss = $class;<br>
+					// 获取某些内部类的参数会抛异常，且异常时$class会变化不是我们想知道的哪个类方法一场了<br>
+					try{<br>
+						$defaul = $p-&gt;getDefaultValue();<br>
+						$arg_str_new .= is_array($defaul) ? ' = '. '[]': ' = '. var_export($defaul, 1);<br>
+					}catch(\Exception $e){<br>
+						trace($p-&gt;isVariadic());<br>
+						trace($a_clsss.'/'.$method.'_'.$key);<br>
+					}<br>
+				}<br>
+				$args_str[] = $arg_str_new;<br>
+			}<br>
+			return implode(', ', $args_str);<br>
+		}<br>
+		return '';<br>
+	}<br>
+~~~</p>
+<p>有的方法没参数直接返回空，有的有参数，咱们想拼接处 参数字符串 比如</p>
+<p>~~~<br>
+&lt;?php<br>
+class A{<br>
+	function foo($a){</p>
+<p>    }<br>
+}<br>
+~~~</p>
+<p>php不会返回<code> foo($a)</code>这串的。得自己处理</p>
+<p>主要留意参数的 是否有默认值、是否引用</p>
+<ul>
+<li>getName</li>
+<li>isOptional</li>
+<li>isDefaultValueAvailable</li>
+<li>getDefaultValue</li>
+</ul>
+<p>在获取默认值参数的时候 我发现有的时候会抛异常，而且都报的是内部类的。</p>
+<p>所以一定要try catch 去获取默认值。</p>
+<p>至此 整个获取某些类的 方法及方法注释和参数信息 的功能全部实现。</p>
+<p>大家如果想获取某一组class的 速查表 只需 修改get_core_class返回值，只要是tp5里自动加载的类。都可以解析。</p>
+<p>整体思路，根据类数组获取方法-&gt;方法文档、获取参数-&gt;获取参数信息</p>
+<p>这样，我就可以安心的偷懒了。下次tp升级，我直接composer update一下，刷新一下首页，拿到静态html  更新到我的 gh-pages 分支。就完成了新框架速写表的更新。</p>
+<p>一劳永逸啊。</p>
+<h2>尾声</h2>
+<p>具体源码参考 ：<a href="https://github.com/yangweijie/thinkphp-lts">https://github.com/yangweijie/thinkphp-lts</a></p>
+<p>查看速查表 直接：<a href="https://yangweijie.github.io/thinkphp-lts/">https://yangweijie.github.io/thinkphp-lts/</a></p>
+<p><img src="https://box.kancloud.cn/5cc127b3019ca3971a3107237d9569f8_1872x967.png" alt="" loading="lazy"></p>
+<p>欢迎给我提供建议。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue33.html">← 一些技术社区（国内为主）</a>
+    <a class="next" href="../../posts/2017/issue35-phper-st-vscode.html">phper从st到vscode →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

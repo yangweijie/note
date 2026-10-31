@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>php 中文文件名下载 · Jay的实验室</title>
+<meta name="description" content="两种">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">php 中文文件名下载</h1>
+    <div class="post-meta">
+      <time>2024-05-08</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a></span>
+    </div>
+    <div class="post-content"><p>两种</p>
+<ol>
+<li>文件名转gbk</li>
+</ol>
+<p>``` php<br>
+        $text = '2024年4月15日商品导出';<br>
+        $filename = mb_convert_encoding($text, &quot;GBK&quot;,  &quot;UTF-8&quot;).'.txt';   // a filename in Chinese characters<br>
+        header('Content-Type: application/octet-stream');<br>
+        header('Content-Disposition: filename='.$filename);<br>
+        readfile(realpath('../think'));<br>
+        exit();</p>
+<pre><code>2. urlencode 
+
+  ``` php
+        $filename = '2024年4月5日中文文件名.txt';   // a filename in Chinese characters
+        $contentDispositionField = 'Content-Disposition: attachment; '
+            . sprintf('filename=&quot;%s&quot;; ', rawurlencode($filename))
+            . sprintf(&quot;filename*=utf-8''%s&quot;, rawurlencode($filename));
+        header('Content-Type: application/octet-stream');
+        header($contentDispositionField);
+        readfile(realpath('../think'));
+        exit();</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2024/issue101-2024.html">← 2024春节成就</a>
+    <a class="next" href="../../posts/2024/issue103-cygwin-php7-4-swoole.html">cygwin  php7.4 和swoole →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

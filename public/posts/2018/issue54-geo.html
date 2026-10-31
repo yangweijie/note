@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>geo扩展库安装 · Jay的实验室</title>
+<meta name="description" content="安装geos   yum install geos">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">geo扩展库安装</h1>
+    <div class="post-meta">
+      <time>2018-04-18</time>
+      
+    </div>
+    <div class="post-content"><p>安装geos   yum install geos<br>
+git clone <a href="https://git.osgeo.org/gitea/geos/php-geos.git">https://git.osgeo.org/gitea/geos/php-geos.git</a><br>
+cd php-geos<br>
+./autogen.sh<br>
+./configure --with-php-config=/Applications/MAMP/bin/php/php7.1.12/bin/php-config<br>
+make # generates modules/geos.so<br>
+make install<br>
+改php.ini</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue53-eolinker.html">← eolinker开源版安装没法设置端口问题</a>
+    <a class="next" href="../../posts/2018/issue57-yar.html">yar使用 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>php实现AES/CBC/PKCS5Padding加密解密（又叫：对称加密） · Jay的实验室</title>
+<meta name="description" content="&lt;?php">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">php实现AES/CBC/PKCS5Padding加密解密（又叫：对称加密）</h1>
+    <div class="post-meta">
+      <time>2017-09-26</time>
+      
+    </div>
+    <div class="post-content"><pre><code>&lt;?php
+ 
+class MagicCrypt {
+    private $iv = &quot;0102030405060708&quot;;//密钥偏移量IV，可自定义
+ 
+    private $encryptKey = &quot;自定义16位长度key&quot;;//AESkey，可自定义
+ 
+    //加密
+    public function encrypt($encryptStr) {
+        $localIV = $this-&gt;iv;
+        $encryptKey = $this-&gt;encryptKey;
+ 
+        //Open module
+        $module = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, $localIV);
+ 
+        //print &quot;module = $module &lt;br/&gt;&quot; ;
+ 
+        mcrypt_generic_init($module, $encryptKey, $localIV);
+ 
+        //Padding
+        $block = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+        $pad = $block - (strlen($encryptStr) % $block); //Compute how many characters need to pad
+        $encryptStr .= str_repeat(chr($pad), $pad); // After pad, the str length must be equal to block or its integer multiples
+ 
+        //encrypt
+        $encrypted = mcrypt_generic($module, $encryptStr);
+ 
+        //Close
+        mcrypt_generic_deinit($module);
+        mcrypt_module_close($module);
+ 
+        return base64_encode($encrypted);
+ 
+    }
+ 
+    //解密
+    public function decrypt($encryptStr) {
+        $localIV = $this-&gt;iv;
+        $encryptKey = $this-&gt;encryptKey;
+ 
+        //Open module
+        $module = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, $localIV);
+ 
+        //print &quot;module = $module &lt;br/&gt;&quot; ;
+ 
+        mcrypt_generic_init($module, $encryptKey, $localIV);
+ 
+        $encryptedData = base64_decode($encryptStr);
+        $encryptedData = mdecrypt_generic($module, $encryptedData);
+ 
+        return $encryptedData;
+    }
+}
+$encryptString = 'gz1DR+BsCzQe55HFdq1IiQ==';
+$encryptObj = new MagicCrypt();
+ 
+$result = $encryptObj-&gt;encrypt($encryptString);//加密结果
+$decryptString = $decryptString = $encryptObj-&gt;decrypt($result);//解密结果
+echo $result . &quot;&lt;br/&gt;&quot;;
+echo $decryptString . &quot;&lt;br/&gt;&quot;;
+?&gt;</code></pre>
+<p>发现 mark app的加密用的这个方式，找了一个对应的，发现没问题</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue41-mysql.html">← MySQL 对比数据库表结构</a>
+    <a class="next" href="../../posts/2017/issue43-nginx-ssl-https.html">Nginx配置SSL证书部署HTTPS网站 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ubuntu18.04下更改apt源为阿里云源 · Jay的实验室</title>
+<meta name="description" content="前言：看见Ubuntu新出了18.04版本感觉不错，装一个玩玩，虽然有很多教程可以参考，但我也给出一个不是很一样的方案吧，尽量解释的详细一点。">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">Ubuntu18.04下更改apt源为阿里云源</h1>
+    <div class="post-meta">
+      <time>2018-08-04</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p>前言：看见Ubuntu新出了18.04版本感觉不错，装一个玩玩，虽然有很多教程可以参考，但我也给出一个不是很一样的方案吧，尽量解释的详细一点。</p>
+<p>为了下载更方便，速度更快，我们往往在使用Linux系列系统时修改apt源为国内的源，一般选择有阿里云，豆瓣之类的，下面简单说下如何更改为阿里云源。</p>
+<p>1.复制源文件备份，以防万一</p>
+<p>我们要修改的文件是sources.list，它在目录/etc/apt/下，sources.list是包管理工具apt所用的记录软件包仓库位置的配置文件，同样类型的还有位于 同目录下sources.list.d文件下的各种.list后缀的各文件。</p>
+<p>命令如下：</p>
+<p>sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak</p>
+<p>2.编辑源列表文件</p>
+<p>命令如下：</p>
+<p>sudo vim /etc/apt/sources.list</p>
+<p>如果报错：sudo:vim:command not found    说明没装vim编辑器</p>
+<p>使用命令：</p>
+<p>sudo apt-get install vim 安装即可</p>
+<p>3.查看新版本信息</p>
+<p>其实Ubuntu18.04版之前的任一版更改apt源为国内源方法早就有了，内容大同小异，我们应当掌握其规律了，其实每一版内容不同的地方就是版本号（或者官方一点的说：系统代号），所以我们先了解下新版本的系统代号：</p>
+<p>使用如下命令：</p>
+<p>lsb_release -c</p>
+<p>得到本系统的系统代号，如下图所示：</p>
+<p>我们可以看到新版本的Ubuntu系统代号为bionic</p>
+<p>同样的我们也可以得到之前任意版本的系统代号：</p>
+<p>Ubuntu 12.04 (LTS)代号为precise。</p>
+<p>Ubuntu 14.04 (LTS)代号为trusty。</p>
+<p>Ubuntu 15.04 代号为vivid。</p>
+<p>Ubuntu 15.10 代号为wily。</p>
+<p>Ubuntu 16.04 (LTS)代号为xenial。</p>
+<p>所以这也就解释了为什么我们百度出来的那么多方案里面内容不尽相同的原因，因为他们更改apt安装源时用的系统不一样。</p>
+<p>4.将原有的内容注释掉，添加以下内容（或者你把里面内容修改成下面的就可以，但是不能有除了以下内容的有效内容）</p>
+<p>deb <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic main restricted universe multiverse</p>
+<p>deb-src <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic main restricted universe multiverse</p>
+<p>deb <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-security main restricted universe multiverse</p>
+<p>deb-src <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-security main restricted universe multiverse</p>
+<p>deb <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-updates main restricted universe multiverse</p>
+<p>deb-src <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-updates main restricted universe multiverse</p>
+<p>deb <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-backports main restricted universe multiverse</p>
+<p>deb-src <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-backports main restricted universe multiverse</p>
+<p>deb <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-proposed main restricted universe multiverse</p>
+<p>deb-src <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-proposed main restricted universe multiverse</p>
+<p>值得注意的是sources.list文件的条目都是有格式的（通过上面的内容大家也看的出来），一般有如下形式</p>
+<p>所以后面几个参数是对软件包的分类（Ubuntu下是main， restricted，universe ，multiverse这四个）</p>
+<p>所以你把内容写成</p>
+<p>deb <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-proposed main restricted </p>
+<p>deb <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-proposed universe multiverse</p>
+<p>deb-src <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-proposed main restricted</p>
+<p>deb-src <a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a> bionic-proposed universe multiverse</p>
+<p>之类的也是可以的，之前我有这个疑惑，所以在这里一并告知和我有一样疑惑的朋友。</p>
+<p>5.更新软件列表</p>
+<p>运行如下命令：</p>
+<p>sudo apt-get update</p>
+<p>6.更新软件包</p>
+<p>运行如下命令：</p>
+<p>sudo apt-get upgrade</p>
+<p>7.最后说两句</p>
+<p>关于sudo apt-get update与sudo apt-get upgrade有什么区别，推荐一篇博文，一看就懂</p>
+<p><a href="https://blog.csdn.net/beckeyloveyou/article/details/51352426">https://blog.csdn.net/beckeyloveyou/article/details/51352426</a></p>
+<p>同时我借鉴了博友gong_xucheng的少部分博文，地址如下</p>
+<p><a href="https://blog.csdn.net/gong_xucheng/article/details/53886271">https://blog.csdn.net/gong_xucheng/article/details/53886271</a></p>
+<p>在此表示感谢。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue66-php.html">← 服务器上装不同版本php</a>
+    <a class="next" href="../../posts/2018/issue68.html">接单 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>服务器上装不同版本php · Jay的实验室</title>
+<meta name="description" content="wget">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">服务器上装不同版本php</h1>
+    <div class="post-meta">
+      <time>2018-07-16</time>
+      
+    </div>
+    <div class="post-content"><p>wget </p>
+<p>./configure --prefix=/alidata/server/php7 \<br>
+--with-curl \<br>
+--with-freetype-dir \<br>
+--with-gd \<br>
+--with-gettext \<br>
+--with-iconv-dir \<br>
+--with-kerberos \<br>
+--with-libdir=lib64 \<br>
+--with-libxml-dir \<br>
+--with-mysqli  --enable-embedded-mysqli  --with-pdo-mysql --with-pcre-dir  --enable-mysqlnd \<br>
+--with-openssl \<br>
+--with-pcre-regex \<br>
+--with-pdo-mysql \<br>
+--with-pdo-sqlite \<br>
+--with-pear \<br>
+--with-png-dir \<br>
+--with-xmlrpc \<br>
+--with-xsl \<br>
+--with-zlib \<br>
+--enable-fpm \<br>
+--enable-bcmath \<br>
+--enable-libxml \<br>
+--enable-inline-optimization \<br>
+--enable-mbregex \<br>
+--enable-mbstring \<br>
+--enable-pcntl \<br>
+--enable-shmop \<br>
+--enable-soap \<br>
+--enable-sockets \<br>
+--enable-sysvsem \<br>
+--enable-xml \<br>
+--enable-zip </p>
+<p>yum install -y freetype-devel libevent libevent-devel libxml2 libxml2-devel ncurses ncurses-devel  openssl openssl-devel  libjpeg libjpeg-devel libpng libpng–devel zlib-devel  bzip2 bzip2-devel libmcrypt libmcrypt-devel</p>
+<p>/alidata/server/php7/lib/php</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue65-nesk-puphpeteer.html">← nesk/puphpeteer使用记</a>
+    <a class="next" href="../../posts/2018/issue67-ubuntu18-04-apt.html">Ubuntu18.04下更改apt源为阿里云源 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

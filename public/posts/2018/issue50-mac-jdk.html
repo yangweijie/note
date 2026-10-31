@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mac系统下安装及卸载JDK · Jay的实验室</title>
+<meta name="description" content="一、安装JDK">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">Mac系统下安装及卸载JDK</h1>
+    <div class="post-meta">
+      <time>2018-02-19</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/java.html">#java</a><a class="tag" href="../../tags/osx.html">#osx</a><a class="tag" href="../../tags/mac.html">#mac</a></span>
+    </div>
+    <div class="post-content"><p>一、安装JDK</p>
+<p>1、下载JDK</p>
+<p>Oracle 1.7以后才有Mac版，1.6以前的版本都是苹果公司编译的。 </p>
+<p>Apple下载地址：<a href="https://developer.apple.com/downloads/index.action#">https://developer.apple.com/downloads/index.action#</a> </p>
+<p>Oracle下载地址：<a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a> </p>
+<p>2、安装JDK</p>
+<p>双击dmg文件，按提示安装即可。</p>
+<p>3、查看JDK安装路径</p>
+<p>打开终端，执行     /usr/libexec/java_home -V</p>
+<p>MacBook-Air:~ eng$ /usr/libexec/java_home -V<br>
+Matching Java Virtual Machines (4):<br>
+    1.8.0_101, x86_64:  &quot;Java SE 8&quot;     /Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home<br>
+    1.7.0_79, x86_64:   &quot;Java SE 7&quot;     /Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home<br>
+    1.6.0_65-b14-466.1, x86_64: &quot;Java SE 6&quot;     /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home<br>
+    1.6.0_65-b14-466.1, i386:   &quot;Java SE 6&quot;     /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home<br>
+/Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home</p>
+<p>Apple JDK路径(默认JDK1.6)：/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home</p>
+<p>Oracle JDK路径(JDK1.8为例) :  /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home</p>
+<p>系统默认的 JDK 版本，是通过 link 来实现的，也就是说 Java 程序如 Maven、Eclispe 选择哪个 JDK 是通过各自的启动脚本，按照约定的 link 文件去查找 Java 程序的。比如 Maven 就会先找 Apple 派的 JDK 后找 Oracle 派的 JDK。</p>
+<p>Apple 派的 JDK 通过把文件 /System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDKlink 到某个版本的 JDK 实现了多版本支持。</p>
+<p>Oracle 派的 JDK 学习 Aplle 派的方法也支持多版本，link 文件是 /System/Library/Frameworks/JavaVM.framework/Versions/Current。</p>
+<p>4、设置JAVA_HOME</p>
+<p>最佳方式：export JAVA_HOME='usr/libexec/java_home'</p>
+<p>另外，你还可以这样用，来选择不同的Java版本：<br>
+export JAVA_HOME='/usr/libexec/java_home -v 1.6'<br>
+或者 </p>
+<p>export JAVA_HOME='/usr/libexec/java_home -v 1.7'</p>
+<p>二、卸载JDK</p>
+<p>参考文章：<a href="https://java.com/zh_CN/download/help/mac_uninstall_java.xml">如何在 Mac 上卸载 Java？</a></p>
+<h4>使用终端卸载 Oracle Java</h4>
+<p>注：要卸载 Java，必须具有管理员权限，并且必须以 root 用户身份或者使用 <code>sudo</code> 工具来执行删除命令。</p>
+<p>按照下面所示，删除一个目录和一个文件（符号链接）：</p>
+<ol>
+<li>单击位于停靠栏中的 Finder 图标</li>
+<li>单击实用程序文件夹</li>
+<li>双击终端图标</li>
+<li>在“终端”窗口中，复制和粘贴命令：</li>
+</ol>
+<p>    <code>sudo rm -fr /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin</code><br>
+    <code>sudo rm -fr /Library/PreferencesPanes/JavaControlPanel.prefPane</code><br>
+    <code>sudo rm -fr ~/Library/Application\ Support/Java</code></p>
+<p>请勿尝试通过从 <code>/usr/bin</code> 删除 Java 工具来卸载 Java。此目录是系统软件的一部分，下次对操作系统执行更新时，Apple 会重置所有更改。</p>
+<p>参考文章：</p>
+<p><a href="https://java.com/zh_CN/download/faq/java_mac.xml">有关在 Mac OS X 上安装和使用 Oracle Java 的信息和系统要求</a></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue49-thinkphp5-think-migration.html">← ThinkPhp5 数据迁移(think-migration)</a>
+    <a class="next" href="../../posts/2018/issue51-2018.html">2018 计划 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

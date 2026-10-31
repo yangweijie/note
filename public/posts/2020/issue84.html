@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>阿里云扩容 · Jay的实验室</title>
+<meta name="description" content="0.Check以下">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">阿里云扩容</h1>
+    <div class="post-meta">
+      <time>2020-01-20</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/linux.html">#linux</a></span>
+    </div>
+    <div class="post-content"><p>0.Check以下<br>
+fdisk -l</p>
+<p>1.检查数据<br>
+fdisk -lu /dev/[disk] (sdb)   <br>
+确定是否mbr</p>
+<p>fdisk -lu /dev/vdb </p>
+<p>2.卸载挂载，如果挂载了的话<br>
+umount /dev/[设备盘名] (sdb1)</p>
+<p>umount /dev/vdb2</p>
+<p>3.删除旧分区<br>
+fdisk -u /dev/[disk] (sdb)</p>
+<p>fdisk -u /dev/vdb</p>
+<p>p<br>
+d<br>
+p<br>
+w</p>
+<p>4.新建分区<br>
+fdisk -u /dev/[disk] (sdb)<br>
+fdisk -u /dev/vdb</p>
+<p>p<br>
+n<br>
+p<br>
+default<br>
+default<br>
+default<br>
+w</p>
+<p>5.检查<br>
+lsblk /dev/[disk] (sdb)</p>
+<p>lsblk /dev/vdb</p>
+<p>e2fsck -n /dev/[设备盘名] (sdb1)</p>
+<p>e2fsck -n /dev/vdb2</p>
+<p>partprobe /dev/[disk] (sdb)</p>
+<p>partprobe /dev/vdb</p>
+<p>e2fsck -f /dev/[设备盘名] (sdb1)</p>
+<p>e2fsck -f /dev/vdb2</p>
+<p>resize2fs /dev/[设备盘名] (sdb1)</p>
+<p>resize2fs /dev/vdb2</p>
+<p>6.Final最终<br>
+mount /dev/[设备盘名] /alidata</p>
+<p>mount /dev/vdb2 /alidata</p>
+<p>df -h</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2020/issue85.html">← 阿里云系统盘扩容</a>
+    <a class="next" href="../../posts/2020/issue86-windows-bat.html">【Windows】自带提权的bat脚本 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

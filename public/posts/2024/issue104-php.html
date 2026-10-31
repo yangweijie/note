@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>php加密 · Jay的实验室</title>
+<meta name="description" content="~~~ shell">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">php加密</h1>
+    <div class="post-meta">
+      <time>2024-07-30</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/%E5%8A%A0%E5%AF%86.html">#加密</a></span>
+    </div>
+    <div class="post-content"><p>~~~ shell<br>
+composer require phpseclib/phpseclib<br>
+~~~</p>
+<h1>AES</h1>
+<p>~~~ php<br>
+use phpseclib3\Crypt\AES;</p>
+<p>  # 加密<br>
+  $aesKey= md5(uniqid(rand(), true));<br>
+  $iv          = self::IV;<br>
+  // AES加密<br>
+  $aes = new AES('CBC');<br>
+  $aes-&gt;setKey($aesKey);<br>
+  $aes-&gt;setIV($iv);<br>
+  $dataJson = is_array($data) ? json_encode($data, JSON_THROW_ON_ERROR) : $data;<br>
+  $encode   = $aes-&gt;encrypt($dataJson);<br>
+  $encodeStr = strtoupper(bin2hex($encode));</p>
+<p>  # 解密<br>
+  $iv          = self::IV;<br>
+  $data        = hex2bin(strtolower($data));<br>
+  // AES解密<br>
+  $aes = new AES('CBC');<br>
+  $aes-&gt;setKey($aesKey);<br>
+  $aes-&gt;setIV($iv);<br>
+  $encode = $aes-&gt;decrypt($data);<br>
+~~~</p>
+<h1>RSA</h1>
+<p>~~~ php</p>
+<h1>加密</h1>
+<p>  public static function RsaEncode($publicKey, $data, $padding = RSA::ENCRYPTION_OAEP){<br>
+      $key = PublicKeyLoader::load(file_get_contents($publicKey), $password);<br>
+      $key-&gt;withPadding($padding);<br>
+      return base64_encode($key-&gt;encrypt($data));<br>
+  }</p>
+<p>  public static function RsaDecode($privateKey, $data, $padding = RSA::ENCRYPTION_OAEP){<br>
+      $key = PublicKeyLoader::load(file_get_contents($privateKey), $password);<br>
+      $key-&gt;withPadding($padding);<br>
+      return $key-&gt;decrypt(base64_decode($data));<br>
+  }</p>
+<h1>解密</h1>
+<p>~~~</p>
+<h1>SM3</h1>
+<p>~~~ shell<br>
+composer require ch4o5/sm3-php<br>
+~~~</p>
+<p>~~~php<br>
+$sm3 = sm3('abc');<br>
+~~~</p>
+<h1>证书转换</h1>
+<p>有的时候客户发的是p12 证书 可以去<a href="https://myssl.com/cert_convert.html">网站</a> 上转换</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2024/issue103-cygwin-php7-4-swoole.html">← cygwin  php7.4 和swoole</a>
+    <a class="next" href="../../posts/2024/issue105-logroate-cron-shell-nginx.html">logroate + cron + shell 切割nginx 日志 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

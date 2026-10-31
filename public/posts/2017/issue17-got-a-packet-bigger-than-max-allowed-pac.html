@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据导入报错：Got a packet bigger than‘max_allowed_packet’bytes的问题 · Jay的实验室</title>
+<meta name="description" content="2个解决方法：">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">数据导入报错：Got a packet bigger than‘max_allowed_packet’bytes的问题</h1>
+    <div class="post-meta">
+      <time>2017-07-10</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/mysql.html">#mysql</a></span>
+    </div>
+    <div class="post-content"><p>2个解决方法：</p>
+<p>1.临时修改：<code>mysql&gt;set global max_allowed_packet=524288000;修改 #512M</code></p>
+<p>2.修改my.cnf，需重启mysql。</p>
+<p>在 [MySQLd] 部分添加一句（如果存在，调整其值就可以）： <code>max_allowed_packet=10M</code></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue18-appdata.html">← 怎么更改AppData文件夹的路径?</a>
+    <a class="next" href="../../posts/2017/issue16-php.html">PHP获取上周、本周、上月、本月、本季度、上季度时间方法大全 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

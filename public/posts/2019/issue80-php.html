@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>php 执行的系统命令带中文时乱码 · Jay的实验室</title>
+<meta name="description" content="首先查看系统对中文的支持">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">php 执行的系统命令带中文时乱码</h1>
+    <div class="post-meta">
+      <time>2019-11-26</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p>首先查看系统对中文的支持</p>
+<pre><code>locale -a | grep zh_CN
+
+    zh_CN
+    zh_CN.gb18030
+    zh_CN.gb2312
+    zh_CN.gbk
+    zh_CN.utf8
+
+vi ~/.bash_profile
+文件末尾添加:
+    export LANG=&quot;zh_CN.UTF-8&quot;
+    export LC_ALL=&quot;zh_CN.UTF-8&quot;
+    export LANG=&quot;en_US.UTF-8&quot;
+    export LC_ALL=&quot;en_US.UTF-8&quot;</code></pre>
+<p>在php文件调用exec前设定环境变量</p>
+<pre><code>    $locale='en_US.UTF-8';  // 或  $locale='zh_CN.UTF-8';
+    setlocale(LC_ALL,$locale);
+    putenv('LC_ALL='.$locale);</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「小米啄鸡」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：<a href="https://blog.csdn.net/qq_35020783/article/details/81299287">https://blog.csdn.net/qq_35020783/article/details/81299287</a></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2019/issue78-php7-serialize-precision-json-encode.html">← PHP7 serialize_precision 配置不当导致 json_encode() 浮点小数溢出错误</a>
+    <a class="next" href="../../posts/2019/issue79-windows-php-java.html">在windows下php执行java命令无反应 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

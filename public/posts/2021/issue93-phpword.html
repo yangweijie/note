@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>phpword 合并单元格的坑 · Jay的实验室</title>
+<meta name="description" content="今天发现以前合并单元格并没有生效，经过研究发现已下结论：">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">phpword 合并单元格的坑</h1>
+    <div class="post-meta">
+      <time>2021-03-03</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/phpword.html">#phpword</a><a class="tag" href="../../tags/office.html">#office</a></span>
+    </div>
+    <div class="post-content"><p>今天发现以前合并单元格并没有生效，经过研究发现已下结论：</p>
+<ul>
+<li>表格的样式宽度支持四种 NIL、TWIP、AUTO、PERCENT 分别代表无宽度、TWIP word基本单位、自动、百分比</li>
+<li>百分比是 1% 代表50份 TWIP</li>
+<li>合并单元格，并不会自动实现自动宽度，比如两行三列单元格， 合并第一行前两列，最终得到的是第一行两个cell，第一个cell和原第一个cell宽度相等</li>
+<li>如果想要合并单元格 且保证最终合并单元格 的宽度和我们想要的宽度一致，唯一的办法是设置表格宽度后，给每行里的每个单元格设置宽度, 如果设置百分比， 总table 占文档100% 设为5000，然后按照每个单元格自己想要的百分比去设置N*50</li>
+<li>合并单元格是通过设置cell的样式实现<code>['gridSpan' =&gt; 2, 'valign' =&gt; 'center']</code></li>
+</ul>
+<p>``` 官方示例<br>
+/*</p>
+<ul>
+<li>3. colspan (gridSpan) and rowspan (vMerge)</li>
+<li>---------------------</li>
+<li>|     |   B    |    |</li>
+<li>|  A  |--------|  E |</li>
+<li>|     | C |  D |    |</li>
+<li>---------------------</li>
+</ul>
+<p> */</p>
+<p>$section-&gt;addPageBreak();<br>
+$section-&gt;addText('Table with colspan and rowspan', $header);</p>
+<p>$fancyTableStyle = array('borderSize' =&gt; 6, 'borderColor' =&gt; '999999');<br>
+$cellRowSpan = array('vMerge' =&gt; 'restart', 'valign' =&gt; 'center', 'bgColor' =&gt; 'FFFF00');<br>
+$cellRowContinue = array('vMerge' =&gt; 'continue');<br>
+$cellColSpan = array('gridSpan' =&gt; 2, 'valign' =&gt; 'center');<br>
+$cellHCentered = array('alignment' =&gt; \PhpOffice\PhpWord\SimpleType\Jc::CENTER);<br>
+$cellVCentered = array('valign' =&gt; 'center');</p>
+<p>$spanTableStyleName = 'Colspan Rowspan';<br>
+$phpWord-&gt;addTableStyle($spanTableStyleName, $fancyTableStyle);<br>
+$table = $section-&gt;addTable($spanTableStyleName);</p>
+<p>$table-&gt;addRow();</p>
+<p>$cell1 = $table-&gt;addCell(2000, $cellRowSpan);<br>
+$textrun1 = $cell1-&gt;addTextRun($cellHCentered);<br>
+$textrun1-&gt;addText('A');<br>
+$textrun1-&gt;addFootnote()-&gt;addText('Row span');</p>
+<p>$cell2 = $table-&gt;addCell(4000, $cellColSpan);<br>
+$textrun2 = $cell2-&gt;addTextRun($cellHCentered);<br>
+$textrun2-&gt;addText('B');<br>
+$textrun2-&gt;addFootnote()-&gt;addText('Column span');</p>
+<p>$table-&gt;addCell(2000, $cellRowSpan)-&gt;addText('E', null, $cellHCentered);</p>
+<p>$table-&gt;addRow();<br>
+$table-&gt;addCell(null, $cellRowContinue);<br>
+$table-&gt;addCell(2000, $cellVCentered)-&gt;addText('C', null, $cellHCentered);<br>
+$table-&gt;addCell(2000, $cellVCentered)-&gt;addText('D', null, $cellHCentered);<br>
+$table-&gt;addCell(null, $cellRowContinue);</p>
+<pre><code>自己做的</code></pre>
+<p>$table = new Table(array(<br>
+            'borderSize'  =&gt; 6,<br>
+            'borderColor' =&gt; 'black',<br>
+            'width'       =&gt; 5000,<br>
+            'unit'        =&gt; TblWidth::PERCENT,<br>
+            'align'      =&gt; 'center',<br>
+        ));</p>
+<p>        $header_style = [<br>
+            'bold' =&gt; true,<br>
+            'size' =&gt; 9<br>
+        ];<br>
+        $paragraphStyle = [<br>
+            'align'=&gt;'center',<br>
+        ];<br>
+        $fontStyle = [<br>
+            'size'  =&gt; 9,<br>
+        ];<br>
+        $table-&gt;addRow();<br>
+        $table-&gt;addCell(39*50)-&gt;addText('名称', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(3*50)-&gt;addText('申请号', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(3*50)-&gt;addText('类型', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(14*50)-&gt;addText('缴费年份', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(26*50)-&gt;addText('缴纳年费日期范围', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(3*50)-&gt;addText('年费', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(10*50)-&gt;addText('滞纳金', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(6*50)-&gt;addText('滞纳金绝限日', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(6*50)-&gt;addText('维护费', $header_style, $paragraphStyle);<br>
+        $total = 0;<br>
+        if($cases){<br>
+            foreach($cases as $key=&gt;&amp;$value){<br>
+                $table-&gt;addRow();<br>
+                $table-&gt;addCell(39*50)-&gt;addText($value['name'], $fontStyle);<br>
+                $table-&gt;addCell(3*50)-&gt;addText($value['apply_no'], $fontStyle);<br>
+                $table-&gt;addCell(3*50)-&gt;addText($value['type'], $fontStyle);<br>
+                $table-&gt;addCell(14*50)-&gt;addText($value['to_year'], $fontStyle);<br>
+                $table-&gt;addCell(26*50)-&gt;addText($value['year_fee_area'], $fontStyle);<br>
+                $table-&gt;addCell(3*50)-&gt;addText((int)$value['year_fee'], $fontStyle);<br>
+                $table-&gt;addCell(10*50)-&gt;addText((int)$value['late_fee'], $fontStyle);<br>
+                $table-&gt;addCell(6*50)-&gt;addText($value['late_fee_end'], $fontStyle);<br>
+                $table-&gt;addCell(6*50)-&gt;addText($value['service_price'], $fontStyle);<br>
+                $total+= (int)($value['year_fee'] + (int)$value['late_fee'] + (int)$value['service_price']);<br>
+            }<br>
+        }<br>
+        $table-&gt;addRow();<br>
+        $table-&gt;addCell(94*50, ['valign'=&gt;'center', 'gridSpan' =&gt; 8, 'unit'=&gt;'pct'])-&gt;addText('合计', $header_style, $paragraphStyle);<br>
+        $table-&gt;addCell(6*50, ['unit'=&gt;'pct'])-&gt;addText($total, $header_style, $paragraphStyle);<br>
+        $templateProcessor-&gt;setComplexBlock('table', $table);</p>
+<pre><code>从而实现了动态生成word中带合并单元格（汇总统计）的功能
+
+![Dingtalk_20210303202156](https://user-images.githubusercontent.com/1614114/109805637-add32c80-7c5e-11eb-980c-dfc3a4c17065.jpg)
+
+
+&gt;参考官方sample Sample_09_Tables.php
+&gt; 如果模板文档里有多个同名的变量， 需要`$templateProcessor-&gt;setComplexValue('company', new Text($config['company']));
+        $templateProcessor-&gt;setComplexValue('company', new Text($config['company']));`  多次
+</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2021/issue92-springboot-validation.html">← springboot整合validation统一参数检查</a>
+    <a class="next" href="../../posts/2021/issue94-java-alieasysdk.html">java alieasysdk 扫码支付 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

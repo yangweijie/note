@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHP获取上周、本周、上月、本月、本季度、上季度时间方法大全 · Jay的实验室</title>
+<meta name="description" content="php">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">PHP获取上周、本周、上月、本月、本季度、上季度时间方法大全</h1>
+    <div class="post-meta">
+      <time>2017-07-10</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/thinkphp.html">#thinkphp</a></span>
+    </div>
+    <div class="post-content"><pre><code class="language-php">/**date 2015-04-11
+     * author http://www.lai18.com
+     **/
+    echo date(&quot;Ymd&quot;,strtotime(&quot;now&quot;)), &quot;\n&quot;;
+    echo date(&quot;Ymd&quot;,strtotime(&quot;-1 week Monday&quot;)), &quot;\n&quot;;
+    echo date(&quot;Ymd&quot;,strtotime(&quot;-1 week Sunday&quot;)), &quot;\n&quot;;
+    echo date(&quot;Ymd&quot;,strtotime(&quot;+0 week Monday&quot;)), &quot;\n&quot;;
+    echo date(&quot;Ymd&quot;,strtotime(&quot;+0 week Sunday&quot;)), &quot;\n&quot;;
+
+    echo &quot;*********第几个月:&quot;;
+    echo date('n');
+    echo &quot;*********本周周几:&quot;;
+    echo date(&quot;w&quot;);
+    echo &quot;*********本月天数:&quot;;
+    echo date(&quot;t&quot;);
+    echo &quot;*********&quot;;
+
+    echo '&lt;br&gt;上周起始时间:&lt;br&gt;';
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(0, 0 , 0,date(&quot;m&quot;),date(&quot;d&quot;)-date(&quot;w&quot;)+1-7,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(23,59,59,date(&quot;m&quot;),date(&quot;d&quot;)-date(&quot;w&quot;)+7-7,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo '&lt;br&gt;本周起始时间:&lt;br&gt;';
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(0, 0 , 0,date(&quot;m&quot;),date(&quot;d&quot;)-date(&quot;w&quot;)+1,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(23,59,59,date(&quot;m&quot;),date(&quot;d&quot;)-date(&quot;w&quot;)+7,date(&quot;Y&quot;))),&quot;\n&quot;;
+
+    echo '&lt;br&gt;上月起始时间:&lt;br&gt;';
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(0, 0 , 0,date(&quot;m&quot;)-1,1,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(23,59,59,date(&quot;m&quot;) ,0,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo '&lt;br&gt;本月起始时间:&lt;br&gt;';
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(0, 0 , 0,date(&quot;m&quot;),1,date(&quot;Y&quot;))),&quot;\n&quot;;
+    echo date(&quot;Y-m-d H:i:s&quot;,mktime(23,59,59,date(&quot;m&quot;),date(&quot;t&quot;),date(&quot;Y&quot;))),&quot;\n&quot;;
+
+    $season = ceil((date('n'))/3);//当月是第几季度
+    echo '&lt;br&gt;本季度起始时间:&lt;br&gt;';
+    echo date('Y-m-d H:i:s', mktime(0, 0, 0,$season*3-3+1,1,date('Y'))),&quot;\n&quot;;
+    echo date('Y-m-d H:i:s', mktime(23,59,59,$season*3,date('t',mktime(0, 0 , 0,$season*3,1,date(&quot;Y&quot;))),date('Y'))),&quot;\n&quot;;
+
+    $season = ceil((date('n'))/3)-1;//上季度是第几季度
+    echo '&lt;br&gt;上季度起始时间:&lt;br&gt;';
+    echo date('Y-m-d H:i:s', mktime(0, 0, 0,$season*3-3+1,1,date('Y'))),&quot;\n&quot;;
+    echo date('Y-m-d H:i:s', mktime(23,59,59,$season*3,date('t',mktime(0, 0 , 0,$season*3,1,date(&quot;Y&quot;))),date('Y'))),&quot;\n&quot;;</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue17-got-a-packet-bigger-than-max-allowed-pac.html">← 数据导入报错：Got a packet bigger than‘max_allowed_packet’bytes的问题</a>
+    <a class="next" href="../../posts/2017/issue15-thinkphp5.html">thinkphp5 速查表 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>java Xstream 生成 属性和值同时存在的 xml · Jay的实验室</title>
+<meta name="description" content="xstream 基本用法是对应类对象 转为xml">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">java Xstream 生成 属性和值同时存在的 xml</h1>
+    <div class="post-meta">
+      <time>2021-11-04</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/java.html">#java</a><a class="tag" href="../../tags/xml.html">#xml</a><a class="tag" href="../../tags/xstream.html">#xstream</a></span>
+    </div>
+    <div class="post-content"><p>xstream 基本用法是对应类对象 转为xml<br>
+但是 不支持  <code>&lt;a href=&quot;&quot;&gt;aa&lt;/a&gt;</code>  这种(我需要的是&lt;p&gt;&lt;img wi=&quot;&quot;/&gt;&lt;/p&gt;)。<br>
+找了半天说要用转换器</p>
+<pre><code>package com.paizhi.component.utils.cpc.entity.coventor;
+
+import com.paizhi.component.utils.cpc.entity.xml.img;
+import com.paizhi.component.utils.cpc.entity.xml.p;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
+public class PConventor implements Converter{
+    //定义转换器能转换的JavaBean类型
+    @Override
+    public boolean canConvert(Class type) {
+        return type.equals(p.class);
+    }
+
+    //把对象序列化成XML或JSON
+    @Override
+    public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
+        p p = (p) value;
+//        writer.startNode(&quot;p&quot;);
+        writer.addAttribute(&quot;id&quot;, p.getId());
+        writer.addAttribute(&quot;num&quot;, p.getNum().toString());
+
+        // 文字
+        if(p.getImg() == null){
+            writer.addAttribute(&quot;Italic&quot;, &quot;0&quot;);
+            writer.setValue(p.getValue());
+        }else{
+            img img = p.getImg();
+             String newImgStr = imgStr.format(&quot;&lt;img wi=\&quot;%s\&quot; he=\&quot;%s\&quot; file=\&quot;%s\&quot; img-format=\&quot;jpg\&quot; img-content=\&quot;drawing\&quot; orientation=\&quot;%s\&quot; inline=\&quot;no\&quot;/&gt;&quot;,
+                img.getWi(),
+                img.getHe(),
+                img.getFile(),
+                img.getOrientation()
+            );
+            writer.setValue(newImgStr);
+        }
+//        writer.endNode();
+    }
+
+    //把XML或JSON反序列化成对象
+    @Override
+    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+        return null;
+    }
+}
+</code></pre>
+<p>于是写了个转换器<br>
+开始想的是用setValue 来将img节点当字符串设为p节点的值。<br>
+万万没想到 输出的时候 给我转义了。</p>
+<p>后来就想着怎么不转义。<br>
+试了几种都不行。</p>
+<p>后来发现 转换器里 可以 写字节点。多写几对 startNode endNode 就行了。 一个不写 就是给当前节点加属性 设值。</p>
+<pre><code>    //把对象序列化成XML或JSON
+    @Override
+    public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
+        p p = (p) value;
+//        writer.startNode(&quot;p&quot;);
+        writer.addAttribute(&quot;id&quot;, p.getId());
+        writer.addAttribute(&quot;num&quot;, p.getNum().toString());
+
+        // 文字
+        if(p.getImg() == null){
+            writer.addAttribute(&quot;Italic&quot;, &quot;0&quot;);
+            writer.setValue(p.getValue());
+        }else{
+            img img = p.getImg();
+            writer.startNode(&quot;img&quot;);
+            writer.addAttribute(&quot;wi&quot;, img.getWi().toString());
+            writer.addAttribute(&quot;he&quot;, img.getHe().toString());
+            writer.addAttribute(&quot;file&quot;, img.getFile());
+            writer.addAttribute(&quot;img-format&quot;, &quot;jpg&quot;);
+            writer.addAttribute(&quot;img-content&quot;, &quot;drawing&quot;);
+            writer.addAttribute(&quot;orientation&quot;, img.getOrientation());
+            writer.addAttribute(&quot;inline&quot;, &quot;no&quot;);
+            writer.endNode();
+        }
+//        writer.endNode();
+    }</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2021/issue94-java-alieasysdk.html">← java alieasysdk 扫码支付</a>
+    <a class="next" href="../../posts/2022/issue96.html">镇江求职渠道 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

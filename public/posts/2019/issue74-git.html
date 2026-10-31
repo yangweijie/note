@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>git提取出两个版本之间的差异文件并打包 · Jay的实验室</title>
+<meta name="description" content="公司的项目原先是使用svn做版本管理，发布项目的时候是采用打包的方式压缩成zip格式的文件，然后用ftp上传。随着开发人员越来越多，需求变化也比较多，经常在开发…">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">git提取出两个版本之间的差异文件并打包</h1>
+    <div class="post-meta">
+      <time>2019-06-06</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/git.html">#git</a></span>
+    </div>
+    <div class="post-content"><p>公司的项目原先是使用svn做版本管理，发布项目的时候是采用打包的方式压缩成zip格式的文件，然后用ftp上传。随着开发人员越来越多，需求变化也比较多，经常在开发新功能时要调整线上的问题，在一个分支上进行开发就非常不方便。虽然svn也支持多分支开发，但是操作非常不便，于是就把项目的版本管理切换成了git。</p>
+<p>切换成git之后，为了平缓的过度，发布项目的时候还是打算使用打包的方式，然后ftp上传。那么问题就来了：git如何提取出两个提交之间的差异文件呢？</p>
+<p>一开始找了git format-patch和git archive都没有找到需要的功能，后来就去查git diff命令，找到了方法。</p>
+<p>git diff这个命令能比较两个提交之间的差异，使用–name-only参数可以只显示文件名。例如：</p>
+<p>$ git diff 608e120 4abe32e --name-only</p>
+<p><img src="https://user-images.githubusercontent.com/1614114/59003259-c030f400-8847-11e9-8d43-8d1acc53de37.png" alt="git diff列出两个提交之间差异的文件" loading="lazy"></p>
+<p>git diff列出两个提交之间差异的文件</p>
+<p>这个输出结果非常有意思，就是差异文件的相对地址，不正好是压缩命令的参数吗？于是立马使用压缩命令</p>
+<p>$ zip update.zip c/environ.c ... 所有的文件...<br>
+就能成功打包了。只是这样的话也太麻烦了吧，幸好linux有提供一个命令xargs能将前一个命令的输出转成另外一个命令的参数，按照这个思路就非常简单了。</p>
+<p>$ git diff 608e120 4abe32e --name-only | xargs zip update.zip</p>
+<p>结合xargs进行打包<br>
+<img src="https://user-images.githubusercontent.com/1614114/59003270-c921c580-8847-11e9-9b87-be21fb676005.png" alt="结合xargs进行打包" loading="lazy"></p>
+<p>总结</p>
+<p>其实这种发布方式并不是非常好，如果线上的环境也能使用版本管理就非常方便了，只是这需要多方面的的配合。从某种意义上来讲，这种打包更新方式只是一种折中的处理方式。</p>
+<p>还一个问题是这样的：提交的排序是按照时间来进行的，如果有分支合并进来的，可能分支里的提交时间在上次发布的提交时间之前，这样是否会漏打包到文件呢？答案是不会的，因为合并分支会产生一个新的提交，这个提交一定是在上次发布的提交之后。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2019/issue73-centos-libreoffice6-2-word-pdf.html">← centos 安装最新libreoffice6.2 来进行word转pdf</a>
+    <a class="next" href="../../posts/2019/issue75-win-linux.html">win下和linux下命令行速查表 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

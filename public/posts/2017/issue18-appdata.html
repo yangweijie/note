@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>怎么更改AppData文件夹的路径? · Jay的实验室</title>
+<meta name="description" content="首先要在“开始”——“运行”内输入“regedit”打开注册表编辑器，然后要在“文件”下拉菜单中的“导出”功能备份好注册表，以防万一，接着在左侧窗口依次打开： …">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">怎么更改AppData文件夹的路径?</h1>
+    <div class="post-meta">
+      <time>2017-07-10</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/software.html">#software</a></span>
+    </div>
+    <div class="post-content"><ul>
+<li>首先要在“开始”——“运行”内输入“regedit”打开注册表编辑器，然后要在“文件”下拉菜单中的“导出”功能备份好注册表，以防万一，接着在左侧窗口依次打开： <code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders</code></li>
+<li>在右侧窗口里，你看到的“名称”就代表那些特殊的文件夹，“数据”就是它们所对应的默认存储路径。修改默认的路径就可以让你的桌面文件夹移动了。</li>
+<li>AppData 应用程序数据目录 <code>C:\Documents and Settings\User name\Application Data</code> 。</li>
+</ul></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue19-mysql.html">← MySQL按照汉字的拼音排序、按照首字母分类</a>
+    <a class="next" href="../../posts/2017/issue17-got-a-packet-bigger-than-max-allowed-pac.html">数据导入报错：Got a packet bigger than‘max_allowed_packet’bytes的问题 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windows开发优化 · Jay的实验室</title>
+<meta name="description" content="命令行">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">windows开发优化</h1>
+    <div class="post-meta">
+      <time>2018-06-14</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/windows.html">#windows</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><h1>命令行</h1>
+<h2>Scoop</h2>
+<p><code>iex (new-object net.webclient).downloadstring('https://get.scoop.sh')</code></p>
+<p><code>scoop bucket add extras</code><br>
+<code>scoop bucket add php-bucket https://github.com/nueko/php-ext-bucket</code><br>
+<code>scoop bucket add php</code></p>
+<h2>pickle</h2>
+<p><a href="https://github.com/FriendsOfPHP/pickle">pickle </a> 用来安装 php扩展</p>
+<p>win php扩展下载目录<br>
+<a href="http://windows.php.net/downloads/pecl/releases/">http://windows.php.net/downloads/pecl/releases/</a></p>
+<p><a href="https://github.com/Microsoft/php-sdk-binary-tools">https://github.com/Microsoft/php-sdk-binary-tools</a></p>
+<pre><code>cd php-sdk 
+
+phpsdk_buildtree phpdev</code></pre>
+<p>cd C:\php-sdk\phpdev\vc15\x64<br>
+<code>git clone -b PHP-7.2.6 https://github.com/php/php-src.git</code></p>
+<p>cd php-src</p>
+<h2>pacman -Syu</h2></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue61-windows-efi-clover.html">← 教你如何在windows下操作EFI分区，方便安装和配置Clover</a>
+    <a class="next" href="../../posts/2018/issue63-sql-general-error-1267-illegal-mix-of-co.html">sql General error: 1267 Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>在CentOS 7上利用systemctl添加自定义系统服务 · Jay的实验室</title>
+<meta name="description" content="CentOS 7继承了RHEL 7的新的特性，例如强大的systemctl，而systemctl的使用也使得以往系统服务的/etc/init.d的启动脚本的方式…">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">在CentOS 7上利用systemctl添加自定义系统服务</h1>
+    <div class="post-meta">
+      <time>2017-08-03</time>
+      <span class="tags"><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p>CentOS 7继承了RHEL 7的新的特性，例如强大的systemctl，而systemctl的使用也使得以往系统服务的/etc/init.d的启动脚本的方式就此改变，也大幅提高了系统服务的运行效率。但服务的配置和以往也发生了极大的不同，说实在的，变的简单而易用了许多。</p>
+<p>下面我们以利用forever来实现Node.js项目自启动为例，初探CentOS 7的systemctl。</p>
+<p>前提：Node.js环境已配置成功，forever包安装成功，有一个能跑的Node.js程序。</p>
+<p>CentOS 7的服务systemctl脚本存放在：/usr/lib/systemd/，有系统（system）和用户（user）之分，像需要开机不登陆就能运行的程序，还是存在系统服务里吧，即：/usr/lib/systemd/system目录下</p>
+<p>每一个服务以.service结尾，一般会分为3部分：[Unit]、[Service]和[Install]，我写的这个服务用于开机运行Node.js项目，具体内容如下：</p>
+<p>[Unit]<br>
+Description=xiyoulibapi<br>
+After=network.target remote-fs.target nss-lookup.target</p>
+<p>[Service]<br>
+Type=forking<br>
+PIDFile=/node.js/pid<br>
+ExecStart=/usr/local/bin/forever start /node.js/xiyoulib/bin/www<br>
+ExecReload=/usr/local/bin/forever restart /node.js/xiyoulib/bin/www<br>
+ExecStop=/usr/local/bin/forever stop /node.js/xiyoulib/bin/www<br>
+PrivateTmp=true</p>
+<p>[Install]<br>
+WantedBy=multi-user.target</p>
+<p>[Unit]部分主要是对这个服务的说明，内容包括Description和After，Description用于描述服务，After用于描述服务类别</p>
+<p>[Service]部分是服务的关键，是服务的一些具体运行参数的设置，这里Type=forking是后台运行的形式，PIDFile为存放PID的文件路径，ExecStart为服务的具体运行命令，ExecReload为重启命令，ExecStop为停止命令，PrivateTmp=True表示给服务分配独立的临时空间，注意：[Service]部分的启动、重启、停止命令全部要求使用绝对路径，使用相对路径则会报错！</p>
+<p>[Install]部分是服务安装的相关设置，可设置为多用户的</p>
+<p>服务脚本按照上面编写完成后，以754的权限保存在/usr/lib/systemd/system目录下，这时就可以利用systemctl进行配置了</p>
+<p>首先，使用systemctl start [服务名（也是文件名）]可测试服务是否可以成功运行，如果不能运行则可以使用systemctl status [服务名（也是文件名）]查看错误信息和其他服务信息，然后根据报错进行修改，直到可以start，如果不放心还可以测试restart和stop命令。</p>
+<p>接着，只要使用systemctl enable xxxxx就可以将所编写的服务添加至开机启动即可。</p>
+<p>我的脚本编写方法参照了nginx的编写方法，也可以根据其他功能类似的程序。</p>
+<p>这样看来，虽然systemctl比较陌生，但是其实比init.d那种方式简单不少，而且使用简单，systemctl能简化的操作还有很多，现在也有不少的资料，看来RHEL/CentOS比其他的Linux发行版还是比较先进的，此次更新也终于舍弃了Linux 2.6内核，无论是速度还是稳定性都提升不少。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue38-supervisor.html">← supervisor初体验</a>
+    <a class="next" href="../../posts/2017/issue39-git-warning-lf-will-be-replaced-by-crlf.html">git warning: LF will be replaced by CRLF解决 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

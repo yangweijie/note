@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mysql float和double类型的区别 · Jay的实验室</title>
+<meta name="description" content="1.float类型">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">mysql float和double类型的区别</h1>
+    <div class="post-meta">
+      <time>2017-12-06</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/thinkphp.html">#thinkphp</a><a class="tag" href="../../tags/mysql.html">#mysql</a></span>
+    </div>
+    <div class="post-content"><p>1.float类型<br>
+float列类型默认长度查不到结果，必须指定精度，比如 <br>
+num float, insert into table (num) values (0.12); select * from table where num=0.12的话，empty set。<br>
+num float(9,7), insert into table (num) values (0.12); select * from table where num=0.12的话会查到这条记录。</p>
+<p>mysql&gt; create table tt<br>
+    -&gt; (<br>
+    -&gt; num float(9,3)<br>
+    -&gt; );<br>
+Query OK, 0 rows affected (0.03 sec)</p>
+<p>mysql&gt; insert into tt(num)values(1234567.8);<br>
+Query OK, 1 row affected, 1 warning (0.04 sec)<br>
+注：超出字段范围，插入数据有误</p>
+<p>mysql&gt; select * from tt;<br>
++-------------+<br>
+| num         |<br>
++-------------+<br>
+| 1000000.000 |<br>
++-------------+<br>
+2 rows in set (0.00 sec)</p>
+<hr>
+<p>注：通常在 linux 下安装完 mysql 后，默认的 sql-mode 值是空，在这种情形下 mysql 执行的是一种不严格的检查，例如日期字段可以插入 ’ 0000-00-00 00:00:00 ’这样的值，还有如果要插入的字段长度超过列定义的长度，那么 mysql 不会终止操作，而是会自动截断后面的字符继续插入操作。</p>
+<p>我们发现插入的字符被自动截断了，但是如果我们本意希望如果长度超过限制就报错，那么我们可以设置 sql_mode 为 STRICT_TRANS_TABLES ，如下：<br>
+mysql&gt; set session sql_mode='STRICT_TRANS_TABLES';<br>
+这样我们再执行同样的操作，mysql 就会告诉我们插入的值太长，操作被终止，如下：</p>
+<p>mysql&gt; insert into tt(num) values(1234567.8);<br>
+ERROR 1264 (22003): Out of range value for column 'num' at row 1</p>
+<hr>
+<p>mysql&gt; insert into tt(num)values(123456.8);<br>
+Query OK, 1 row affected (0.00 sec)</p>
+<p>mysql&gt; select * from tt;<br>
++-------------+<br>
+| num         |<br>
++-------------+<br>
+| 1000000.000 |<br>
+|  123456.797 |<br>
++-------------+<br>
+2 rows in set (0.00 sec)<br>
+注：小数位数不够，自动补齐，但是存在一个问题就是如上的近似值。</p>
+<p>mysql&gt; insert into tt(num)values(123456.867);<br>
+Query OK, 1 row affected (0.04 sec)</p>
+<p>mysql&gt; select * from tt;<br>
++-------------+<br>
+| num         |<br>
++-------------+<br>
+| 1000000.000 |<br>
+|  123456.797 |<br>
+|  123456.867 |<br>
++-------------+<br>
+3 rows in set (0.00 sec)</p>
+<p>mysql&gt; select * from tt where num=123456.867;<br>
++------------+<br>
+| num        |<br>
++------------+<br>
+| 123456.867 |<br>
++------------+<br>
+1 row in set (0.00 sec)</p>
+<p>mysql&gt; insert into tt(num)values(2.8);<br>
+Query OK, 1 row affected (0.04 sec)</p>
+<p>mysql&gt; select * from tt;<br>
++-------------+<br>
+| num         |<br>
++-------------+<br>
+| 1000000.000 |<br>
+|  123456.797 |<br>
+|  123456.867 |<br>
+|       2.800 |<br>
++-------------+<br>
+4 rows in set (0.00 sec)</p>
+<p>mysql&gt; select * from tt where num=2.8;<br>
++-------+<br>
+| num   |<br>
++-------+<br>
+| 2.800 |<br>
++-------+<br>
+1 row in set (0.00 sec)</p>
+<p>mysql&gt; insert into tt(num)values(2.888888);<br>
+Query OK, 1 row affected (0.00 sec)</p>
+<p>mysql&gt; select * from tt;<br>
++-------------+<br>
+| num         |<br>
++-------------+<br>
+| 1000000.000 |<br>
+|  123456.797 |<br>
+|  123456.867 |<br>
+|       2.800 |<br>
+|       2.889 |<br>
++-------------+<br>
+5 rows in set (0.00 sec)<br>
+注：小数位数超了，自动取近似值。</p>
+<hr>
+<p>2.double类型</p>
+<p>mysql&gt; create table tt(<br>
+    -&gt; num double(9,3)<br>
+    -&gt; );<br>
+Query OK, 0 rows affected (0.04 sec)</p>
+<p>mysql&gt; insert into tt(num) values(234563.9);<br>
+Query OK, 1 row affected (0.00 sec)</p>
+<p>mysql&gt; select * from tt;<br>
++------------+<br>
+| num        |<br>
++------------+<br>
+| 234563.900 |<br>
++------------+<br>
+1 row in set (0.00 sec)</p>
+<p>mysql&gt; insert into tt(num) values(2345623.2);<br>
+Query OK, 1 row affected, 1 warning (0.04 sec)<br>
+mysql&gt; insert into tt(num) values(234563.2);<br>
+Query OK, 1 row affected (0.00 sec)</p>
+<p>mysql&gt; select * from tt;<br>
++------------+<br>
+| num        |<br>
++------------+<br>
+| 234563.900 |<br>
+| 999999.999 |<br>
+| 234563.200 |<br>
++------------+<br>
+2 rows in set (0.00 sec)</p>
+<p>mysql&gt; insert into tt(num) values(2.8);<br>
+Query OK, 1 row affected (0.00 sec)</p>
+<p>mysql&gt; select * from tt;<br>
++------------+<br>
+| num        |<br>
++------------+<br>
+| 234563.900 |<br>
+| 999999.999 |<br>
+| 234563.200 |<br>
+|      2.800 |<br>
++------------+<br>
+3 rows in set (0.00 sec)</p>
+<p>FLOAT(M,D)或REAL(M,D)或DOUBLE PRECISION(M,D)。这里，“(M,D)”表示该值一共显示M位整数，其中D位位于小数点后面。<br>
+例如，定义为FLOAT(7,4)的一个列可以显示为-999.9999。MySQL保存值时进行四舍五入，因此如果在FLOAT(7,4)列内插入999.00009，近似结果是999.0001。</p>
+<p>单精度浮点数(float)的尾数是用24bit表示的，双精度(double)浮点数的尾数是用53bit表示的，转换成十进制：<br>
+2^24 - 1 = 16777215           <br>
+2^53 - 1 = 9007199254740991     <br>
+由上可见，IEEE754单精度浮点数的有效数字二进制是24位，按十进制来说，是8位；双精度浮点数的有效数字二进制是53位，按十进制来说，是16 位。</p>
+<h2>tp5 精度问题</h2>
+<p>在tp5里 0.9+ -0.9 = 0.00 数据库double 的 数据库查询出来 0.00 结果php dump出来是溢出的。</p>
+<p>~~~<br>
+'params'          =&gt; [<br>
+        PDO::ATTR_EMULATE_PREPARES=&gt;true,<br>
+    ],<br>
+~~~</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue44-basic-php.html">← basic 认证 php 获取失效问题</a>
+    <a class="next" href="../../posts/2018/issue46-http-499-nginx-499.html">HTTP 499 状态码 nginx下 499错误 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>smartgit-win 破解 · Jay的实验室</title>
+<meta name="description" content="最近用windows 开发了，smartgit 破解不了。">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">smartgit-win 破解</h1>
+    <div class="post-meta">
+      <time>2023-03-31</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/git.html">#git</a></span>
+    </div>
+    <div class="post-content"><p>最近用windows 开发了，smartgit 破解不了。<br>
+后来发现官方22版去除非商业使用了。之前的smartgit-agent 总是启动不了。<br>
+发现家里mac 的21.17 一直使用。去下了对应的便携版无果。于是回到21.1.14（刚又试了下可以。）<br>
+最后细心的发现， <code>-javaagent:D:\GreenSoft\smartgit-agent\smartgit-agent.jar</code> 是放在最后一行，心想，是不是执行顺序不对。<br>
+于是调整了下。也去除了双引号。</p>
+<p>~~~<br>
+-javaagent:D:\GreenSoft\smartgit-agent\smartgit-agent.jar<br>
+;-javaagent:${smartgit.installation}/crack/smartgit-agent.jar<br>
+-Dsmartboot.sourceDirectory=.updates<br>
+-Dsmartgit.settings=${smartgit.installation}\.settings<br>
+-XX:ErrorFile=%EXE4J_EXEDIR%..\.settings\hs_err_pid%p.log<br>
+~~~</p>
+<p>想着把破解文件直接放在 程序根目录 做成真绿色软件 参考 ${smartgit.installation} 路径的。结果不行。</p>
+<p>总结：</p>
+<ul>
+<li>下载 21.1.17版</li>
+<li>修改 smartgit.vmoptions 文件， 首行加上<code>-javaagent:D:\GreenSoft\smartgit-agent\smartgit-agent.jar</code>  全路径</li>
+<li>首次启动smart-git 选择注册， 浏览license.zip 点击注册，大工告成！</li>
+</ul></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2023/issue97-wsl2-genie-systemctl.html">← wsl2 安装genie 使用systemctl</a>
+    <a class="next" href="../../posts/2023/issue99-laravel-phpstorm.html">laravel- 支持phpstorm打开 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

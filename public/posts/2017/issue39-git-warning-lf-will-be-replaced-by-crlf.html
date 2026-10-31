@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>git warning: LF will be replaced by CRLF解决 · Jay的实验室</title>
+<meta name="description" content="初始化自己项目的时候，出现了N+个warning: LF will be replaced by CRLF，">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">git warning: LF will be replaced by CRLF解决</h1>
+    <div class="post-meta">
+      <time>2017-08-12</time>
+      <span class="tags"><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/git.html">#git</a></span>
+    </div>
+    <div class="post-content"><p>初始化自己项目的时候，出现了N+个warning: LF will be replaced by CRLF，</p>
+<p>git config --global core.autocrlf false</p>
+<p>参考：<a href="http://stackoverflow.com/questions/1967370/git-is-saying-lf-will-be-replaced-by-crlf">http://stackoverflow.com/questions/1967370/git-is-saying-lf-will-be-replaced-by-crlf</a></p>
+<p>看来存入缓存的时候，不同的操作系统文件结尾返回不一样，所以的CRLF会被替换为LF。但在取出的时候会被转换回CRLF,潜在的危险是二进制的改变·所以还是留为true吧。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue37-centos-7-systemctl.html">← 在CentOS 7上利用systemctl添加自定义系统服务</a>
+    <a class="next" href="../../posts/2017/issue40-ubuntu-node-js.html">如何在Ubuntu上安装最新版本的Node.js →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

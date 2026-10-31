@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tp5 最新版 数据集查询后 调用内置分页后 想修改分页过的数据 补充额外字段 · Jay的实验室</title>
+<meta name="description" content="tp5 最新版 数据集查询后 调用内置分页后 想修改分页过的数据 补充额外字段 可以用collection 的 offsetSet 方法">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">tp5 最新版 数据集查询后 调用内置分页后 想修改分页过的数据 补充额外字段</h1>
+    <div class="post-meta">
+      <time>2017-07-10</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a></span>
+    </div>
+    <div class="post-content"><p>tp5 最新版 数据集查询后 调用内置分页后 想修改分页过的数据 补充额外字段 可以用collection 的 offsetSet 方法</p>
+<p>~~~php<br>
+$productCategory = Db::name('ProductCategory')-&gt;alias('a')-&gt;field(&quot;a.id,a.category_name,a.discount,a.order_index,count(b.id) as product_num&quot;)<br>
+          -&gt;join('kwy_product b', 'b.product_category_id =a.id', 'left')-&gt;where($where)-&gt;group(&quot;a.id&quot;)-&gt;order(&quot;a.order_index asc&quot;)-&gt;paginate(10);</p>
+<p>        foreach($productCategory-&gt;all() as $key =&gt;$val ){<br>
+            $productCategory-&gt;offsetSet($key, array_merge($val, ['sex'=&gt;1]));<br>
+        }<br>
+~~~</p>
+<p>完成获取器的操作 以后可能支持分页类对象的each 方法修改数据</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue15-thinkphp5.html">← thinkphp5 速查表</a>
+    <a class="next" href="../../posts/2017/issue13-windows.html">在windows 命令行中打开 当前目录 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

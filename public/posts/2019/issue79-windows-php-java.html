@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>在windows下php执行java命令无反应 · Jay的实验室</title>
+<meta name="description" content="&lt;?php">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">在windows下php执行java命令无反应</h1>
+    <div class="post-meta">
+      <time>2019-11-26</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/windows.html">#windows</a><a class="tag" href="../../tags/shell.html">#shell</a><a class="tag" href="../../tags/java.html">#java</a></span>
+    </div>
+    <div class="post-content"><p>&lt;?php    </p>
+<p>        exec(&quot;java -version&quot;,$out,$status);</p>
+<p>        var_dump($out);</p>
+<p>        echo $status;</p>
+<p>?&gt;</p>
+<p>执行结果是$out是空数组，$status为0，不知道为什么，java命令（已加入环境变量）在cmd命令行下是可以执行的，而且exec('dir')也是可以成功执行的，不知道java命令为什么会有问题</p>
+<p>解决了，后来直接在命令行执行脚本发现java -version竟然是标准错误输出，所以如果要得到输出的话，只要java -version 2&gt;&amp;1就可以了，亲测可用</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2019/issue80-php.html">← php 执行的系统命令带中文时乱码</a>
+    <a class="next" href="../../posts/2019/issue81-php-word.html">php word 执行宏 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

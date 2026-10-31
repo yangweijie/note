@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <title>Jay的实验室</title>
+  <link>/</link>
+  <description>进来了，你发现大秘宝了吗？</description>
+  <language>zh-CN</language>
+  <generator>PJBlog For Finch</generator>
+  <item>
+    <title>mac优化</title>
+    <link>/posts/2026/issue110-mac.html</link>
+    <guid>/posts/2026/issue110-mac.html</guid>
+    <pubDate>Sat, 10 Oct 2026 00:00:00 GMT</pubDate>
+    <description>- 如何减少系统盘占用</description>
+  </item>
+  <item>
+    <title>关于AI 如何利用开源或者自己调教你的ai agent</title>
+    <link>/posts/2026/issue109-ai-ai-agent.html</link>
+    <guid>/posts/2026/issue109-ai-ai-agent.html</guid>
+    <pubDate>Sun, 21 Jun 2026 00:00:00 GMT</pubDate>
+    <description>- ai ide</description>
+  </item>
+  <item>
+    <title>关于导出优化</title>
+    <link>/posts/2026/issue108.html</link>
+    <guid>/posts/2026/issue108.html</guid>
+    <pubDate>Tue, 24 Feb 2026 00:00:00 GMT</pubDate>
+    <description>导出性能优化</description>
+  </item>
+  <item>
+    <title>建站白嫖系列</title>
+    <link>/posts/2025/issue107.html</link>
+    <guid>/posts/2025/issue107.html</guid>
+    <pubDate>Sat, 23 Aug 2025 00:00:00 GMT</pubDate>
+    <description>访问统计</description>
+  </item>
+  <item>
+    <title>替代扩展的php扩展库</title>
+    <link>/posts/2024/issue106-php.html</link>
+    <guid>/posts/2024/issue106-php.html</guid>
+    <pubDate>Sat, 05 Oct 2024 00:00:00 GMT</pubDate>
+    <description>Readme(https://github.com/symfony/polyfill/blob/1.x/README.md)</description>
+  </item>
+  <item>
+    <title>logroate + cron + shell 切割nginx 日志</title>
+    <link>/posts/2024/issue105-logroate-cron-shell-nginx.html</link>
+    <guid>/posts/2024/issue105-logroate-cron-shell-nginx.html</guid>
+    <pubDate>Wed, 07 Aug 2024 00:00:00 GMT</pubDate>
+    <description>logrotate 配置 在 /etc/logrotate.d 中 定义 nginx</description>
+  </item>
+  <item>
+    <title>php加密</title>
+    <link>/posts/2024/issue104-php.html</link>
+    <guid>/posts/2024/issue104-php.html</guid>
+    <pubDate>Tue, 30 Jul 2024 00:00:00 GMT</pubDate>
+    <description>~~~ shell</description>
+  </item>
+  <item>
+    <title>cygwin  php7.4 和swoole</title>
+    <link>/posts/2024/issue103-cygwin-php7-4-swoole.html</link>
+    <guid>/posts/2024/issue103-cygwin-php7-4-swoole.html</guid>
+    <pubDate>Tue, 14 May 2024 00:00:00 GMT</pubDate>
+    <description>先手动最小化d盘装一遍 cygwin64 然后将其重命名cygwin642</description>
+  </item>
+  <item>
+    <title>php 中文文件名下载</title>
+    <link>/posts/2024/issue102-php.html</link>
+    <guid>/posts/2024/issue102-php.html</guid>
+    <pubDate>Wed, 08 May 2024 00:00:00 GMT</pubDate>
+    <description>两种</description>
+  </item>
+  <item>
+    <title>2024春节成就</title>
+    <link>/posts/2024/issue101-2024.html</link>
+    <guid>/posts/2024/issue101-2024.html</guid>
+    <pubDate>Thu, 08 Feb 2024 00:00:00 GMT</pubDate>
+    <description>1. 新建企业微信个人公司\&quot;jay的实验室\&quot; 15262980903</description>
+  </item>
+  <item>
+    <title>微信小程序安全域名</title>
+    <link>/posts/2023/issue100.html</link>
+    <guid>/posts/2023/issue100.html</guid>
+    <pubDate>Fri, 20 Oct 2023 00:00:00 GMT</pubDate>
+    <description>Tutorial: WebSocket 升级指引（Web &amp; 小程序）(https://web.sdk.qcloud.com/im/doc/zh-cn/tuto…</description>
+  </item>
+  <item>
+    <title>laravel- 支持phpstorm打开</title>
+    <link>/posts/2023/issue99-laravel-phpstorm.html</link>
+    <guid>/posts/2023/issue99-laravel-phpstorm.html</guid>
+    <pubDate>Thu, 27 Apr 2023 00:00:00 GMT</pubDate>
+    <description>http://localhost:63342/api/file/?file=%file&amp;line=%line</description>
+  </item>
+  <item>
+    <title>smartgit-win 破解</title>
+    <link>/posts/2023/issue98-smartgit-win.html</link>
+    <guid>/posts/2023/issue98-smartgit-win.html</guid>
+    <pubDate>Fri, 31 Mar 2023 00:00:00 GMT</pubDate>
+    <description>最近用windows 开发了，smartgit 破解不了。</description>
+  </item>
+  <item>
+    <title>wsl2 安装genie 使用systemctl</title>
+    <link>/posts/2023/issue97-wsl2-genie-systemctl.html</link>
+    <guid>/posts/2023/issue97-wsl2-genie-systemctl.html</guid>
+    <pubDate>Tue, 28 Feb 2023 00:00:00 GMT</pubDate>
+    <description>apt install lsb-release\u0000</description>
+  </item>
+  <item>
+    <title>镇江求职渠道</title>
+    <link>/posts/2022/issue96.html</link>
+    <guid>/posts/2022/issue96.html</guid>
+    <pubDate>Thu, 01 Sep 2022 00:00:00 GMT</pubDate>
+    <description>- boss 直聘</description>
+  </item>
+  <item>
+    <title>java Xstream 生成 属性和值同时存在的 xml</title>
+    <link>/posts/2021/issue95-java-xstream-xml.html</link>
+    <guid>/posts/2021/issue95-java-xstream-xml.html</guid>
+    <pubDate>Thu, 04 Nov 2021 00:00:00 GMT</pubDate>
+    <description>xstream 基本用法是对应类对象 转为xml</description>
+  </item>
+  <item>
+    <title>java alieasysdk 扫码支付</title>
+    <link>/posts/2021/issue94-java-alieasysdk.html</link>
+    <guid>/posts/2021/issue94-java-alieasysdk.html</guid>
+    <pubDate>Tue, 12 Oct 2021 00:00:00 GMT</pubDate>
+    <description>官方api里 pc.trade.pay 默认生成的是form 表单，不是原来php端支持的iframe 嵌入二维码的字符串返回，需要手动构建。</description>
+  </item>
+  <item>
+    <title>phpword 合并单元格的坑</title>
+    <link>/posts/2021/issue93-phpword.html</link>
+    <guid>/posts/2021/issue93-phpword.html</guid>
+    <pubDate>Wed, 03 Mar 2021 00:00:00 GMT</pubDate>
+    <description>今天发现以前合并单元格并没有生效，经过研究发现已下结论：</description>
+  </item>
+  <item>
+    <title>springboot整合validation统一参数检查</title>
+    <link>/posts/2021/issue92-springboot-validation.html</link>
+    <guid>/posts/2021/issue92-springboot-validation.html</guid>
+    <pubDate>Thu, 07 Jan 2021 00:00:00 GMT</pubDate>
+    <description>1.背景</description>
+  </item>
+  <item>
+    <title>sql查看mysql中各数据库大小</title>
+    <link>/posts/2020/issue91-sql-mysql.html</link>
+    <guid>/posts/2020/issue91-sql-mysql.html</guid>
+    <pubDate>Thu, 05 Nov 2020 00:00:00 GMT</pubDate>
+    <description>用SQL命令查看Mysql数据库大小</description>
+  </item>
+</channel></rss>

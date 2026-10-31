@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux删除（清空）正在运行的应用日志文件内容 · Jay的实验室</title>
+<meta name="description" content="在测试环境定位问题时，如果发现日志文件内容太多或太大，有时需要删除该日志，如Tomcat，Nginx日志。以前每次都是先rm -rf .log，然后重启应用。直…">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">Linux删除（清空）正在运行的应用日志文件内容</h1>
+    <div class="post-meta">
+      <time>2018-06-04</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p>在测试环境定位问题时，如果发现日志文件内容太多或太大，有时需要删除该日志，如Tomcat，Nginx日志。以前每次都是先rm -rf ***.log，然后重启应用。直到后来发现了以下命令，原来可以不用重启应用直接清空日志。最简单的方式直接运行以下命令：</p>
+<p><code>&gt;file.log  </code><br>
+    还有其它两种方式，分别为：</p>
+<p><code>echo &quot;&quot;&gt;file.log  </code></p>
+<p><code>cat /dev/null &gt; file.log  </code></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue59-php-inotify.html">← php inotify 扩展的安装</a>
+    <a class="next" href="../../posts/2018/issue61-windows-efi-clover.html">教你如何在windows下操作EFI分区，方便安装和配置Clover →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cygwin  php7.4 和swoole · Jay的实验室</title>
+<meta name="description" content="先手动最小化d盘装一遍 cygwin64 然后将其重命名cygwin642">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">cygwin  php7.4 和swoole</h1>
+    <div class="post-meta">
+      <time>2024-05-14</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/swoole.html">#swoole</a><a class="tag" href="../../tags/cygwin64.html">#cygwin64</a></span>
+    </div>
+    <div class="post-content"><p>先手动最小化d盘装一遍 cygwin64 然后将其重命名cygwin642</p>
+<p>下载 <a href="https://www.yunzhongzhuan.com/#sharefile=PUNA75rL_4607214">网盘</a>中的压缩包 解压至d 或其他非C 盘的根目录</p>
+<p>压缩包里的用户名是Administrator 如果 当前机器用户不是，就手动将home/Administrator 改为自己用户，然后 双击开始菜单里的Cygwin64 Terminal 进入，将 /usr/bin 下的composer74s.bat 里d 改为实际判断（已经是d 无需更改）。</p>
+<p>环境变量path 里 导入d:/cygwin64/bin （terminal里是/usr/bin win里只有/bin）后，</p>
+<p>这样就可以 在cmd里 php74s -m  查看确认有swoole 扩展，composer74s 可以更新linux 下依赖了。</p>
+<p>composer74s 加速</p>
+<p><code>composer74s config -g repo.packagist composer https://mirrors.aliyun.com/composer/</code></p>
+<p><code>composer74s repo:use 1</code></p>
+<p><img src="https://github.com/yangweijie/note/assets/1614114/7cf351b3-309e-45a1-befa-f5a9f586dd02" alt="5526ed786ac7a500b33d3daaf61fb3d" loading="lazy"></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2024/issue102-php.html">← php 中文文件名下载</a>
+    <a class="next" href="../../posts/2024/issue104-php.html">php加密 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

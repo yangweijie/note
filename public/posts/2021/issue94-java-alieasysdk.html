@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>java alieasysdk 扫码支付 · Jay的实验室</title>
+<meta name="description" content="官方api里 pc.trade.pay 默认生成的是form 表单，不是原来php端支持的iframe 嵌入二维码的字符串返回，需要手动构建。">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">java alieasysdk 扫码支付</h1>
+    <div class="post-meta">
+      <time>2021-10-12</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/java.html">#java</a><a class="tag" href="../../tags/alipay.html">#alipay</a></span>
+    </div>
+    <div class="post-content"><p>官方api里 pc.trade.pay 默认生成的是form 表单，不是原来php端支持的iframe 嵌入二维码的字符串返回，需要手动构建。</p>
+<p>～～～java 命名空间引入<br>
+import com.alipay.easysdk.factory.Factory;<br>
+import com.alipay.easysdk.kernel.Client;<br>
+import com.aliyun.tea.TeaConverter;<br>
+import com.aliyun.tea.TeaPair;<br>
+～～～<br>
+~~~ 获取alipay的配置<br>
+ private Config getAliOptions() {<br>
+        Config config = new Config();<br>
+        config.protocol = &quot;https&quot;;<br>
+//        config.gatewayHost = &quot;openapi.alipay.com&quot;;<br>
+//        config.gatewayHost = env.equals(&quot;master&quot;)? &quot;openapi.alipay.com&quot;: &quot;openapi.alipaydev.com&quot;;<br>
+        SysConfig sc = null;<br>
+        sc = sysConfigService.detail(&quot;ali_pay_config&quot;);<br>
+        String scValue = null;<br>
+        scValue = sc.getValue();<br>
+        HashMap&lt;String,String&gt; scObject =  JSON.parseObject(scValue, HashMap.class);</p>
+<p>        config.gatewayHost = scObject.get(&quot;dev&quot;).equals(&quot;0&quot;)  ? &quot;openapi.alipay.com&quot;:&quot;openapi.alipaydev.com&quot;;<br>
+        config.signType = &quot;RSA2&quot;;</p>
+<p>        config.appId = scObject.get(&quot;appid&quot;); </p>
+<p>        // 为避免私钥随源码泄露，推荐从文件中读取私钥字符串而不是写入源码中<br>
+        config.merchantPrivateKey = scObject.get(&quot;privateKey&quot;); </p>
+<p>        //注：证书文件路径支持设置为文件系统中的路径或CLASS_PATH中的路径，优先从文件系统中加载，加载失败后会继续尝试从CLASS_PATH中加载<br>
+//        config.merchantCertPath = &quot;&lt;-- 请填写您的应用公钥证书文件路径，例如：/foo/appCertPublicKey_2019051064521003.crt --&gt;&quot;;<br>
+//        config.alipayCertPath = &quot;&lt;-- 请填写您的支付宝公钥证书文件路径，例如：/foo/alipayCertPublicKey_RSA2.crt --&gt;&quot;;<br>
+//        config.alipayRootCertPath = &quot;&lt;-- 请填写您的支付宝根证书文件路径，例如：/foo/alipayRootCert.crt --&gt;&quot;;</p>
+<p>        //注：如果采用非证书模式，则无需赋值上面的三个证书路径，改为赋值如下的支付宝公钥字符串即可<br>
+         config.alipayPublicKey = scObject.get(&quot;publicKey&quot;); </p>
+<p>        //可设置异步通知接收服务地址（可选）<br>
+        config.notifyUrl = scObject.get(&quot;notifyUrl&quot;);</p>
+<p>        if(scObject.get(&quot;encryptKey&quot;) != null &amp;&amp; !scObject.get(&quot;encryptKey&quot;).isEmpty()){<br>
+            //可设置AES密钥，调用AES加解密相关接口时需要（可选）<br>
+            config.encryptKey = scObject.get(&quot;encryptKey&quot;);</p>
+<p>        return config;<br>
+    }<br>
+~~~</p>
+<p>～～～ 发起订单<br>
+private Result aliThirdPay(BigDecimal moneyValue, Integer dId){<br>
+        // 1. 设置参数（全局只需设置一次）<br>
+        Config config = getAliOptions();<br>
+        Factory.setOptions(config);<br>
+        String notify_url = config.notifyUrl;<br>
+//        String notify_url = &quot;<a href="https://xxxx.com/web/open/alipayCallback&quot;;">https://xxxx.com/web/open/alipayCallback&quot;;</a><br>
+        String out_trade_no = SnowflakeIdWorker.nextId(1L) + &quot;-&quot; + dId;</p>
+<p>        try {<br>
+            // 2. 发起API调用（以创建当面付收款二维码为例）<br>
+//            AlipayTradePrecreateResponse a = null;<br>
+            Client _kernel = Factory.Payment.Page()._kernel;</p>
+<p>            Map&lt;String, String&gt; systemParams = TeaConverter.buildMap(<br>
+                new TeaPair(&quot;method&quot;, &quot;alipay.trade.page.pay&quot;),<br>
+                new TeaPair(&quot;app_id&quot;, _kernel.getConfig(&quot;appId&quot;)),<br>
+                new TeaPair(&quot;timestamp&quot;, _kernel.getTimestamp()),<br>
+                new TeaPair(&quot;format&quot;, &quot;json&quot;),<br>
+                new TeaPair(&quot;version&quot;, &quot;1.0&quot;),<br>
+                new TeaPair(&quot;alipay_sdk&quot;, _kernel.getSdkVersion()),<br>
+                new TeaPair(&quot;charset&quot;, &quot;UTF-8&quot;),<br>
+                new TeaPair(&quot;sign_type&quot;, _kernel.getConfig(&quot;signType&quot;)),<br>
+                new TeaPair(&quot;app_cert_sn&quot;, _kernel.getMerchantCertSN()),<br>
+                new TeaPair(&quot;alipay_root_cert_sn&quot;, _kernel.getAlipayRootCertSN())<br>
+            );</p>
+<p>            Map&lt;String, Object&gt; bizParams = TeaConverter.buildMap(<br>
+                new TeaPair(&quot;body&quot;, &quot;充值&quot;),<br>
+                new TeaPair(&quot;qr_pay_mode&quot;, &quot;4&quot;),<br>
+                new TeaPair(&quot;qrcode_width&quot;, &quot;100&quot;),<br>
+                new TeaPair(&quot;subject&quot;, &quot;充值订单&quot;),<br>
+                new TeaPair(&quot;out_trade_no&quot;, out_trade_no),<br>
+                new TeaPair(&quot;total_amount&quot;, moneyValue),<br>
+                new TeaPair(&quot;product_code&quot;, &quot;FAST_INSTANT_TRADE_PAY&quot;)<br>
+            );</p>
+<p>            Map&lt;String, String&gt; textParams = TeaConverter.buildMap(<br>
+                new TeaPair(&quot;notify_url&quot;, notify_url)<br>
+            );</p>
+<p>            String sign = _kernel.sign(systemParams, bizParams, textParams, _kernel.getConfig(&quot;merchantPrivateKey&quot;));</p>
+<p>            String url = _kernel.generatePage(&quot;GET&quot;, systemParams, bizParams, textParams, sign);</p>
+<p>            Map&lt;String, Object&gt; resultMap = new HashMap&lt;&gt;();<br>
+            resultMap.put(&quot;url&quot;, url);<br>
+            resultMap.put(&quot;chargeWay&quot;, 0);<br>
+            return Result.ok(resultMap);<br>
+        } catch (Exception e) {<br>
+            System.err.println(&quot;调用遭遇异常，原因：&quot; + e.getMessage());<br>
+            return Result.failed(e.getMessage());<br>
+        }<br>
+    }<br>
+～～～</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2021/issue93-phpword.html">← phpword 合并单元格的坑</a>
+    <a class="next" href="../../posts/2021/issue95-java-xstream-xml.html">java Xstream 生成 属性和值同时存在的 xml →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

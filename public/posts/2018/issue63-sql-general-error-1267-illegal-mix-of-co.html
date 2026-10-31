@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sql General error: 1267 Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) · Jay的实验室</title>
+<meta name="description" content="今天客户的微信注册遇到昵称问题">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">sql General error: 1267 Illegal mix of collations (utf8mb4_general_ci,IMPLICIT)</h1>
+    <div class="post-meta">
+      <time>2018-06-21</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/sql.html">#sql</a><a class="tag" href="../../tags/mysql.html">#mysql</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p>今天客户的微信注册遇到昵称问题</p>
+<p><img src="https://user-images.githubusercontent.com/1614114/41708734-fe46bda2-7573-11e8-8de6-65acadb6fb9c.png" alt="image" loading="lazy"></p>
+<p>开始找了个修改表结构的sql 改了几个特殊字段， 结果还是报错</p>
+<p>索性tp写了个循环后 将所有表的字符全改utf8mb4了</p>
+<p> ```<br>
+   public function modify_table_charset(){<br>
+    	$tables = Db::query('show tables');<br>
+    	$sql = '';<br>
+    	foreach ($tables as $t) {<br>
+    		$sql .= PHP_EOL.&lt;&lt;&lt;SQL<br>
+ALTER TABLE {$t['Tables_in_novel']} CONVERT TO CHARACTER SET utf8mb4 collate utf8mb4_general_ci;</p>
+<p>SQL;</p>
+<p>    	}<br>
+		echo $sql;<br>
+    }</p>
+<pre><code>
+还有改数据库默认编码
+</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue62-windows.html">← windows开发优化</a>
+    <a class="next" href="../../posts/2018/issue64-tp5-postgresql.html">tp5 postgresql →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>svn 和 git webhook的使用 · Jay的实验室</title>
+<meta name="description" content="最近由于想提高代码提交的效率不再git commit &amp;&amp; git push 和 svn commit 后每次要去服务器更新代码。">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">svn 和 git webhook的使用</h1>
+    <div class="post-meta">
+      <time>2018-10-08</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/shell.html">#shell</a><a class="tag" href="../../tags/git.html">#git</a><a class="tag" href="../../tags/osx.html">#osx</a><a class="tag" href="../../tags/mac.html">#mac</a><a class="tag" href="../../tags/svn.html">#svn</a><a class="tag" href="../../tags/web-hook.html">#web hook</a></span>
+    </div>
+    <div class="post-content"><p>最近由于想提高代码提交的效率不再git commit &amp;&amp; git push 和 svn commit 后每次要去服务器更新代码。<br>
+就参考了 <a href="http://get.ftqq.com/9079.get">分享下使用svn或者git时，测试服务器代码自动更新、线上服务器代码手动更新的配置经验</a> 孟康的文章。没有配置服务器上的文件</p>
+<p>svn 用的svn bucket 免费的自带钩子</p>
+<p><img src="https://user-images.githubusercontent.com/1614114/46598408-92f44080-cb16-11e8-9fad-663b4b79a63b.png" alt="tim 20181008162318" loading="lazy"></p>
+<p>这个工具比较好的是有钩子请求历史记录。</p>
+<p>然后写了项目里的控制器代码：</p>
+<pre><code>&lt;?php
+namespace app\dev\home;
+
+use think\Controller;
+
+/**
+ * Svn钩子
+ * @package app\install\controller
+ */
+class Svn extends Controller
+{
+
+    protected function _initialize()
+    {
+        define('SVN_TOKEN', 'guihzip');
+        header(&quot;Cache-Control:no-cache,must-revalidate&quot;);
+    }
+
+    public function commit()
+    {
+        header(&quot;Cache-Control:no-cache,must-revalidate&quot;);
+        extract($_POST);
+        if ($token == SVN_TOKEN) {
+            switch ($event) {
+                case 'test':
+                    return 'ok';
+                    break;
+                case 'start-commit':
+                    return 'ok';
+                    break;
+                default:
+                    // ptrace($log);
+
+                    if(stripos($log, '@commit') !== false){
+                        $username   = 'XXXXX';
+                        $password   = 'XXXXX';
+                        $target_dir = realpath('..');
+                        // ptrace($target_dir);
+                        ini_set('disable_functions', '');
+                        exec(&quot;sudo svn up --username {$username} --password {$password} --no-auth-cache {$target_dir} 2&gt;&amp;1&quot;, $output, $outresult);
+                        ptrace(implode(PHP_EOL, $output).PHP_EOL.$outresult);
+                        if ($outresult === 0) {
+                            // echo '更新成功！';
+                            //echo print_r($output);
+                            return 'ok';
+                        } else {
+                            // echo '更新失败！';
+                            // echo print_r($output);
+                            return 'failed';
+                        }
+                    }else{
+                        return 'no up';
+                    }
+                    break;
+            }
+        } else {
+            return 'error token';
+        }
+    }
+}
+</code></pre>
+<p>钩子运行时会报各种没权限，因为我的项目是root clone 出来的。于是查找各种办法，</p>
+<p><a href="http://get.ftqq.com/9081.get">php利用root权限执行shell脚本(二) </a></p>
+<p>加入了www 用户组后 执行的svn 命令前面一定要带sudo  就可以了。</p>
+<p>接下来是git 用的oschina 后来换名为了 gitee 。</p>
+<p>在项目里 新增钩子，咱们只管push的钩子</p>
+<p><img src="https://user-images.githubusercontent.com/1614114/46598631-5aa13200-cb17-11e8-8136-946736833181.png" alt="image" loading="lazy"></p>
+<p>对应的代码：</p>
+<pre><code>&lt;?php
+namespace app\dev\home;
+
+use think\Controller;
+
+/**
+ * Git钩子
+ * @package app\install\controller
+ */
+class Git extends Controller
+{
+
+    protected function _initialize()
+    {
+        define('GIT_TOKEN', 'guihzip');
+        header(&quot;Cache-Control:no-cache,must-revalidate&quot;);
+    }
+
+    public function push()
+    {
+        header(&quot;Cache-Control:no-cache,must-revalidate&quot;);
+        // ptrace($_POST);
+        $rws_post = file_get_contents('php://input');
+        $_POST = json_decode($rws_post, 1);
+
+        // ptrace($_POST);
+        extract($_POST);
+        $header = $this-&gt;request-&gt;header();
+        // ptrace($header);
+        $token = $header['x-gitee-token'];
+        $event = $header['x-gitee-event'];
+        if ($token == GIT_TOKEN) {
+            switch ($event) {
+                case 'test':
+                    return 'ok';
+                    break;
+                case 'start-commit':
+                    return 'ok';
+                    break;
+                default:
+                    // ptrace($log);
+                	$log = $head_commit['message'];
+                    if(stripos($log, '@push') !== false){
+                        error_reporting ( E_ALL );
+			$dir = realpath('..');//该目录为git检出目录
+			exec(&quot;sudo cd {$dir} &amp;&amp; git pull origin master 2&gt;&amp;1&quot;, $output, $outresult);
+                        ptrace(implode(PHP_EOL, $output).PHP_EOL.$outresult);
+                        if ($outresult === 0) {
+                            // echo '更新成功！';
+                            //echo print_r($output);
+                            return 'ok';
+                        } else {
+                            // echo '更新失败！';
+                            // echo print_r($output);
+                            return 'failed';
+                        }
+                    }else{
+                        return 'no up';
+                    }
+                    break;
+            }
+        } else {
+            return 'error token';
+        }
+    }
+}</code></pre>
+<h2>git 遇到的问题：</h2>
+<p>1） 没有账号密码<br>
+2）git pull 说没有指定分支</p>
+<p>第一个问题 通过 设置remote url 为带名称 密码的 地址就行 <a href="https://www.jianshu.com/p/8020de245f6a">https://www.jianshu.com/p/8020de245f6a</a></p>
+<p>第二个问题 通过 <a href="http://get.ftqq.com/9083.get">git branch --set-upstream 本地关联远程分支</a></p>
+<blockquote><p>孟康文章里的 output 不是一个字符串要自行转换。 <br>
+gitee 里的post不是传统post 7.2 里 全局变量  </p></blockquote>
+<p>$rws_post = $GLOBALS['HTTP_RAW_POST_DATA'];<br>
+$mypost = json_decode($rws_post,1);<br>
+方式 已经获取不到了  必须 file_get_contents('php://input'); 获取  </p>
+<blockquote><p>x-gitee-token 在 gitee 的文章里 其实是大写的， 可能我的nginx环境不同，所以大家要自己调试一下获取header 看看。<br>
+ptrace 是自己封装的 钉钉告警函数，大家可以换成发邮件。</p></blockquote></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue69.html">← 在线工具集</a>
+    <a class="next" href="../../posts/2018/issue71-lsp-sublime-php-ide.html">使用LSP插件将 sublime 变成 PHP IDE-后续篇 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

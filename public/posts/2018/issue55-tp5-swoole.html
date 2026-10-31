@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tp5 swoole · Jay的实验室</title>
+<meta name="description" content="  swoole的资料：">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">tp5 swoole</h1>
+    <div class="post-meta">
+      <time>2018-04-27</time>
+      <span class="tags"><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/thinkphp.html">#thinkphp</a><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/swoole.html">#swoole</a><a class="tag" href="../../tags/mac.html">#mac</a></span>
+    </div>
+    <div class="post-content"><p>  swoole的资料：<br>
+<a href="https://wiki.swoole.com">https://wiki.swoole.com</a></p>
+<p>主要看了 环境依赖、编译安装、快速起步</p>
+<ol>
+<li>起步 聊天室 websocket 参见ws.zip。</li>
+</ol>
+<p>开始遇到的问题：<br>
+如何重载<br>
+Swoole提供了柔性终止/重启的机制，管理员只需要向SwooleServer发送特定的信号，Server的worker进程可以安全的结束。<br>
+•	SIGTERM: 向主进程/管理进程发送此信号服务器将安全终止<br>
+•	在PHP代码中可以调用$serv-&gt;shutdown()完成此操作<br>
+•	SIGUSR1: 向主进程/管理进程发送SIGUSR1信号，将平稳地restart所有worker进程<br>
+•	在PHP代码中可以调用$serv-&gt;reload()完成此操作<br>
+•	swoole的reload有保护机制，当一次reload正在进行时，收到新的重启信号会丢弃<br>
+•	如果设置了user/group，Worker进程可能没有权限向master进程发送信息，这种情况下必须使用root账户，在shell中执行kill指令进行重启<br>
+由于swoole 是常驻内存的，如果修改了代码 直接继续发送包代码是不生效的。需要reload</p>
+<ol>
+<li>设置进程标题，通过ps grep 查找来kill</li>
+</ol>
+<p>~~~<br>
+cli_set_process_title('chat_process'); 这个mac  不支持<br>
+kill -15 pid<br>
+~~~</p>
+<ol>
+<li>将进程pid 写入脚本，root用户手动重启</li>
+</ol>
+<p>~~~<br>
+ps -efH|grep swoole mac上 是 ps -efh|grep php<br>
+$server-&gt;on('start',function($serv ) {<br>
+    // cli_set_process_title('chat_process');<br>
+    $managerPid = $serv-&gt;manager_pid;</p>
+<p>    $shString = &lt;&lt;&lt;SH<br>
+echo &quot;Reloading...&quot;</p>
+<p>kill -USR1 {$managerPid}</p>
+<p>echo &quot;Reloaded&quot;<br>
+SH;<br>
+	$sh_file = '.reload_manager.sh';<br>
+    file_put_contents($sh_file, $shString);<br>
+});<br>
+~~~</p>
+<ol>
+<li>安装inotify 扩展 监听文件，将文件 在onWorkStart 回调中require_once. 监听到文件变化了，自动重启</li>
+</ol>
+<p>参考sd框架</p>
+<ol>
+<li>链接的fd 不好感知是哪个设备，如何将针对不同设备形成定向广播</li>
+</ol>
+<p>$server-&gt;connection_list()  获取全部在线链接</p>
+<ol>
+<li>数据库超时</li>
+</ol>
+<p>暂时设置了数据库的重连参数<br>
+'break_reconnect' =&gt; true,</p>
+<ol>
+<li>引入tp框架后，调试输出的不显示了</li>
+</ol>
+<p>介入其他项目里的 alert dlert 函数</p>
+<ol>
+<li>报错在终端不方便追踪bug，</li>
+</ol>
+<p>接管异常<br>
+设计同步方案<br>
+针对重载，在根目录建立server_function.php workStart里 require_once</p>
+<p>~~~<br>
+&lt;?php<br>
+function onMessage($server, $frame){<br>
+	\Think\App::invokeClass('\app\index\controller\Message', [])-&gt;receive($server, $frame);<br>
+}</p>
+<p>function onTask($server, $task_id, $src_worker_id, $data){<br>
+	\Think\App::invokeClass('\app\index\controller\Task', [])-&gt;run($server, $task_id, $src_worker_id, $data);<br>
+}</p>
+<p>function onClose($server, $fd){<br>
+    $data = json_encode([<br>
+        'op'      =&gt; 'after_close',<br>
+        'data'    =&gt; '',<br>
+        'from_fd' =&gt; $fd,<br>
+    ], JSON_UNESCAPED_UNICODE);<br>
+    $server-&gt;task($data);<br>
+}</p>
+<p>function onRequest ($server, $request, $response) {<br>
+    //请求过滤<br>
+    if ($request-&gt;server['path_info'] == '/favicon.ico' || $request-&gt;server['request_uri'] == '/favicon.ico') {<br>
+        return $response-&gt;end();<br>
+    }<br>
+	// 环境常量<br>
+    $response-&gt;header('Access-Control-Allow-Origin', &quot;*&quot;);<br>
+	$_SERVER = [<br>
+        'argv' =&gt; [],<br>
+    ];<br>
+    $_GET    = $request-&gt;get?:[];<br>
+    $_POST   = $request-&gt;post;<br>
+    foreach ($request-&gt;server as $key=&gt;$value) {<br>
+    	$_SERVER[strtoupper($key)] = $value;<br>
+    }<br>
+    $_COOKIE = $request-&gt;cookie;<br>
+    $_FILES  = $request-&gt;files;<br>
+    $ret = \Think\App::invokeClass('\app\index\controller\Index', [$server, $request, $response])-&gt;request();<br>
+    $response-&gt;end($ret);<br>
+    exit();<br>
+}<br>
+~~~</p>
+<p>主文件index.php</p>
+<p>~~~<br>
+&lt;?php<br>
+namespace think;<br>
+global $server;<br>
+$server = new \swoole_websocket_server(&quot;0.0.0.0&quot;, 9501);<br>
+$server-&gt;set(<br>
+	['task_worker_num'=&gt;10]<br>
+);</p>
+<p>$server-&gt;on('start',function($serv ) {<br>
+    // cli_set_process_title('chat_process');<br>
+    $managerPid = $serv-&gt;manager_pid;</p>
+<p>    $shString = &lt;&lt;&lt;SH<br>
+echo &quot;Reloading...&quot;</p>
+<p>kill -USR1 {$managerPid}</p>
+<p>echo &quot;Reloaded&quot;<br>
+SH;<br>
+	$sh_file = '.reload_manager.sh';<br>
+    file_put_contents($sh_file, $shString);<br>
+});</p>
+<p>$server-&gt;on('WorkerStart',function($serv , $worker_id) {<br>
+	define('ERROR_LOG_TYPE', 'ws_error_log');<br>
+	define('APP_PATH', __DIR__ . '/application/');<br>
+	define('THINK_PATH', __DIR__ . '/thinkphp/');<br>
+	// 加载框架引导文件<br>
+	require_once __DIR__ . '/base.php';<br>
+	$_SERVER = [<br>
+		'REQUEST_METHOD' =&gt; 'GET',<br>
+		'argv'           =&gt; [],<br>
+	];<br>
+});</p>
+<p>$server-&gt;on('open', function (\swoole_websocket_server $server, $request) {<br>
+    echo &quot;server: handshake success with fd{$request-&gt;fd}\n&quot;;<br>
+});</p>
+<p>$server-&gt;on('message', function (\swoole_websocket_server $server, $frame) {<br>
+	echo &quot;receive from {$frame-&gt;fd}:{$frame-&gt;data},opcode:{$frame-&gt;opcode},fin:{$frame-&gt;finish}\n&quot;;<br>
+	$_SERVER['REQUEST_TIME'] = time();<br>
+	App::initCommon();<br>
+	require_once __DIR__. '/server_function.php';<br>
+    onMessage($server, $frame);<br>
+});</p>
+<p>$server-&gt;on('close', function ($ser, $fd) {<br>
+    echo &quot;client {$fd} closed\n&quot;;<br>
+	require_once __DIR__. '/server_function.php';<br>
+    onClose($ser, $fd);<br>
+});</p>
+<p>$server-&gt;on('finish', function ($ser, $fd) {<br>
+    return true;<br>
+});</p>
+<p>$server-&gt;on('task', function(\swoole_websocket_server $server, $task_id, $src_worker_id, $data){<br>
+	App::initCommon();<br>
+	require_once __DIR__. '/server_function.php';<br>
+	onTask($server, $task_id, $src_worker_id, $data);<br>
+	return true;<br>
+});</p>
+<p>$server-&gt;start();<br>
+~~~</p>
+<p>首先，参考 <a href="https://www.tuicool.com/articles/emY3Ar">https://www.tuicool.com/articles/emY3Ar</a>  有了思路 ，然后阅读tp5源码 app 发现可以用静态方法将 映射调用某个类，因此。<br>
+将task message 映射到Task 的run  和 Message控制器 的 receive 方法里。</p>
+<p>然后 定义数据格式为json 然后 反json后 动态op 参数调用内部方法。</p>
+<p>消息的处理<br>
+经过讨论，为了方便客户端离线后台看到消息，我们设计了数据表 ws_message表。</p>
+<p>业务消息必然和shop_id table_id 相关，然后保存 发送方from_client_id 和接受方to_client_id 并记录 发送消息设备类型 主还是副</p>
+<p>经过讨论，主设备发送消息 无需记录， 消息 中data 和user_info 为序列化字段。</p>
+<p>Message 类的组成</p>
+<p>~~~<br>
+&lt;?php<br>
+namespace app\index\controller;</p>
+<p>use app\common\lib\SystemLog;<br>
+use app\index\model\WsDevices;<br>
+use app\index\model\WsMessage;<br>
+use app\index\model\WsOnlineClients;</p>
+<p>class Message<br>
+{</p>
+<p>    public function __construct()<br>
+    {<br>
+        config('default_return_type', 'json');<br>
+    }</p>
+<p>    public $from_fd;<br>
+    public $server;<br>
+    public $date_format = 'Y-m-d H:i:s';</p>
+<p>    public function success($info, $data = [])<br>
+    {<br>
+        debug('api_end');<br>
+        $push_data = [<br>
+            'code'      =&gt; 0,<br>
+            'msg'       =&gt; $info,<br>
+            'time'      =&gt; date($this-&gt;date_format, $_SERVER['REQUEST_TIME']),<br>
+            'data'      =&gt; $data,<br>
+            'ttfb_time' =&gt; debug('api_begin', 'api_end', 6) . 's',<br>
+        ];<br>
+        return $this-&gt;server-&gt;push($this-&gt;from_fd, json_encode($push_data, JSON_UNESCAPED_UNICODE));<br>
+    }</p>
+<p>    public function error($info, $data = [])<br>
+    {<br>
+        debug('api_end');<br>
+        $push_data = [<br>
+            'code'      =&gt; 1,<br>
+            'msg'       =&gt; $info,<br>
+            'time'      =&gt; date($this-&gt;date_format, $_SERVER['REQUEST_TIME']),<br>
+            'data'      =&gt; $data,<br>
+            'ttfb_time' =&gt; debug('api_begin', 'api_end', 6) . 's',<br>
+        ];<br>
+        return $this-&gt;server-&gt;push($this-&gt;from_fd, json_encode($push_data, JSON_UNESCAPED_UNICODE));<br>
+    }</p>
+<p>    public function receive($server, $frame)<br>
+    {<br>
+        debug('api_begin');<br>
+        $data = $frame-&gt;data;<br>
+        $this-&gt;from_fd = $frame-&gt;fd;<br>
+        $this-&gt;server = $server;<br>
+        echo $data . '\n';<br>
+        $data = json_decode($data, 1);<br>
+        if (is_array($data)) {<br>
+            if (method_exists($this, $data['op'])) {<br>
+                $call = $data['op'];<br>
+                unset($data['op']);<br>
+                $this-&gt;$call($server, $frame, $data);<br>
+            } else {<br>
+                goto rawMsg;<br>
+            }<br>
+        } else {<br>
+            rawMsg:<br>
+            $this-&gt;rawMsg($server, $frame, $frame-&gt;data);<br>
+        }<br>
+    }</p>
+<p>    // 登录<br>
+    public function login($server, $frame, $data)<br>
+    {<br>
+        // dlert2(&quot;fd:#{$frame-&gt;fd}|shop_id:{$data['shop_id']}|client_id:{$data['client_id']}|type:{$data['type']}的设备登录了，&quot;.datetime());<br>
+        WsDevices::login($frame-&gt;fd, $data['shop_id'], $data['client_id'], $data['type']);<br>
+        if($data['type'] == '主'){<br>
+            // 登录后重发数据， 客户端重新链接后会重新拉去列表<br>
+            // $data = json_encode([<br>
+            //     'op'        =&gt; 'after_login',<br>
+            //     'client_id' =&gt; $data['client_id'],<br>
+            //     'from_fd'   =&gt; $frame-&gt;fd,<br>
+            // ], JSON_UNESCAPED_UNICODE);<br>
+            // $server-&gt;task($data);<br>
+        }<br>
+    }</p>
+<p>    // 登出<br>
+    public function logout($server, $frame, $data)<br>
+    {<br>
+        $server-&gt;close($frame-&gt;fd);<br>
+    }</p>
+<p>    // 加菜 退菜 打折 赠送 结账<br>
+    public function notify($server, $frame, $data)<br>
+    {<br>
+        if ($data['from_client_type'] == '主') {<br>
+            $sub_clients = WsDevices::getSubClientByShopId($data['shop_id']);<br>
+            if ($sub_clients) {<br>
+                $sub_client_ids = array_column($sub_clients, 'client_id');<br>
+                $fds = WsOnlineClients::where('client_id', 'in', $sub_client_ids)-&gt;column('fd');<br>
+                foreach ($fds as $fd) {<br>
+                    $server-&gt;push($fd, $data);<br>
+                }<br>
+            }<br>
+        } else {<br>
+            $main_clients = WsDevices::getMainClientByShopId($data['shop_id']);<br>
+            if ($main_clients) {<br>
+            	$ws_message_client_ids = [];<br>
+                foreach ($main_clients as $main_client) {<br>
+                    $id = WsMessage::add($data['shop_id'], $data['table_id'], $data['type'], $data['data'], $data['user_info'], $data['from_client_id'], $main_client['client_id'], '副', $data['status']);<br>
+                	$ws_message_client_ids[$main_client['client_id']] = $id;<br>
+                }<br>
+                $main_client_ids = array_column($main_clients, 'client_id');</p>
+<p>                if ($main_client_ids) {<br>
+                    $fds = WsOnlineClients::where('client_id', 'in', $main_client_ids)-&gt;column('client_id,fd');<br>
+                    $online_messages = array_intersect_key($ws_message_client_ids, $fds);<br>
+                    foreach ($fds as $client_id=&gt;$fd) {<br>
+                    	if(isset($online_messages[$client_id])){<br>
+                    		$msg_id = $online_messages[$client_id];<br>
+                    		$push_data = [<br>
+                                'id'       =&gt; $msg_id, <br>
+                                'status'   =&gt; $data['status'], <br>
+                                'table_id' =&gt; $data['table_id'], <br>
+                                'type'     =&gt; $data['type'],<br>
+                                'title'    =&gt; &quot;桌id：{$data['table_id']} {$data['type']}&quot;,<br>
+                            ];<br>
+                            $info = $server-&gt;connection_info($fd);<br>
+                            if($info['websocket_status'] == 3){<br>
+                                $ret = $server-&gt;push($fd, json_encode($push_data, JSON_UNESCAPED_UNICODE));<br>
+                                if($ret){<br>
+                                    WsMessage::where('id', $msg_id)-&gt;update(['is_delivered'=&gt;1]);<br>
+                                }else{<br>
+                                    $fail_msg = sprintf('时间：%s，店铺id:%d下子设备 client_id:%s 向主设备client_id %s发送 【桌号id：%s，类型：%s，消息id：%d】的消息失败', datetime(),$data['shop_id'], $data['from_client_id'], $client_id, $data['table_id'], $data['type'], $msg_id);<br>
+                                    alert(__CLASS__.':'.__FUNCTION__.':L'.__LINE__.PHP_EOL.$fail_msg);<br>
+                                    dlert(__CLASS__.':'.__FUNCTION__.':L'.__LINE__.PHP_EOL.$fail_msg);<br>
+                                    SystemLog::error_log($fail_msg, __CLASS__.':'.__FUNCTION__.':L'.__LINE__, ERROR_LOG_TYPE);<br>
+                                }<br>
+                            }<br>
+                    	}<br>
+                    }<br>
+                }<br>
+            } else {<br>
+                $this-&gt;error('店铺主设备未记录，请先联系商家完成主设备初始化');<br>
+            }<br>
+        }<br>
+    }</p>
+<p>    // 处理非序列化消息<br>
+    public function rawMsg($server, $frame, $msg)<br>
+    {<br>
+        $server-&gt;push($frame-&gt;fd, &quot;{$frame-&gt;data}&quot;);<br>
+        // dlert2($msg);<br>
+        if (stripos($msg, '说') !== false) {<br>
+            $data = json_encode([<br>
+                'op' =&gt; 'say',<br>
+                'data' =&gt; $msg,<br>
+                'from_fd' =&gt; $frame-&gt;fd,<br>
+            ], JSON_UNESCAPED_UNICODE);<br>
+            $server-&gt;task($data);<br>
+        }</p>
+<p>        // 获取特殊管理的消息<br>
+        if (stripos($msg, 'from_admin') !== false) {<br>
+            parse_str($msg, $params);<br>
+            dump($params);<br>
+            $op = $params['op'];<br>
+            switch ($op) {<br>
+                case 'reload':<br>
+                    echo 'reloading server';<br>
+                    $server-&gt;reload();<br>
+                    break;<br>
+                case 'get_connections':<br>
+                    $server-&gt;push($frame-&gt;fd, json_encode($server-&gt;connection_list() ?: [], JSON_UNESCAPED_UNICODE));<br>
+                    break;<br>
+                case 'send_messages':<br>
+                    $data = json_encode([<br>
+                        'op'      =&gt; 'admin_say',<br>
+                        'data'    =&gt; $params['content'],<br>
+                        'from_fd' =&gt; $frame-&gt;fd,<br>
+                        'to_fds'  =&gt; $params['to_fds'],<br>
+                    ], JSON_UNESCAPED_UNICODE);<br>
+                    $server-&gt;task($data);<br>
+                    break;<br>
+                default:<br>
+                    break;<br>
+            }<br>
+        }<br>
+    }<br>
+}<br>
+~~~<br>
+rawMsg  是用于不是json 格式的字符串，处理消息。用于客户端测试 echo服务器。和其他特殊命令<br>
+login  用于自定义登录消息，记录在线设备，更新设备状态<br>
+logout 下线（设备-删除ws_online_clients）记录。通过手动close fd 抓onClose里的 task 异步任务。</p>
+<p>notify 主要逻辑 主要用于 产生消息记录，并广播至同店铺主设备（多个主设备比较复杂，需要二次同步，不实现）。push成功后更新is_delived 字段</p>
+<p>http接口<br>
+1.获取消息列表（待处理-shop_id）ws.weiwoju.com/api.php/index/index/messageList/shop_id/{shop_id}<br>
+直接查询</p>
+<ol>
+<li>处理标记消息</li>
+</ol>
+<p>ws.weiwoju.com/api.php/index/index/deal/{id:1,status}</p>
+<ol>
+<li>获取主设备在线状态</li>
+</ol>
+<p>ws.weiwoju.com/api.php/index/index/check_online_main/shop_id/{shop_id}<br>
+其实就是查询online表和devices 表的</p>
+<ol>
+<li>http 内请求websocket</li>
+</ol>
+<p>ws.weiwoju.com/api.php/index/index/notify_main/ 参数见代码</p>
+<p>和web端请求格式一致。</p>
+<p>进程模型</p>
+<p>ssl开启<br>
+生成证书：<br>
+SSL支持</p>
+<p>本章将详细讲解如何制作证书以及如何开启Swoole的SSL的单向、双向认证。<br>
+准备工作<br>
+选择任意路径，执行如下命令创建文件夹结构<br>
+~~~<br>
+mkdir ca<br>
+cd ca<br>
+mkdir private<br>
+mkdir server<br>
+mkdir newcerts<br>
+~~~<br>
+在ca目录下创建openssl.conf文件，文件内容如下<br>
+~~~<br>
+[ ca ]  <br>
+default_ca      = foo                   # The default ca section  </p>
+<p>[ foo ]  <br>
+dir            = /path/to/ca         # top dir  <br>
+database       = /path/to/ca/index.txt          # index file.  <br>
+new_certs_dir  = /path/to/ca/newcerts           # new certs dir  </p>
+<p>certificate    = /path/to/ca/private/ca.crt         # The CA cert  <br>
+serial         = /path/to/ca/serial             # serial no file  <br>
+private_key    = /path/to/ca/private/ca.key  # CA private key  <br>
+RANDFILE       = /path/to/ca/private/.rand      # random number file  </p>
+<p>default_days   = 365                     # how long to certify for  <br>
+default_crl_days= 30                     # how long before next CRL  <br>
+default_md     = md5                     # message digest method to use  <br>
+unique_subject = no                      # Set to 'no' to allow creation of  <br>
+                                         # several ctificates with same subject.  <br>
+policy         = policy_any              # default policy  </p>
+<p>[ policy_any ]  <br>
+countryName = match  <br>
+stateOrProvinceName = match  <br>
+organizationName = match  <br>
+organizationalUnitName = match  <br>
+localityName            = optional  <br>
+commonName              = optional  <br>
+emailAddress            = optional<br>
+~~~<br>
+其中，/path/to/ca/是ca目录的绝对路径。<br>
+创建ca证书<br>
+在ca目录下创建一个shell脚本，命名为new_ca.sh。文件内容如下：<br>
+~~~<br>
+#!/bin/sh  <br>
+openssl genrsa -out private/ca.key  <br>
+openssl req -new -key private/ca.key -out private/ca.csr  <br>
+openssl x509 -req -days 365 -in private/ca.csr -signkey private/ca.key -out private/ca.crt  <br>
+echo FACE &gt; serial  <br>
+touch index.txt  <br>
+openssl ca -gencrl -out private/ca.crl -crldays 7 -config &quot;./openssl.conf&quot;<br>
+~~~</p>
+<p>执行sh new_ca.sh命令，创建ca证书。生成的证书存放于private目录中。<br>
+注意 在创建ca证书的过程中，需要输入一些信息。其中，countryName、stateOrProvinceName、organizationName、organizationalUnitName这四个选项的内容必须要填写，并且需要记住。在生成后续的证书过程中，要保证这四个选项的内容一致。<br>
+创建服务端证书<br>
+在ca目录下创建一个shell脚本，命名为new_server.sh。文件内容如下：<br>
+~~~<br>
+#!/bin/sh  <br>
+openssl genrsa -out server/server.key  <br>
+openssl req -new -key server/server.key -out server/server.csr  <br>
+openssl ca -in server/server.csr -cert private/ca.crt -keyfile private/ca.key -out server/server.crt -config &quot;./openssl.conf&quot;<br>
+~~~<br>
+执行sh new_ca.sh命令，创建ca证书。生成的证书存放于server目录中。<br>
+创建客户端证书<br>
+在ca目录下创建一个shell脚本，命名为new_client.sh。文件内容如下：<br>
+~~~<br>
+#!/bin/sh  </p>
+<p>base=&quot;./&quot;  <br>
+mkdir -p $base/users/  <br>
+openssl genrsa -des3 -out $base/users/client.key 1024  <br>
+openssl req -new -key $base/users/client.key -out $base/users/client.csr  <br>
+openssl ca -in $base/users/client.csr -cert $base/private/ca.crt -keyfile $base/private/ca.key -out $base/users/client.crt -config &quot;./openssl.conf&quot;  <br>
+openssl pkcs12 -export -clcerts -in $base/users/client.crt -inkey $base/users/client.key -out $base/users/client.p12<br>
+~~~<br>
+执行sh new_ca.sh命令，创建ca证书。生成的证书存放于users目录中。 进入users目录，可以看到有一个client.p12文件，这个就是客户端可用的证书了，但是这个证书是不能在php中使用的，因此需要做一次转换。命令如下：<br>
+~~~<br>
+openssl pkcs12 -clcerts -nokeys -out cer.pem -in client.p12<br>
+openssl pkcs12 -nocerts -out key.pem -in client.p12<br>
+~~~<br>
+以上两个命令会生成cer.pem和key.pem两个文件。其中，生成key.pem时会要求设置密码，这里记为client_pwd<br>
+注意 如果在创建客户端证书时，就已经给client.p12设置了密码，那么在转换格式的时候，需要输入密码进行转换<br>
+最终结果<br>
+以上步骤执行结束后，会得到不少文件，其中需要用的文件如下表所示：</p>
+<table><thead><tr><th>文件名</th><th>路径</th><th>说明</th></tr></thead><tbody>
+<tr><td>ca.crt</td><td>ca/private/</td><td>ca证书</td></tr>
+<tr><td>server.crt</td><td>ca/server/</td><td>服务器端证书</td></tr>
+<tr><td>server.key</td><td>ca/server/</td><td>服务器端秘钥</td></tr>
+<tr><td>cer.pem</td><td>ca/client/</td><td>客户端证书</td></tr>
+<tr><td>key.pem</td><td>ca/client/</td><td>客户端秘钥</td></tr>
+</tbody></table>
+<p>SSL单向认证<br>
+Swoole开启SSL<br>
+Swoole开启SSL功能需要如下参数：<br>
+~~~<br>
+$server = new swoole_server(&quot;127.0.0.1&quot;, &quot;9501&quot; , SWOOLE_PROCESS, SWOOLE_SOCK_TCP | SWOOLE_SSL );<br>
+$server = new swoole_http_server(&quot;127.0.0.1&quot;, &quot;9501&quot; , SWOOLE_PROCESS, SWOOLE_SOCK_TCP | SWOOLE_SSL );<br>
+~~~<br>
+并在swoole的配置选项中增加如下两个选项：<br>
+~~~<br>
+$server-&gt;set(array(<br>
+    'ssl_cert_file' =&gt; '/path/to/server.crt',<br>
+    'ssl_key_file' =&gt;  '/path/to/server.key',<br>
+));<br>
+~~~<br>
+这时，swoole服务器就已经开启了单向SSL认证，可以通过<a href="https://127.0.0.1:9501/进行访问。">https://127.0.0.1:9501/进行访问。</a><br>
+SSL双向认证<br>
+服务器端设置<br>
+双向认证指服务器也要对发起请求的客户端进行认证，只有通过认证的客户端才能进行访问。 为了开启SSL双向认证，swoole需要额外的配置参数如下：<br>
+~~~<br>
+$server-&gt;set(array(<br>
+    'ssl_cert_file' =&gt; '/path/to/server.crt',<br>
+    'ssl_key_file' =&gt;  '/path/to/server.key',<br>
+    'ssl_client_cert_file' =&gt; '/path/to/ca.crt',<br>
+    'ssl_verify_depth' =&gt; 10,<br>
+));<br>
+~~~<br>
+客户端设置<br>
+这里我们使用CURL进行https请求的发起。 首先，需要配置php.ini,增加如下配置：<br>
+<code>curl.cainfo=/path/to/ca.crt</code><br>
+发起curl请求时，增加如下配置项：<br>
+~~~<br>
+$ch = curl_init();</p>
+<p>curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '2'); <br>
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);   // 只信任CA颁布的证书<br>
+curl_setopt($ch, CURLOPT_SSLCERT, &quot;/path/to/cer.pem&quot;);<br>
+curl_setopt($ch, CURLOPT_SSLKEY,  &quot;/path/to/key.pem&quot;);<br>
+curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');<br>
+curl_setopt($ch, CURLOPT_SSLCERTPASSWD, '******'); // 创建客户端证书时标记的client_pwd密码<br>
+~~~<br>
+这时，就可以发起一次https请求，并且被swoole服务器验证通过了。</p>
+<p>服务端域名 要开启那个ssl：</p>
+<p>~~~<br>
+listen       443 ssl;<br>
+    ssl_certificate      server.crt;<br>
+    ssl_certificate_key  server.key;<br>
+    ssl_session_cache    shared:SSL:1m;<br>
+    ssl_session_timeout  5m;<br>
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;<br>
+    ssl_ciphers  HIGH:!aNULL:!MD5;<br>
+    ssl_prefer_server_ciphers  on;<br>
+~~~</p>
+<p>这样 443 后ssl  去掉ssl on  可以 混合访问</p>
+<p>生成配置中的一些设置，经过测试不填host可以任意域名：</p>
+<p>~~~<br>
+Country Name (2 letter code) []:CN<br>
+State or Province Name (full name) []:Zhejiang<br>
+Locality Name (eg, city) []:Hangzhou<br>
+Organization Name (eg, company) []:weiwoju<br>
+Organizational Unit Name (eg, section) []:ws<br>
+password = weiwoju</p>
+<p>~~~</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue56-git.html">← 自建git</a>
+    <a class="next" href="../../posts/2018/issue58-lsp-sublime-php-ide.html">使用LSP插件将 sublime 变成 PHP IDE →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

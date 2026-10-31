@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>logroate + cron + shell 切割nginx 日志 · Jay的实验室</title>
+<meta name="description" content="logrotate 配置 在 /etc/logrotate.d 中 定义 nginx">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">logroate + cron + shell 切割nginx 日志</h1>
+    <div class="post-meta">
+      <time>2024-08-07</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/shell.html">#shell</a><a class="tag" href="../../tags/nginx.html">#nginx</a></span>
+    </div>
+    <div class="post-content"><h1>logrotate 配置 在 <code>/etc/logrotate.d</code> 中 定义 nginx</h1>
+<p>~~~ conf<br>
+/home/wwwlogs/*log {<br>
+    daily<br>
+    rotate 7<br>
+    missingok<br>
+    notifempty<br>
+    compress<br>
+    dateext<br>
+    sharedscripts<br>
+    create 640 www www<br>
+    postrotate<br>
+    /usr/sbin/service nginx reload<br>
+    endscript<br>
+}<br>
+~~~</p>
+<p>在 /opt/中新建 logrotate-nginx.sh<br>
+~~~ shell<br>
+#!/bin/bash<br>
+#创建转储日志压缩存放目录<br>
+mkdir -p /home/wwwlogs/days<br>
+#手工对nginx日志进行切割转换<br>
+/usr/sbin/logrotate -vf /etc/logrotate.d/nginx<br>
+#当前时间<br>
+time=$(date -d &quot;yesterday&quot; +&quot;%Y-%m-%d&quot;)<br>
+#进入转储日志存放目录<br>
+cd /home/wwwlogs/days<br>
+#对目录中的转储日志文件的文件名进行统一转换<br>
+for i in $(ls ./ | grep &quot;^\(.*\)\.[[:digit:]]$&quot;)<br>
+do<br>
+mv ${i} ./$(echo ${i}|sed -n 's/^\(.*\)\.\([[:digit:]]\)$/\1/p')-$(echo $time)<br>
+done<br>
+#对转储的日志文件进行压缩存放，并删除原有转储的日志文件，只保存压缩后的日志文件。以节约存储空间<br>
+for i in $(ls ./ | grep &quot;^\(.*\)\-\([[:digit:]-]\+\)$&quot;)<br>
+do<br>
+tar jcvf ${i}.bz2 ./${i}<br>
+rm -rf ./${i}<br>
+done<br>
+#只保留最近7天的压缩转储日志文件<br>
+find /home/wwwlogs/days<em> -name &quot;</em>.bz2&quot; -mtime 7 -type f -exec rm -rf {} \;<br>
+~~~</p>
+<p><code>crontab -e</code><br>
+添加 一行定时任务<br>
+~~~<br>
+0 0 <em> </em> * /bin/bash -x /opt/logrotate-nginx.sh &gt; /dev/null 2&gt;<br>
+~~~<br>
+chmod 0777 /opt/logrotate-nginx.sh</p>
+<p>测试 /opt/logrotate-nginx.sh</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2024/issue104-php.html">← php加密</a>
+    <a class="next" href="../../posts/2024/issue106-php.html">替代扩展的php扩展库 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

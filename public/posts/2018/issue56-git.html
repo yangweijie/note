@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>自建git · Jay的实验室</title>
+<meta name="description" content="自建git">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">自建git</h1>
+    <div class="post-meta">
+      <time>2018-04-27</time>
+      <span class="tags"><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/git.html">#git</a><a class="tag" href="../../tags/nginx.html">#nginx</a></span>
+    </div>
+    <div class="post-content"><h1>自建git</h1>
+<p>由于码云项目出了企业版 每个项目成员最多5个人。<br>
+虽然coding允许免费5个私有项目，为了不受限制，我们决定阿里云服务器上自建git仓库。</p>
+<p>1.安装<br>
+yum install git git-daemon</p>
+<ol>
+<li>配置 Git</li>
+</ol>
+<p>在 CentOS 中，Git 是以 xinetd 方式提供服务的，默认的 xinetd 配置文件在：/etc/xinetd.d/git。<br>
+编辑配置文件，以下是改好的一份 git xinetd 配置文件：<br>
+~~~</p>
+<h1>default: off</h1>
+<h1>description: The git dæmon allows git repositories to be exported using \</h1>
+<h1>the git:// protocol.</h1>
+<p>service git<br>
+{<br>
+    disable = no<br>
+        socket_type     = stream<br>
+        wait            = no<br>
+        user            = nobody<br>
+        server          = /usr/libexec/git-core/git-daemon<br>
+        server_args     = --base-path=/var/lib/git --export-all --user-path=public_git --syslog --inetd --verbose<br>
+        log_on_failure  += USERID<br>
+}<br>
+~~~<br>
+接下来启动 xinetd 服务：<br>
+[root@c1.inanu.net]#<br>
+<code>service xinetd start</code></p>
+<ol>
+<li>建立 Puppet 服务器端 Git 仓库</li>
+</ol>
+<p>~~~<br>
+[root@c1.inanu.net]# useradd -d /var/lib/git -s /usr/bin/git-shell git #创建 git 用户<br>
+[root@c1.inanu.net]# passwd git #设置 git 用户密码<br>
+[root@c1.inanu.net]# chown -R git:git /var/lib/git<br>
+[git@c1.inanu.net]$ cd /var/lib/git<br>
+[git@c1.inanu.net]$ mkdir .ssh<br>
+[git@c1.inanu.net]$ chmod 700 .ssh<br>
+[git@c1.inanu.net]$ touch .ssh/authorized_keys<br>
+[git@c1.inanu.net]$ chmod 600 .ssh/authorized_keys<br>
+[git@c1.inanu.net]$ mkdir /var/lib/git/xx.git #创建 Puppet 服务器端 Git 仓库<br>
+[git@c1.inanu.net]$ sudo chown -R git:git xx.git<br>
+[git@c1.inanu.net]$ cd /var/lib/git/xx.git 注意是否是git的权限<br>
+[git@c1.inanu.net]$ git --bare init #初始化 Puppet 服务器端 Git 仓库<br>
+~~~<br>
+4.客户端clone<br>
+<code>git clone git@ip:xx/path 全路径</code></p>
+<p>已有项目如何迁移</p>
+<ol>
+<li>本地clone  刚建的项目</li>
+<li>拷贝本地已有项目所有文件 到这个目录后提交</li>
+<li>设置远程项目 remote 为新的地址</li>
+<li>尝试更新</li>
+</ol>
+<p>更新 账户密码  git git2018</p>
+<p>查看远程地址<br>
+~~~<br>
+Git remote -v<br>
+git remote set-url origin ssh://git@116.62.11.197:58585/home/git/ws.git<br>
+~~~<br>
+无法加入know_hosts </p>
+<ol>
+<li>chown username: /home/username/.ssh  </li>
+<li>chown username: /home/username/.ssh/*  </li>
+<li>chmod 700 /home/username/.ssh  </li>
+<li>chmod 600 /home/username.ssh/*  </li>
+</ol>
+<p><img src="blob:<a href="https://www.kancloud.cn/91d078a3-4863-4441-be5a-943609dbd5a5"">https://www.kancloud.cn/91d078a3-4863-4441-be5a-943609dbd5a5"</a> alt="" loading="lazy"></p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2018/issue57-yar.html">← yar使用</a>
+    <a class="next" href="../../posts/2018/issue55-tp5-swoole.html">tp5 swoole →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

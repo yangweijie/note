@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>关于AI 如何利用开源或者自己调教你的ai agent · Jay的实验室</title>
+<meta name="description" content="- ai ide">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">关于AI 如何利用开源或者自己调教你的ai agent</h1>
+    <div class="post-meta">
+      <time>2026-06-21</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/extension.html">#extension</a><a class="tag" href="../../tags/ai.html">#ai</a></span>
+    </div>
+    <div class="post-content"><ul>
+<li>ai ide</li>
+<ul>
+<li>phpstorm or jetbrans </li>
+<li>vscode</li>
+<li>visual studio</li>
+<li>xcode</li>
+<li>zed</li>
+</ul>
+<li>ai cli agent</li>
+<ul>
+<li>opencode</li>
+<li>mimocode</li>
+<li>zcode </li>
+</ul>
+<li>mcp</li>
+<ul>
+<li>qoder-composer-use windows 上 在 <code>c:\Users\xxxx\.qoder\plugins\.cache\qoder-bundler\qoder-computer-use\QoderComputerUse.exe</code>。mac上在 <code>/Users/XXX/.qoder/plugins/cache/qoder-bundler/qoder-computer-use/Qoder Computer Use</code></li>
+</ul>
+</ul>
+<ul>
+<ul>
+<li>unfetch 支持mcp的下载工具 方便下载模型</li>
+</ul>
+</ul>
+<p>~~~<br>
+{<br>
+  &quot;mcpServers&quot;: {<br>
+    &quot;unfetch&quot;: {<br>
+      &quot;command&quot;: &quot;/Applications/unfetch.app/Contents/MacOS/unfetch&quot;,<br>
+      &quot;args&quot;: [&quot;--mcp&quot;]<br>
+    }<br>
+  }<br>
+}<br>
+~~~</p>
+<ul>
+<li>skills</li>
+<ul>
+<li>pr-takeover 用于你fork github 仓库源码 后修改了提交了pr 对方提要求继续修改 后续 ai自动接入讨论直至合并的技能</li>
+</ul>
+</ul>
+<p>~~~<br>
+bunx skills add <a href="https://github.com/nexu-io/looper">https://github.com/nexu-io/looper</a> --skill pr-takeover<br>
+~~~</p>
+<ul>
+<li>tools</li>
+<ul>
+<li><a href="https://github.com/yangweijie/xget-cli">xget-cli</a>  用于命令行获取git、docker、model 镜像地址和加速的工具</li>
+<li><a href="https://github.com/yangweijie/opencode-ReadMediaFile">opencode-ReadMediaFile</a> 从 kimicode 借鉴</li>
+<li>skill market 国内github 不可用 那些命令行安装不行，codebuddy 自带了两个市场</li>
+</ul>
+<li>agent</li>
+<ul>
+<li>linus</li>
+<li>php-pro</li>
+</ul>
+<li>local model runtime 本地 ai 模型运行时</li>
+<ul>
+<li>ollama 有免费模型 </li>
+<li>lmstudio 支持lm link 可远程访问</li>
+<li>omlx mac 上 m芯片运行 利器 自带量化</li>
+<li>lemonade 跨平台 amd gpu 友好的 支持 各种模型 文本、图片、推理 分类好了</li>
+</ul>
+<li>小模型</li>
+<ul>
+<li>minicpm-v-4.6 1B 多模态模型 配合 <a href="https://github.com/yangweijie/opencode-ReadMediaFile">opencode-ReadMediaFile</a> 可以分析视频</li>
+</ul>
+</ul></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2026/issue108.html">← 关于导出优化</a>
+    <a class="next" href="../../posts/2026/issue110-mac.html">mac优化 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

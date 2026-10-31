@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>supervisor初体验 · Jay的实验室</title>
+<meta name="description" content="1.安装">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">supervisor初体验</h1>
+    <div class="post-meta">
+      <time>2017-08-03</time>
+      <span class="tags"><a class="tag" href="../../tags/blog.html">#blog</a><a class="tag" href="../../tags/php.html">#php</a><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p><strong>1.安装</strong></p>
+<p>宿主机环境：（Centos7）</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-3d52bb0de044d78d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>宿主机环境</p>
+<p>#yum install python-setuptools</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-e10c50020df81643.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>yum install python-setuptools</p>
+<p>#easy_install supervisor</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-3efd1976de43fa03.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>easy_install supervisor</p>
+<p><strong>测试安装是否成功：</strong></p>
+<p>#echo_supervisord_conf</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-0fa69d64c0541fd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>echo_supervisord_conf</p>
+<p><strong>2.创建配置文件</strong></p>
+<p>创建supervisor配置文件目录/etc/supervisor/</p>
+<p>#mkdir -m 755 -p /etc/supervisor/</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-a35442b3b3322d2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>mkdir -m 755 -p /etc/supervisor/</p>
+<p>创建主配文件supervisord.conf</p>
+<p>#echo_supervisord_conf &gt; /etc/supervisor/supervisord.conf</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-57b2b291869440b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>echo_supervisord_conf &gt; /etc/supervisor/supervisord.conf</p>
+<p>创建项目配置文件目录</p>
+<h1>mkdir -m 755 conf.d</h1>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-bdf1528dab7d0811.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<h1>mkdir -m 755 conf.d</h1>
+<p>3.调试</p>
+<p>在/home/k1ic/supervisor_simple 目录下创建test.c</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-02ba4cf694e9a6f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>test.c</p>
+<p>编译为test #gcc -o test test.c</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-cf151a9c4551a838.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>gcc -o test test.c</p>
+<p>在/etc/supervisor/conf.d 目录下创建 test.ini</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-941fcf9c291e0caf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>test.ini</p>
+<p>在主配文档中引入test.ini</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-7a827afc1b0a1460.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>files = ./conf.d/*.ini</p>
+<p>启动supervisor</p>
+<h1>supervisord -c /etc/supervisor/supervisord.conf</h1>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-69e6e917e6739846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>supervisord -c /etc/supervisor/supervisord.conf</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-b03469800dce2f08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>pstree -p | grep supervisord</p>
+<p>查看supervisord.log发现program test已启动</p>
+<h1>cat /tmp/supervisord.log</h1>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-5078fcc82a70ca05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<h1>cat /tmp/supervisord.log</h1>
+<p>用 supervisorctl 查看已经被监控的program（<strong>注：直接用 #supervisorctl 会提示：<a href="http://localhost:9001">http://localhost:9001</a> refused connection</strong>）</p>
+<p>#supervisorctl -c /etc/supervisor/supervisord.conf</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-56c63f5d75495aa4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>supervisorctl -c /etc/supervisor/supervisord.conf</p>
+<p>增加一例监控php脚本</p>
+<p>创建skud.ini</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-a3dbfb53f038b47e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>skud.ini</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-727cca0530107c8d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>[program:skuld]</p>
+<p>在/home/k1ic/supervisor_simple目录下创建skuld.php</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-6b747b9cd5bf02e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>skuld.php</p>
+<p>重启监控服务</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-e97398ee02681218.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>reload</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-c8322a7f66809846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>pstree</p>
+<p>================分割线================</p>
+<p><strong>这才是重点^^</strong></p>
+<p>0\. supervisor 比较适合监控业务应用，且只能监控前台程序，<strong>php fork方式实现的daemon不能用它监控，</strong>否则supervisor&gt; status 会提示：<strong>BACKOFF  Exited too quickly (process log may have details)</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-e05f53999df42586.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p><strong>BACKOFF  Exited too quickly (process log may have details)</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-dd9a1b44b39d19e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>cat supervisord.log</p>
+<p>1.每次修改配置文件后<strong>需进入supervisorctl，执行reload</strong>， 改动部分才能生效</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-8aaf0b1f7e40807b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>reload</p>
+<p>2.两个命令</p>
+<p>supervisord : supervisor的服务器端部分，用于supervisor启动</p>
+<p>supervisorctl：启动supervisor的命令行窗口，在该命令行中可执行start、stop、status、reload等操作。</p>
+<p>3.web管理界面</p>
+<p>将supervisord.conf中[inet_http_server]部分做相应配置，在supervisorctl中reload即可启动web管理界面</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-55d5439d676f0474.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p>[inet_http_server]</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/35360-a95a906d7d1fa4d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" loading="lazy"></p>
+<p><a href="http://107.170.249.52:9001/?message=Page%20refreshed%20at%20Tue%20Sep%2029%2016%3A20%3A40%202015">http://107.170.249.52:9001/?message=Page%20refreshed%20at%20Tue%20Sep%2029%2016%3A20%3A40%202015</a></p>
+<p>参考文献：</p>
+<p>Supervisor的安装与使用入门</p>
+<p><a href="http://fukun.org/archives/07102224.html">http://fukun.org/archives/07102224.html</a></p>
+<p>按需讲解之Supervisor</p>
+<p><a href="http://www.cnblogs.com/yjf512/archive/2012/03/05/2380496.html">http://www.cnblogs.com/yjf512/archive/2012/03/05/2380496.html</a></p>
+<p>supervisord entered FATAL state, too many start retries too quickly错误处理</p>
+<p><a href="http://beginman.cn/linux/2015/09/25/error-about-supervisord/">http://beginman.cn/linux/2015/09/25/error-about-supervisord/</a></p>
+<p>Supervisor监控PHP进程</p>
+<p><a href="http://www.phpddt.com/php/supervisor.html">http://www.phpddt.com/php/supervisor.html</a></p>
+<p>关于进程监控及自动启动</p>
+<p><a href="http://www.vimer.cn/2013/07/%E5%85%B3%E4%BA%8E%E8%BF%9B%E7%A8%8B%E7%9B%91%E6%8E%A7%E5%8F%8A%E8%87%AA%E5%8A%A8%E5%90%AF%E5%8A%A8.html">http://www.vimer.cn/2013/07/%E5%85%B3%E4%BA%8E%E8%BF%9B%E7%A8%8B%E7%9B%91%E6%8E%A7%E5%8F%8A%E8%87%AA%E5%8A%A8%E5%90%AF%E5%8A%A8.html</a></p>
+<p>centos服务安装 #37</p>
+<p>Supervisor学习</p>
+<p><a href="http://beginman.cn/linux/2015/04/06/Supervisor/">http://beginman.cn/linux/2015/04/06/Supervisor/</a></p>
+<p>通过进程模型进行扩展</p>
+<p><a href="http://12factor.net/zh_cn/concurrency">http://12factor.net/zh_cn/concurrency</a></p>
+<p>作者：k1ic<br>
+链接：<a href="http://www.jianshu.com/p/9abffc905645">http://www.jianshu.com/p/9abffc905645</a><br>
+來源：简书<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue34-git.html">← git 使用</a>
+    <a class="next" href="../../posts/2017/issue37-centos-7-systemctl.html">在CentOS 7上利用systemctl添加自定义系统服务 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>

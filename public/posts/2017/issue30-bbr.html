@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>亲测，免费 “ 锐速 ” ，BBR 网络加速 可用！ · Jay的实验室</title>
+<meta name="description" content="| kernel 4.9版本后的内核新增了一款TCP拥塞控制技术：BBR，这个是好东西。建议百度细看，你会有惊喜！">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">亲测，免费 “ 锐速 ” ，BBR 网络加速 可用！</h1>
+    <div class="post-meta">
+      <time>2017-07-12</time>
+      <span class="tags"><a class="tag" href="../../tags/software.html">#software</a><a class="tag" href="../../tags/linux.html">#linux</a><a class="tag" href="../../tags/shell.html">#shell</a></span>
+    </div>
+    <div class="post-content"><p>| kernel 4.9版本后的内核新增了一款TCP拥塞控制技术：BBR，这个是好东西。建议百度细看，你会有惊喜！</p>
+<p>首先要看看你但前的内核版本：<br>
+在终端输入：<code>uname -a</code><br>
+~~~ shell<br>
+Linux yh-Study-pc 4.9.0-deepin5-amd64 #1 SMP PREEMPT Deepin 4.9.8-5 (2017-05-02) x86_64 GNU/Linux<br>
+~~~<br>
+看红色字体哪里，如果是4.9以后的版本就可以使用了。</p>
+<p>~~~ shell<br>
+sudo gedit /etc/sysctl.conf <br>
+~~~<br>
+在 /etc/sysctl.conf  最后面加入下面两行，开启内核BBR的配置</p>
+<p>``` shell<br>
+net.core.default_qdisc=fq<br>
+net.ipv4.tcp_congestion_control=bbr</p>
+<pre><code>保存退出。
+
+让刚才配置的 sysctl.conf 现在生效
+`sudo  sysctl -p`
+
+检查bbr是否生效：
+`sudo sysctl net.ipv4.tcp_available_congestion_control`
+如果输出
+`net.ipv4.tcp_available_congestion_control = bbr cubic reno`
+而且
+`sudo lsmod | grep bbr`
+有 tcp_bbr 进程 号 ，说明开启成功了。
+
+特别是移动 ， 联通 宽带的用户，快来体验一下吧。 |
+</code></pre></div>
+  </article>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2017/issue1-hello-world.html">← Hello World!</a>
+    <a class="next" href="../../posts/2017/issue32.html">国内开发提速 →</a>
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>
