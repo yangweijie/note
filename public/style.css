@@ -81,3 +81,28 @@ a:hover { text-decoration: underline; }
 .comments { margin-top: 34px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px 34px; box-shadow: 0 1px 4px rgba(90, 70, 40, .07); }
 .comments-title { font-size: 20px; margin: 0 0 10px; letter-spacing: 1px; }
 .comments .giscus { margin-top: 10px; }
+
+/* giscus 评论 · custom 主题（融合米色纸底风格） */
+.comments .giscus {
+  --font-family: "Songti SC", Georgia, "Noto Serif SC", serif;
+  --color-page-bg: #fffdf8;
+  --color-page-text: #2f2a24;
+  --color-header-bg: #f3ecdf;
+  --color-header-text: #2f2a24;
+  --color-line: #e6dccb;
+  --color-divider: #e6dccb;
+  --color-shadow: rgba(90, 70, 40, .07);
+  --color-text: #2f2a24;
+  --color-text-light: #97897a;
+  --color-text-dark: #1f1b16;
+  --color-text-link: #b3542e;
+  --color-text-link-hover: #9a4527;
+  --color-reaction: #f3ecdf;
+  --color-reaction-strong: #b3542e;
+  --color-body: #fffdf8;
+  --color-button: #b3542e;
+  --color-button-hover: #9a4527;
+  --color-button-disabled: #d8cfc0;
+  --color-button-danger: #a8402f;
+  --color-button-disabled-danger: #e8d5d0;
+}
