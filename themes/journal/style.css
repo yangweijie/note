@@ -76,3 +76,8 @@ a:hover { text-decoration: underline; }
 
 .site-footer { margin-top: 72px; font-size: 13px; color: var(--muted); text-align: center; letter-spacing: 1px; }
 @media (max-width: 520px) { body { padding: 32px 16px 48px; } .post { padding: 26px 22px; } }
+
+/* 评论（giscus） */
+.comments { margin-top: 34px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px 34px; box-shadow: 0 1px 4px rgba(90, 70, 40, .07); }
+.comments-title { font-size: 20px; margin: 0 0 10px; letter-spacing: 1px; }
+.comments .giscus { margin-top: 10px; }
