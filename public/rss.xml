@@ -6,6 +6,13 @@
   <language>zh-CN</language>
   <generator>PJBlog For Finch</generator>
   <item>
+    <title>lms-ms：用 ModelScope 把 LM Studio 下载提速 30 倍</title>
+    <link>/posts/2026/lms-ms-downloader.html</link>
+    <guid>/posts/2026/lms-ms-downloader.html</guid>
+    <pubDate>Wed, 25 Nov 2026 00:00:00 GMT</pubDate>
+    <description>从「下载慢」表象出发，实测三条链路、验证插件能力边界，最终收敛为一个 136 行的跨平台命令行工具。附完整源码与使用说明。</description>
+  </item>
+  <item>
     <title>winc如何正确配置PHP格式化和修复命令</title>
     <link>/posts/2026/winc-php-format-fix.html</link>
     <guid>/posts/2026/winc-php-format-fix.html</guid>
@@ -137,12 +144,5 @@
     <guid>/posts/2021/issue93-phpword.html</guid>
     <pubDate>Wed, 03 Mar 2021 00:00:00 GMT</pubDate>
     <description>今天发现以前合并单元格并没有生效，经过研究发现已下结论：</description>
-  </item>
-  <item>
-    <title>springboot整合validation统一参数检查</title>
-    <link>/posts/2021/issue92-springboot-validation.html</link>
-    <guid>/posts/2021/issue92-springboot-validation.html</guid>
-    <pubDate>Thu, 07 Jan 2021 00:00:00 GMT</pubDate>
-    <description>1.背景</description>
   </item>
 </channel></rss>

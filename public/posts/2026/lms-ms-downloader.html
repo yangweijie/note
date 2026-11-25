@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lms-ms：用 ModelScope 把 LM Studio 下载提速 30 倍 · Jay的实验室</title>
+<meta name="description" content="从「下载慢」表象出发，实测三条链路、验证插件能力边界，最终收敛为一个 136 行的跨平台命令行工具。附完整源码与使用说明。">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">lms-ms：用 ModelScope 把 LM Studio 下载提速 30 倍</h1>
+    <div class="post-meta">
+      <time>2026-11-25</time>
+      <span class="tags"><a class="tag" href="../../tags/python.html">#Python</a><a class="tag" href="../../tags/lm-studio.html">#LM Studio</a><a class="tag" href="../../tags/modelscope.html">#ModelScope</a><a class="tag" href="../../tags/%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91.html">#工具开发</a></span>
+    </div>
+    <div class="post-content"><h1>lms-ms：用 ModelScope 把 LM Studio 下载提速 30 倍</h1>
+<blockquote><p>一次从「下载慢」表象出发，经过链路实测、能力边界验证、工具实现，最终收敛为跨平台命令行工具的完整过程。</p></blockquote>
+<p>起因是一个常见的抱怨：LM Studio 下载模型太慢。但在动手写代码前，有个前提必须先厘清——<strong>LM Studio 的插件系统能不能拦住下载流程？</strong> 如果它只能给大模型注册工具调用，那做成官方插件就是死路。</p>
+<p>于是问题被拆成四步：诊断慢在哪里 → 决策用什么形态 → 实现工具 → 验证并适配跨平台。</p>
+<h2>一、诊断：三层链路的实测</h2>
+<p>环境基线：LM Studio 0.4.28+2，模型目录 <code>~/.lmstudio/models</code>（已占 304 GB），关键配置 <code>useHFProxy: true</code>，系统无代理。</p>
+<p>三条链路的连通性测试：</p>
+<table><thead><tr><th>链路</th><th>结果</th></tr></thead><tbody>
+<tr><td><code>huggingface.co</code> 官方</td><td>12 秒超时，不通</td></tr>
+<tr><td><code>search.lmstudio.ai</code>（LM Studio 内置中转）</td><td>12 秒超时，不通</td></tr>
+<tr><td><code>hf-mirror.com</code></td><td>可达，单连接约 <strong>950 KB/s</strong></td></tr>
+</tbody></table>
+<p><strong>关键发现一</strong>：<code>useHFProxy: true</code> 会让 LM Studio 把下载请求转发到自家中转 <code>search.lmstudio.ai</code>，这个域名在当前网络下完全不通——这就是界面下载卡住的直接原因。</p>
+<p><strong>关键发现二</strong>：网上流传的「设 <code>HF_ENDPOINT=hf-mirror.com</code> 环境变量」对 LM Studio 基本无效。它是 Electron 应用，下载走 Node/undici，不读系统代理环境变量。</p>
+<p>并发也救不了：对 hf-mirror 做 8 并发分块测试，单连接 ~950 KB/s，8 并发 ~1.1 MB/s，仅提升 20%。瓶颈在出口链路本身——hf-mirror 会把大文件 302 到 <code>cas-bridge.xethub.hf.co</code>，这条链路在国内同样不理想。</p>
+<p><strong>胜出者是 ModelScope</strong>：</p>
+<table><thead><tr><th>链路</th><th>连接延迟</th><th>大文件吞吐</th></tr></thead><tbody>
+<tr><td>hf-mirror.com</td><td>0.19 s</td><td>~0.95 MB/s</td></tr>
+<tr><td><strong>ModelScope</strong></td><td><strong>0.04 s</strong></td><td><strong>15.1 MB/s</strong></td></tr>
+</tbody></table>
+<p>走国内 CDN，延迟低一个数量级，吞吐约为 hf-mirror 的 <strong>16 倍</strong>。常用 HF 组织（<code>mlx-community</code>、<code>lmstudio-community</code>、<code>bartowski</code>、<code>Qwen</code>）在 ModelScope 上都有同名镜像，映射方案可行。</p>
+<p>技术路线就此收敛：<strong>绕开 LM Studio 下载器，用 ModelScope 预下载到模型目录。</strong></p>
+<h2>二、形态抉择：插件还是命令行？</h2>
+<p>查证 LM Studio 官方插件系统的能力边界后，结论很明确：它只提供 <code>withToolsProvider</code>（注册工具）、<code>withConfigSchematics</code>（配置面板）、prompt 预处理三类扩展，<strong>无法 hook 模型下载流程</strong>。</p>
+<table><thead><tr><th>形态</th><th>可行性</th><th>评价</th></tr></thead><tbody>
+<tr><td>应用内插件</td><td>能注册工具，但拦不住下载</td><td>不解决核心问题</td></tr>
+<tr><td>命令行工具</td><td>直接包装 ModelScope 下载</td><td>唯一能真正替换下载通道的形态</td></tr>
+<tr><td>两者都要</td><td>先命令行，再补插件</td><td>插件价值有限，徒增复杂度</td></tr>
+</tbody></table>
+<p>最终选择：<strong>命令行工具 <code>lms-ms</code></strong>，名字和用法都对齐 <code>lms get</code>。</p>
+<p>动手前先把成功标准写成可验证的四条：</p>
+<ol>
+<li><code>lms-ms &lt;repo&gt;</code> 能下载到 <code>~/.lmstudio/models/&lt;owner&gt;/&lt;repo&gt;</code></li>
+<li>下载后 <code>lms ls</code> 能识别</li>
+<li>支持 <code>lms get</code> 风格的 <code>@量化</code> 语法</li>
+<li>默认不下全精度大文件，避免误拉几十 GB</li>
+</ol>
+<p>并用真实仓库验证了三件事：<code>HubApi.get_model_files(repo, recursive=True)</code> 能拿到路径和大小；GGUF 量化命名与 HF 完全一致（<code>@Q4_K_M</code> 可直接精确匹配）；<code>snapshot_download</code> 支持 <code>local_dir</code> / <code>allow_patterns</code> / <code>max_workers</code>。</p>
+<h2>三、实现：136 行的单文件工具</h2>
+<p>核心逻辑就两段：</p>
+<pre><code class="language-python"># 量化匹配：精确匹配文件名末尾的标记，避免子串误伤
+def quant_token(path: str) -&gt; str:
+    return Path(path).stem.rsplit(&quot;-&quot;, 1)[-1]
+
+matched = [
+    p for p, _ in entries
+    if p.endswith(&quot;.gguf&quot;) and quant_token(p).lower() == quant.lower()
+]
+
+# 只下匹配的 GGUF + 小型配置文件，不碰 f16 全精度
+patterns = matched + [p for p, _ in entries if p.endswith((&quot;.json&quot;, &quot;.txt&quot;, &quot;.model&quot;))]
+snapshot_download(repo, local_dir=str(target), allow_patterns=patterns, max_workers=8)</code></pre>
+<p>几个务实细节：<code>modelscope</code> 只装在 anaconda 解释器里，脚本用 try-import + <code>os.execv</code> 自动切换，用户无感；下载前用 <code>shutil.disk_usage()</code> 做磁盘预检；断点续传由 <code>snapshot_download</code> 原生提供；量化不存在时列出全部可用项，不抛堆栈。</p>
+<h2>四、实测：30 MB/s 与一次假阴性</h2>
+<pre><code>$ lms-ms bartowski/Qwen2.5-0.5B-Instruct-GGUF@Q4_K_M --workers 8
+量化 Q4_K_M -&gt; Qwen2.5-0.5B-Instruct-Q4_K_M.gguf
+预计下载: 379.4MB（2 个文件）
+开始下载（8 并发）...</code></pre>
+<p><strong>397 MB / 13 秒 ≈ 30 MB/s</strong>，相比 hf-mirror 快约 30 倍。文件完整性通过 GGUF 魔数校验（<code>47475546</code>），只下载了 Q4_K_M 文件与 73 B 配置，未误拉 f16 全精度。</p>
+<p>然后遇到一次典型的<strong>假阴性</strong>：<code>lms ls | grep Qwen2.5-0.5B-Instruct-GGUF</code> 返回空。排查发现模型其实已识别成功，问题出在搜索关键词——<code>lms ls</code> 显示的是<strong>规范化短名</strong>（小写、连字符、去 <code>-GGUF</code> 后缀），实际显示为 <code>qwen2.5-0.5b-instruct</code>。<code>lms ls --json</code> 给出铁证：<code>modelKey=qwen2.5-0.5b-instruct</code>、<code>path=.../Qwen2.5-0.5B-Instruct-Q4_K_M.gguf</code>、<code>sizeBytes=397808192</code>，与下载文件完全一致。</p>
+<p><strong>教训</strong>：工具报告「找不到」时，先确认查找的标识符是不是工具内部使用的那个。LM Studio 有两套标识符——<code>modelKey</code> 是规范化短名，<code>indexedModelIdentifier</code> 才是完整路径，<code>lms load</code> 用前者。</p>
+<h2>五、跨平台：一个 .cmd 启动器</h2>
+<p>脚本主体是跨平台的：<code>Path.home() / &quot;.lmstudio&quot; / &quot;models&quot;</code> 在 Windows 上自动展开为 <code>%USERPROFILE%\.lmstudio\models</code>。需要处理的只有三处：shebang、硬编码的 Anaconda 路径、完成提示里的 <code>grep</code>。</p>
+<p>不动核心逻辑，加一层薄启动器解决「全局命令」和「解释器定位」：</p>
+<pre><code class="language-bat">@echo off
+if defined LMS_MS_PYTHON (
+    &quot;%LMS_MS_PYTHON%&quot; &quot;%~dp0lms-ms.py&quot; %*
+) else (
+    py -3 &quot;%~dp0lms-ms.py&quot; %*
+)
+exit /b %errorlevel%</code></pre>
+<p>脚本内只改一处：完成提示按 <code>os.name</code> 分支，Windows 用 <code>findstr</code>，其他平台保持 <code>grep</code>。macOS 侧 <code>--dry-run</code> 回归通过。</p>
+<h2>六、工程复盘</h2>
+<ol>
+<li><strong>先验证能力边界，再动手实现</strong>。否则几天后会得到一个装上去却拦不住任何下载的东西。</li>
+<li><strong>数据驱动的方案选择</strong>。16 倍差距不是猜出来的，是测出来的。</li>
+<li><strong>模糊的成功标准会制造无限返工</strong>。写成四条可验证的，工具就能独立闭环。</li>
+<li><strong>「找不到」不等于「不存在」</strong>。用更底层的数据源（<code>--json</code>）交叉验证。</li>
+<li><strong>跨平台适配优先考虑包装层</strong>。用启动器隔离环境差异，核心逻辑保持单一。</li>
+</ol>
+<hr>
+<h2>附件一：lms-ms.py（单文件工具）</h2>
+<p>完整源码，可直接复制使用：</p>
+<pre><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;lms-ms — 用 ModelScope 高速下载模型到 LM Studio 模型目录。
+
+用法:
+  lms-ms owner/repo              下载整个仓库
+  lms-ms owner/repo@Q4_K_M       只下载指定量化（GGUF）
+  lms-ms --list owner/repo       列出仓库文件与可用量化
+  lms-ms --dry-run ...           只预览，不下载
+  lms-ms --workers N             并发数（默认 8）
+&quot;&quot;&quot;
+from __future__ import annotations
+
+import argparse
+import os
+import shutil
+import sys
+from pathlib import Path
+
+# modelscope 只装在 anaconda 解释器里；当前解释器没有时自动切换过去
+try:
+    from modelscope.hub.api import HubApi
+    from modelscope.hub.snapshot_download import snapshot_download
+except ImportError:
+    _ALT = &quot;/Volumes/data/Application/anaconda3/bin/python&quot;
+    if os.path.exists(_ALT) and os.path.realpath(sys.executable) != os.path.realpath(_ALT):
+        os.execv(_ALT, [_ALT, __file__, *sys.argv[1:]])
+    sys.exit(&quot;需要 modelscope：pip install modelscope，或使用含 modelscope 的 Python&quot;)
+
+MODELS_ROOT = Path.home() / &quot;.lmstudio&quot; / &quot;models&quot;
+CONFIG_SUFFIXES = (&quot;.json&quot;, &quot;.txt&quot;, &quot;.model&quot;)
+
+
+def split_spec(spec: str):
+    &quot;&quot;&quot;owner/repo@quant -&gt; (repo, quant|None)&quot;&quot;&quot;
+    if &quot;@&quot; in spec:
+        return spec.rsplit(&quot;@&quot;, 1)
+    return spec, None
+
+
+def quant_token(path: str) -&gt; str:
+    &quot;&quot;&quot;从文件名推断量化标记：X-Y-Q4_K_M.gguf -&gt; Q4_K_M&quot;&quot;&quot;
+    return Path(path).stem.rsplit(&quot;-&quot;, 1)[-1]
+
+
+def human(n: int) -&gt; str:
+    n = float(n)
+    for unit in (&quot;B&quot;, &quot;KB&quot;, &quot;MB&quot;, &quot;GB&quot;):
+        if n &lt; 1024:
+            return f&quot;{n:.1f}{unit}&quot;
+        n /= 1024
+    return f&quot;{n:.1f}TB&quot;
+
+
+def main() -&gt; int:
+    ap = argparse.ArgumentParser(description=&quot;用 ModelScope 高速下载模型到 LM Studio&quot;)
+    ap.add_argument(&quot;model&quot;, help=&quot;owner/repo，或 owner/repo@量化（如 @Q4_K_M）&quot;)
+    ap.add_argument(&quot;--list&quot;, action=&quot;store_true&quot;, help=&quot;列出仓库文件与可用量化&quot;)
+    ap.add_argument(&quot;--dry-run&quot;, action=&quot;store_true&quot;, help=&quot;只显示将要下载的文件&quot;)
+    ap.add_argument(&quot;--workers&quot;, type=int, default=8, help=&quot;并发下载数（默认 8）&quot;)
+    args = ap.parse_args()
+
+    repo, quant = split_spec(args.model)
+    if &quot;/&quot; not in repo:
+        print(f&quot;错误：模型标识需为 owner/repo 格式，收到: {repo}&quot;, file=sys.stderr)
+        return 2
+
+    api = HubApi()
+    try:
+        files = api.get_model_files(repo, recursive=True)
+    except Exception as exc:
+        print(f&quot;错误：ModelScope 上找不到 {repo}: {exc}&quot;, file=sys.stderr)
+        return 3
+
+    entries = [(f.get(&quot;Path&quot;, &quot;&quot;), int(f.get(&quot;Size&quot;) or 0)) for f in files]
+    entries = [(p, s) for p, s in entries if p]
+
+    if args.list:
+        print(f&quot;{repo} 的文件（共 {len(entries)} 个）：&quot;)
+        for path, size in entries:
+            tag = f&quot;  [{quant_token(path)}]&quot; if path.endswith(&quot;.gguf&quot;) else &quot;&quot;
+            print(f&quot;  {human(size):&gt;10}  {path}{tag}&quot;)
+        return 0
+
+    patterns = None
+    if quant:
+        matched = [
+            p for p, _ in entries
+            if p.endswith(&quot;.gguf&quot;) and quant_token(p).lower() == quant.lower()
+        ]
+        if not matched:
+            avail = sorted({quant_token(p) for p, _ in entries if p.endswith(&quot;.gguf&quot;)})
+            print(f&quot;错误：{repo} 中没有量化 {quant}。可用: {', '.join(avail)}&quot;, file=sys.stderr)
+            return 4
+        # GGUF 只下匹配文件 + 小配置文件，避免误拉其他量化或全精度文件
+        patterns = matched + [p for p, _ in entries if p.endswith(CONFIG_SUFFIXES)]
+        print(f&quot;量化 {quant} -&gt; {', '.join(matched)}&quot;)
+
+    selected = [(p, s) for p, s in entries if patterns is None or p in patterns]
+    total = sum(s for _, s in selected)
+    target = MODELS_ROOT / repo
+    print(f&quot;目标目录: {target}&quot;)
+    print(f&quot;预计下载: {human(total)}（{len(selected)} 个文件）&quot;)
+
+    try:
+        free = shutil.disk_usage(MODELS_ROOT).free
+    except OSError:
+        free = None
+    if free is not None and total &gt; free:
+        print(f&quot;错误：磁盘剩余 {human(free)}，不足以下载 {human(total)}&quot;, file=sys.stderr)
+        return 5
+
+    if args.dry_run:
+        print(&quot;dry-run：未下载。&quot;)
+        return 0
+
+    target.mkdir(parents=True, exist_ok=True)
+    kwargs = {&quot;local_dir&quot;: str(target), &quot;max_workers&quot;: args.workers}
+    if patterns:
+        kwargs[&quot;allow_patterns&quot;] = patterns
+
+    print(f&quot;开始下载（{args.workers} 并发）...&quot;)
+    snapshot_download(repo, **kwargs)
+
+    # LM Studio 用规范化短名作为 modelKey（小写、连字符、去 -GGUF 后缀）
+    repo_name = repo.rsplit(&quot;/&quot;, 1)[-1]
+    model_key = repo_name[:-5] if repo_name.upper().endswith(&quot;-GGUF&quot;) else repo_name
+    key = model_key.lower()
+    if os.name == &quot;nt&quot;:
+        verify = f'lms ls | findstr /i &quot;{key}&quot;'
+    else:
+        verify = f&quot;lms ls | grep -i '{key}'&quot;
+    print(f&quot;\n完成。启动 LM Studio 后验证：&quot;)
+    print(f&quot;  {verify}&quot;)
+    print(f&quot;  加载：lms load {key}&quot;)
+    print(f&quot;  （准确标识符见 lms ls --json 的 modelKey / indexedModelIdentifier）&quot;)
+    return 0
+
+
+if __name__ == &quot;__main__&quot;:
+    sys.exit(main())</code></pre>
+<h2>附件二：lms-ms.cmd（Windows 启动器）</h2>
+<pre><code class="language-bat">@echo off
+rem lms-ms - Windows global launcher
+rem 1. Put this file next to lms-ms.py
+rem 2. Add that folder to PATH
+rem 3. If modelscope is installed in a specific interpreter (e.g. Anaconda),
+rem    set LMS_MS_PYTHON to the full path of that python.exe
+
+if defined LMS_MS_PYTHON (
+    &quot;%LMS_MS_PYTHON%&quot; &quot;%~dp0lms-ms.py&quot; %*
+) else (
+    py -3 &quot;%~dp0lms-ms.py&quot; %*
+)
+exit /b %errorlevel%</code></pre>
+<h2>附件三：README.md（使用说明）</h2>
+<p>````markdown</p>
+<h1>lms-ms — ModelScope 加速下载器</h1>
+<p>LM Studio 内置下载走 <code>search.lmstudio.ai</code> 中转，在国内网络下常不可达；hf-mirror 单连接仅约 1 MB/s。本工具走 ModelScope 国内 CDN，实测 <strong>30 MB/s</strong>（约快 30 倍），下载后直接落入 LM Studio 模型目录，启动 LM Studio 即自动识别。</p>
+<h2>安装</h2>
+<p>已安装到 <code>~/.local/bin/lms-ms</code>（源码副本 <code>lms-ms.py</code> 在工作区）。依赖 <code>modelscope</code>，已由本机 anaconda 环境提供；脚本会自动定位该解释器。</p>
+<h2>Windows 全局使用</h2>
+<p>脚本本身跨平台（模型目录自动展开为 <code>%USERPROFILE%\.lmstudio\models</code>），Windows 只需解决&quot;全局命令&quot;和&quot;解释器定位&quot;两件事。用附带的 <code>lms-ms.cmd</code> 启动器：</p>
+<ol>
+<li>把 <code>lms-ms.py</code> 和 <code>lms-ms.cmd</code> 放到同一目录，例如 <code>%USERPROFILE%\.lms-ms\</code></li>
+<li>把该目录加入 PATH（系统属性 → 环境变量，或 PowerShell 执行）：</li>
+</ol>
+<p>   ```powershell<br>
+   [Environment]::SetEnvironmentVariable(&quot;Path&quot;, $env:Path + &quot;;$env:USERPROFILE\.lms-ms&quot;, &quot;User&quot;)<br>
+   ```</p>
+<ol>
+<li>重开终端，即可直接用 <code>lms-ms</code>（CMD / PowerShell 均可）</li>
+</ol>
+<p><strong>解释器选择</strong>：启动器优先读环境变量 <code>LMS_MS_PYTHON</code>，未设置时回退到 <code>py -3</code>。若 <code>modelscope</code> 装在 Anaconda，需设置：</p>
+<pre><code class="language-powershell">[Environment]::SetEnvironmentVariable(&quot;LMS_MS_PYTHON&quot;, &quot;C:\ProgramData\anaconda3\python.exe&quot;, &quot;User&quot;)</code></pre>
+<p>（路径按实际 Anaconda 安装位置调整，可用 <code>where python</code> 查看。）脚本里原有一处 macOS 专用的 Anaconda fallback 路径在 Windows 上会被忽略，不影响使用。</p>
+<p>Windows 下完成提示自动改用 <code>findstr</code>，与 CMD 兼容；<code>lms ls --json</code> 用法与 macOS 相同。</p>
+<h2>用法</h2>
+<pre><code class="language-bash">lms-ms owner/repo                    # 下载整个仓库
+lms-ms owner/repo@Q4_K_M             # 只下指定量化 + 配置文件（推荐）
+lms-ms bartowski/Qwen2.5-0.5B-Instruct-GGUF@Q4_K_M
+lms-ms --list owner/repo             # 列出所有文件及可用量化标记
+lms-ms --dry-run owner/repo@Q8_0     # 预览要下载的文件与体积
+lms-ms owner/repo --workers 16       # 调整并发数（默认 8）</code></pre>
+<p><code>@量化</code> 语法与 <code>lms get</code> 一致，匹配规则为文件名末尾的量化标记精确匹配（如 <code>Q4_K_M</code>、<code>Q8_0</code>、<code>IQ2_M</code>、<code>f16</code>）。无效量化会报错并列出全部可用项。</p>
+<h2>下载位置</h2>
+<p><code>~/.lmstudio/models/&lt;owner&gt;/&lt;repo&gt;/</code>，与 LM Studio 原生目录结构一致。下载后：</p>
+<pre><code class="language-bash">lms ls                               # 确认模型出现在列表
+lms ls --json                        # 看准确的 modelKey / indexedModelIdentifier
+lms load &lt;modelKey&gt;                  # 加载（短名，如 qwen2.5-0.5b-instruct）</code></pre>
+<p><strong>注意</strong>：<code>lms ls</code> 显示的是规范化短名（<code>modelKey</code>），不是下载目录的 repo 名。例如 <code>bartowski/Qwen2.5-0.5B-Instruct-GGUF</code> 显示为 <code>qwen2.5-0.5b-instruct</code>（小写、去 <code>-GGUF</code> 后缀）。直接用 repo 名 grep 会匹配不到，这是正常的——用 <code>lms ls --json</code> 的 <code>path</code> 字段可确认文件确实来自该 repo。</p>
+<h2>设计说明</h2>
+<ul>
+<li><strong>为何不是 LM Studio 插件</strong>：官方插件系统只提供 <code>withToolsProvider</code> / <code>withConfigSchematics</code> / prompt 预处理，无法拦截 GUI 或 <code>lms get</code> 的下载流程。命令行包装是唯一能真正替换下载通道的形态。</li>
+<li><strong>仓库映射</strong>：HF 常用组织（<code>mlx-community</code>、<code>lmstudio-community</code>、<code>bartowski</code>、<code>Qwen</code> 等）在 ModelScope 上多为同名仓库，脚本直接用 <code>owner/repo</code> 查询；不存在时明确报错。</li>
+<li><strong>安全约束</strong>：<code>@量化</code> 模式只下载匹配的 GGUF 与小型配置文件（<code>.json/.txt/.model</code>），不会误拉 f16 全精度文件。下载前有磁盘空间预检。</li>
+<li><strong>断点续传</strong>：由 <code>modelscope.snapshot_download</code> 提供，重复执行同一命令会跳过已完成文件。</li>
+</ul>
+<h2>实测记录</h2>
+<p><code>bartowski/Qwen2.5-0.5B-Instruct-GGUF@Q4_K_M</code>：397 MB，13 秒完成，平均 30 MB/s；文件落地 <code>~/.lmstudio/models/bartowski/Qwen2.5-0.5B-Instruct-GGUF/</code>，GGUF 魔数校验通过。</p>
+<h2>局限</h2>
+<ul>
+<li>仅覆盖 ModelScope 上有镜像的仓库；冷门模型可能缺失，需 <code>--list</code> 先确认。</li>
+<li>不会自动调用 <code>lms load</code>；下载与加载分离，避免误加载大模型占满内存。</li>
+</ul>
+<p>````</p></div>
+  </article>
+  <section class="comments">
+    <h2 class="comments-title">评论</h2>
+    <script src="https://giscus.app/client.js"
+      data-repo="yangweijie/note"
+      data-repo-id="MDEwOlJlcG9zaXRvcnk5Njc5MDA4Nw=="
+      data-category="Announcements"
+      data-category-id="DIC_kwDOBcTmR84DKJzQ"
+      data-mapping="specific"
+      data-term="lms-ms：用 ModelScope 把 LM Studio 下载提速 30 倍"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="custom"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async></script>
+    <noscript>评论需要启用 JavaScript 才能加载。</noscript>
+  </section>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2026/winc-php-format-fix.html">← winc如何正确配置PHP格式化和修复命令</a>
+    
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>
