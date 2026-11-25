@@ -6,6 +6,13 @@
   <language>zh-CN</language>
   <generator>PJBlog For Finch</generator>
   <item>
+    <title>winc如何正确配置PHP格式化和修复命令</title>
+    <link>/posts/2026/winc-php-format-fix.html</link>
+    <guid>/posts/2026/winc-php-format-fix.html</guid>
+    <pubDate>Wed, 25 Nov 2026 00:00:00 GMT</pubDate>
+    <description>Winc 没有内置 PHP 格式化与修复工具，本文用 php-cs-fixer + phpcbf 加一层 stdin→stdout 桥接脚本，实现保存即格式化、保存即修复，附 macOS 与 Windows 双平台完整配置。</description>
+  </item>
+  <item>
     <title>mac优化</title>
     <link>/posts/2026/issue110-mac.html</link>
     <guid>/posts/2026/issue110-mac.html</guid>
@@ -137,12 +144,5 @@
     <guid>/posts/2021/issue92-springboot-validation.html</guid>
     <pubDate>Thu, 07 Jan 2021 00:00:00 GMT</pubDate>
     <description>1.背景</description>
-  </item>
-  <item>
-    <title>sql查看mysql中各数据库大小</title>
-    <link>/posts/2020/issue91-sql-mysql.html</link>
-    <guid>/posts/2020/issue91-sql-mysql.html</guid>
-    <pubDate>Thu, 05 Nov 2020 00:00:00 GMT</pubDate>
-    <description>用SQL命令查看Mysql数据库大小</description>
   </item>
 </channel></rss>

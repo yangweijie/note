@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>winc如何正确配置PHP格式化和修复命令 · Jay的实验室</title>
+<meta name="description" content="Winc 没有内置 PHP 格式化与修复工具，本文用 php-cs-fixer + phpcbf 加一层 stdin→stdout 桥接脚本，实现保存即格式化、保存即修复，附 macOS 与 Windows 双平台完整配置。">
+<meta name="generator" content="PJBlog For Finch">
+<link rel="stylesheet" href="../../style.css">
+<link rel="alternate" type="application/rss+xml" title="Jay的实验室" href="../../rss.xml">
+</head>
+<body>
+<header class="site-header">
+  <h1 class="site-title"><a href="../../index.html">Jay的实验室</a></h1>
+  <nav class="site-nav">
+    <a href="../../index.html">首页</a>
+    <a href="../../archive.html">归档</a>
+    <a href="../../about.html">关于</a>
+    <a href="../../rss.xml">RSS</a>
+  </nav>
+</header>
+<main>
+  <article class="post">
+    <h1 class="post-title">winc如何正确配置PHP格式化和修复命令</h1>
+    <div class="post-meta">
+      <time>2026-11-25</time>
+      <span class="tags"><a class="tag" href="../../tags/php.html">#PHP</a><a class="tag" href="../../tags/winc.html">#Winc</a><a class="tag" href="../../tags/%E5%B7%A5%E5%85%B7%E9%85%8D%E7%BD%AE.html">#工具配置</a></span>
+    </div>
+    <div class="post-content"><p>折腾编辑器配置最容易踩的坑，是默认「它应该支持」——但 Winc 的 PHP 支持恰恰需要自己搭。这篇把配置原理、双平台脚本和验证方法一次讲清楚。</p>
+<h2>先搞懂 Winc 的命令机制</h2>
+<p>翻了 Winc 的开源源码可以确认：<strong>它没有内置任何 PHP 格式化/修复引擎</strong>。配置里的 <code>format.commands.&lt;扩展名&gt;</code> 和 <code>format.fixCommands.&lt;扩展名&gt;</code> 接受的是一条外部命令，工作方式固定为：</p>
+<ol>
+<li>把当前编辑器缓冲区的内容通过 <strong>stdin</strong> 传给命令；</li>
+<li>读取命令的 <strong>stdout</strong>，用它替换编辑器里的内容。</li>
+</ol>
+<p>这决定了配置的两个关键点：</p>
+<ul>
+<li>工具要自己装（本文选 <code>php-cs-fixer</code> 做格式化、<code>phpcbf</code> 做修复）；</li>
+<li>这两个工具都只接受「文件路径」参数，不支持 stdin——所以中间必须加一层<strong>桥接脚本</strong>：把 stdin 落盘到临时文件 → 调工具处理 → 把结果 <code>cat</code> 回 stdout。</li>
+</ul>
+<p>理解了这条链路，下面的配置就都是顺理成章的。</p>
+<h2>一、安装 PHP 工具链</h2>
+<p>用 Composer 全局安装：</p>
+<pre><code class="language-bash">composer global require friendsofphp/php-cs-fixer squizlabs/php_codesniffer
+composer global config bin-dir --absolute</code></pre>
+<p>实际装到的版本：<code>php-cs-fixer 3.75</code> + <code>phpcbf 4.0.4</code>。</p>
+<p>⚠️ <strong>版本坑</strong>：php-cs-fixer 3.75 最高只支持到 PHP 8.3。如果系统默认是 PHP 8.5，命令里必须写死用 PHP 8.3 来跑它；<code>phpcbf</code>（CodeSniffer 4.x）则可以直接用系统 PHP。</p>
+<h2>二、macOS 配置</h2>
+<h3>1. 规则文件</h3>
+<p>新建 <code>~/Library/Application Support/winc/php-cs-fixer.php</code>，规则走保守的 PSR-12 + 短数组，只排版、不改代码行为：</p>
+<pre><code class="language-php">&lt;?php
+
+$finder = PhpCsFixer\Finder::create()-&gt;in(__DIR__);
+
+return (new PhpCsFixer\Config())
+    -&gt;setRules([
+        '@PSR12' =&gt; true,
+        'array_syntax' =&gt; ['syntax' =&gt; 'short'],
+    ])
+    -&gt;setFinder($finder);</code></pre>
+<p>（用 context-kit 检索过项目，没有既定的 PHP 风格配置，所以选 PSR-12 这个最安全的基线。）</p>
+<h3>2. 桥接脚本</h3>
+<p>新建 <code>~/Library/Application Support/winc/php-winc.sh</code>，加可执行权限（<code>chmod +x</code>）：</p>
+<pre><code class="language-bash">#!/bin/bash
+# 用法: php-winc.sh format|fix
+set -euo pipefail
+task=&quot;${1:-format}&quot;
+
+# 用编辑器传来的文件名做临时文件名；没有则用默认名
+name=&quot;file.php&quot;
+if [ -n &quot;${WINC_FILE:-}&quot; ]; then
+  name=&quot;$(basename &quot;$WINC_FILE&quot;)&quot;
+fi
+
+dir=&quot;$(mktemp -d)&quot;
+tmp=&quot;$dir/$name&quot;
+trap 'rm -rf &quot;$dir&quot;' EXIT
+
+# stdin → 临时文件
+cat &gt; &quot;$tmp&quot;
+
+# 切到原文件所在目录，保证相对路径引用和配置能被正确找到
+if [ -n &quot;${WINC_FILE:-}&quot; ] &amp;&amp; [ -d &quot;$(dirname &quot;$WINC_FILE&quot;)&quot; ]; then
+  cd &quot;$(dirname &quot;$WINC_FILE&quot;)&quot;
+fi
+
+bin=&quot;$(composer global config bin-dir --absolute 2&gt;/dev/null)&quot;
+
+if [ &quot;$task&quot; = &quot;fix&quot; ]; then
+  # phpcbf 用系统 PHP
+  &quot;$bin/phpcbf&quot; --standard=PSR12 &quot;$tmp&quot; &gt;/dev/null 2&gt;&amp;1 || true
+else
+  # php-cs-fixer 必须用 PHP 8.3；按本机实际路径调整
+  php8.3 &quot;$bin/php-cs-fixer&quot; fix --quiet \
+    --config &quot;$HOME/Library/Application Support/winc/php-cs-fixer.php&quot; \
+    &quot;$tmp&quot; &gt;/dev/null 2&gt;&amp;1 || true
+fi
+
+# 处理结果 → stdout
+cat &quot;$tmp&quot;</code></pre>
+<p>脚本用 <code>mktemp</code> 把 stdin 写到临时文件，处理完就删——<strong>不会直接改动磁盘上的原文件</strong>，所以未保存的缓冲区也能正常格式化。</p>
+<h3>3. 修改 Winc 配置</h3>
+<p>编辑 <code>~/Library/Application Support/winc/config.json</code>，在 <code>format</code> 节加入：</p>
+<pre><code class="language-json">&quot;format&quot;: {
+  &quot;onSave&quot;: true,
+  &quot;commands&quot;: {
+    &quot;php&quot;: &quot;\&quot;/Users/jay/Library/Application Support/winc/php-winc.sh\&quot; format&quot;
+  },
+  &quot;fixOnSave&quot;: true,
+  &quot;fixCommands&quot;: {
+    &quot;php&quot;: &quot;\&quot;/Users/jay/Library/Application Support/winc/php-winc.sh\&quot; fix&quot;
+  }
+}</code></pre>
+<p><code>onSave</code> / <code>fixOnSave</code> 都设为 <code>true</code>，保存时先修复再格式化。改之前记得备份：</p>
+<pre><code class="language-bash">cp &quot;$HOME/Library/Application Support/winc/config.json&quot; \
+   &quot;$HOME/Library/Application Support/winc/config.json.bak-$(date +%Y%m%d-%H%M%S)&quot;</code></pre>
+<h2>三、Windows 配置</h2>
+<h3>1. 安装与路径</h3>
+<p>先装 PHP 8.3（php-cs-fixer 3.75 不支持更高版本），然后：</p>
+<pre><code class="language-powershell">composer global require friendsofphp/php-cs-fixer squizlabs/php_codesniffer
+composer global config bin-dir --absolute</code></pre>
+<p>Composer 的 bin 目录通常是 <code>%APPDATA%\Composer\vendor\bin</code>。</p>
+<p>Winc 的配置目录是 <code>%APPDATA%\winc\config.json</code>；源码里做了兜底：APPDATA 缺失时回退到 <code>HOME\winc</code>。把上面的 <code>php-cs-fixer.php</code> 规则文件放到同一目录。</p>
+<h3>2. 桥接脚本</h3>
+<p>新建 <code>%APPDATA%\winc\php-winc.ps1</code>：</p>
+<pre><code class="language-powershell">param([string]$Task = 'format')
+$ErrorActionPreference = 'Stop'
+$PSNativeCommandUseErrorActionPreference = $false
+
+$name = if ($env:WINC_FILE) { [IO.Path]::GetFileName($env:WINC_FILE) } else { 'file.php' }
+$dir = Join-Path $env:TEMP ([guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $dir -Force | Out-Null
+$tmp = Join-Path $dir $name
+try {
+    $src = [Console]::In.ReadToEnd()
+    [IO.File]::WriteAllText($tmp, $src, (New-Object Text.UTF8Encoding($false)))
+    $bin = Join-Path $env:APPDATA 'Composer\vendor\bin'
+    if ($Task -eq 'fix') {
+        &amp; (Join-Path $bin 'phpcbf.bat') --standard=PSR12 $tmp 2&gt;$null | Out-Null
+    } else {
+        &amp; php (Join-Path $bin 'php-cs-fixer') fix --quiet --config (Join-Path $env:APPDATA 'winc\php-cs-fixer.php') $tmp 2&gt;$null | Out-Null
+    }
+    [Console]::Out.Write([IO.File]::ReadAllText($tmp))
+}
+finally {
+    Remove-Item -LiteralPath $dir -Recurse -Force -ErrorAction SilentlyContinue
+}</code></pre>
+<h3>3. config.json</h3>
+<p>⚠️ <strong>Winc 不会展开命令里的 <code>%APPDATA%</code></strong>，路径必须写死绝对路径：</p>
+<pre><code class="language-json">&quot;format&quot;: {
+  &quot;onSave&quot;: true,
+  &quot;commands&quot;: {
+    &quot;php&quot;: &quot;powershell -NoProfile -ExecutionPolicy Bypass -File \&quot;C:\\Users\\你的用户名\\AppData\\Roaming\\winc\\php-winc.ps1\&quot; format&quot;
+  },
+  &quot;fixOnSave&quot;: true,
+  &quot;fixCommands&quot;: {
+    &quot;php&quot;: &quot;powershell -NoProfile -ExecutionPolicy Bypass -File \&quot;C:\\Users\\你的用户名\\AppData\\Roaming\\winc\\php-winc.ps1\&quot; fix&quot;
+  }
+}</code></pre>
+<h2>四、实测验证</h2>
+<p>配置写完不要直接信，按 Winc 的真实调用方式验一遍：命令拆分、stdin 输入、设置 <code>WINC_FILE</code> 环境变量、以文件所在目录为 cwd。</p>
+<p><strong>格式化测试</strong>——输入：</p>
+<pre><code class="language-php">&lt;?php
+function demo(){echo &quot;hi&quot;;}</code></pre>
+<p>输出应自动补空行、函数体换行、4 空格缩进，退出码 0。</p>
+<p><strong>修复测试</strong>——输入：</p>
+<pre><code class="language-php">&lt;?php
+if(true){echo &quot;x&quot;;}</code></pre>
+<p>输出应为 <code>if (true) { echo &quot;x&quot;; }</code>，退出码 0。</p>
+<p>两个命令都通过才算配置成功。如果 Windows 上没生效，先在终端手动跑一次：</p>
+<pre><code class="language-powershell">php php-cs-fixer fix --dry-run --diff 文件.php</code></pre>
+<p>看具体报错再针对性处理。</p>
+<h2>五、重启并使用</h2>
+<p>配置是<strong>启动时加载</strong>的，必须完全退出 Winc（macOS 用 ⌘Q）再重新打开。之后：</p>
+<ul>
+<li><code>⇧⌥F</code> 手动格式化；</li>
+<li>Fix 在命令面板搜 “Fix”；</li>
+<li>因为开了 <code>onSave</code> / <code>fixOnSave</code>，保存时会自动先修复再格式化。</li>
+</ul>
+<h2>小结</h2>
+<p>Winc 配置 PHP 工具的关键就一句话：<strong>工具本身不支持 stdin，所以用桥接脚本把 stdin 转成临时文件</strong>。摸清这条链路后，想换风格规则（比如改成 Laravel / Symfony）也只要动规则文件，脚本和配置都不用变。</p></div>
+  </article>
+  <section class="comments">
+    <h2 class="comments-title">评论</h2>
+    <script src="https://giscus.app/client.js"
+      data-repo="yangweijie/note"
+      data-repo-id="MDEwOlJlcG9zaXRvcnk5Njc5MDA4Nw=="
+      data-category="Announcements"
+      data-category-id="DIC_kwDOBcTmR84DKJzQ"
+      data-mapping="specific"
+      data-term="winc如何正确配置PHP格式化和修复命令"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="custom"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async></script>
+    <noscript>评论需要启用 JavaScript 才能加载。</noscript>
+  </section>
+  <nav class="post-nav">
+    <a class="prev" href="../../posts/2026/issue110-mac.html">← mac优化</a>
+    
+  </nav>
+</main>
+<footer class="site-footer">
+  <p>© 2026 Jay的实验室 · Powered by PJBlog For Finch</p>
+</footer>
+</body>
+</html>
