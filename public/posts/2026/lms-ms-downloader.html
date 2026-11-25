@@ -26,8 +26,7 @@
       <time>2026-11-25</time>
       <span class="tags"><a class="tag" href="../../tags/python.html">#Python</a><a class="tag" href="../../tags/lm-studio.html">#LM Studio</a><a class="tag" href="../../tags/modelscope.html">#ModelScope</a><a class="tag" href="../../tags/%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91.html">#工具开发</a></span>
     </div>
-    <div class="post-content"><h1>lms-ms：用 ModelScope 把 LM Studio 下载提速 30 倍</h1>
-<blockquote><p>一次从「下载慢」表象出发，经过链路实测、能力边界验证、工具实现，最终收敛为跨平台命令行工具的完整过程。</p></blockquote>
+    <div class="post-content"><blockquote><p>一次从「下载慢」表象出发，经过链路实测、能力边界验证、工具实现，最终收敛为跨平台命令行工具的完整过程。</p></blockquote>
 <p>起因是一个常见的抱怨：LM Studio 下载模型太慢。但在动手写代码前，有个前提必须先厘清——<strong>LM Studio 的插件系统能不能拦住下载流程？</strong> 如果它只能给大模型注册工具调用，那做成官方插件就是死路。</p>
 <p>于是问题被拆成四步：诊断慢在哪里 → 决策用什么形态 → 实现工具 → 验证并适配跨平台。</p>
 <h2>一、诊断：三层链路的实测</h2>
