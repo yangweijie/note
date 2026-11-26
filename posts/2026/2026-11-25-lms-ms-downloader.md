@@ -61,26 +61,26 @@ summary: 从「下载慢」表象出发，实测三条链路、验证插件能�
 
 并用真实仓库验证了三件事：`HubApi.get_model_files(repo, recursive=True)` 能拿到路径和大小；GGUF 量化命名与 HF 完全一致（`@Q4_K_M` 可直接精确匹配）；`snapshot_download` 支持 `local_dir` / `allow_patterns` / `max_workers`。
 
-## 三、实现：136 行的单文件工具
+## 三、实现：单文件工具
 
-核心逻辑就两段：
+核心是量化匹配：按文件名尾部匹配，`@PTQ1_0-mtp` / `@mtp` / `@Q4_K_M` 都支持，精确标记优先，命中多个时拒绝下载并列出候选，避免误拉大文件：
 
 ```python
-# 量化匹配：精确匹配文件名末尾的标记，避免子串误伤
-def quant_token(path: str) -> str:
-    return Path(path).stem.rsplit("-", 1)[-1]
-
-matched = [
-    p for p, _ in entries
-    if p.endswith(".gguf") and quant_token(p).lower() == quant.lower()
-]
+def match_ggufs(entries, quant: str):
+    """按尾部匹配 GGUF：@PTQ1_0-mtp / @mtp / @Q4_K_M 都支持。"""
+    q = quant.lower().lstrip("-")
+    ggufs = [p for p, _ in entries if p.endswith(".gguf")]
+    tail = [p for p in ggufs if Path(p).stem.lower().endswith("-" + q)]
+    if tail:
+        return tail
+    return [p for p in ggufs if quant_token(p).lower() == q]
 
 # 只下匹配的 GGUF + 小型配置文件，不碰 f16 全精度
 patterns = matched + [p for p, _ in entries if p.endswith((".json", ".txt", ".model"))]
 snapshot_download(repo, local_dir=str(target), allow_patterns=patterns, max_workers=8)
 ```
 
-几个务实细节：`modelscope` 只装在 anaconda 解释器里，脚本用 try-import + `os.execv` 自动切换，用户无感；下载前用 `shutil.disk_usage()` 做磁盘预检；断点续传由 `snapshot_download` 原生提供；量化不存在时列出全部可用项，不抛堆栈。
+几个务实细节：`models_root()` 优先读 LM Studio 的 `settings.json` 里的 `downloadsFolder`（实际配置的模型目录），读不到才回退默认的 `~/.lmstudio/models`；`display_token()` 让 `--list` 输出 `PTQ1_0-mtp` 这类人类可读的标记；下载前用 `shutil.disk_usage()` 做磁盘预检；断点续传由 `snapshot_download` 原生提供；量化不存在或命中多个时列出全部可用项并明确报错，不抛堆栈。缺少 `modelscope` 时直接给出安装提示（跨平台由 `LMS_MS_PYTHON` 指定解释器）。
 
 ## 四、实测：30 MB/s 与一次假阴性
 
@@ -148,18 +148,32 @@ import shutil
 import sys
 from pathlib import Path
 
-# modelscope 只装在 anaconda 解释器里；当前解释器没有时自动切换过去
 try:
     from modelscope.hub.api import HubApi
     from modelscope.hub.snapshot_download import snapshot_download
 except ImportError:
-    _ALT = "/Volumes/data/Application/anaconda3/bin/python"
-    if os.path.exists(_ALT) and os.path.realpath(sys.executable) != os.path.realpath(_ALT):
-        os.execv(_ALT, [_ALT, __file__, *sys.argv[1:]])
-    sys.exit("需要 modelscope：pip install modelscope，或使用含 modelscope 的 Python")
+    sys.exit("需要 modelscope：pip install modelscope，或设置 LMS_MS_PYTHON 指向含 modelscope 的 Python")
 
-MODELS_ROOT = Path.home() / ".lmstudio" / "models"
 CONFIG_SUFFIXES = (".json", ".txt", ".model")
+
+
+def models_root() -> Path:
+    """优先用 LM Studio 实际配置的模型目录（settings.json 的 downloadsFolder），回退默认 ~/.lmstudio/models。"""
+    home = Path.home()
+    try:
+        import json
+        data = json.loads((home / ".lmstudio" / "settings.json").read_text(encoding="utf-8"))
+        folder = data.get("downloadsFolder")
+        if folder:
+            p = Path(os.path.expandvars(folder)).expanduser()
+            if p.is_dir():
+                return p
+    except (OSError, ValueError):
+        pass
+    return home / ".lmstudio" / "models"
+
+
+MODELS_ROOT = models_root()
 
 
 def split_spec(spec: str):
@@ -172,6 +186,24 @@ def split_spec(spec: str):
 def quant_token(path: str) -> str:
     """从文件名推断量化标记：X-Y-Q4_K_M.gguf -> Q4_K_M"""
     return Path(path).stem.rsplit("-", 1)[-1]
+
+
+def display_token(path: str) -> str:
+    """面向用户的标记：末段不含数字（如 mtp）时取末两段，得到 PTQ1_0-mtp 这类写法。"""
+    parts = Path(path).stem.split("-")
+    if len(parts) >= 2 and not any(ch.isdigit() for ch in parts[-1]):
+        return "-".join(parts[-2:])
+    return parts[-1]
+
+
+def match_ggufs(entries, quant: str):
+    """按尾部匹配 GGUF：@PTQ1_0-mtp / @mtp / @Q4_K_M 都支持。"""
+    q = quant.lower().lstrip("-")
+    ggufs = [p for p, _ in entries if p.endswith(".gguf")]
+    tail = [p for p in ggufs if Path(p).stem.lower().endswith("-" + q)]
+    if tail:
+        return tail
+    return [p for p in ggufs if quant_token(p).lower() == q]
 
 
 def human(n: int) -> str:
@@ -209,21 +241,24 @@ def main() -> int:
     if args.list:
         print(f"{repo} 的文件（共 {len(entries)} 个）：")
         for path, size in entries:
-            tag = f"  [{quant_token(path)}]" if path.endswith(".gguf") else ""
+            tag = f"  [{display_token(path)}]" if path.endswith(".gguf") else ""
             print(f"  {human(size):>10}  {path}{tag}")
         return 0
 
     patterns = None
     if quant:
-        matched = [
-            p for p, _ in entries
-            if p.endswith(".gguf") and quant_token(p).lower() == quant.lower()
-        ]
+        matched = match_ggufs(entries, quant)
         if not matched:
-            avail = sorted({quant_token(p) for p, _ in entries if p.endswith(".gguf")})
+            avail = sorted({display_token(p) for p, _ in entries if p.endswith(".gguf")})
             print(f"错误：{repo} 中没有量化 {quant}。可用: {', '.join(avail)}", file=sys.stderr)
             return 4
-        # GGUF 只下匹配文件 + 小配置文件，避免误拉其他量化或全精度文件
+        if len(matched) > 1:
+            sizes = dict(entries)
+            print(f"错误：@{quant} 命中 {len(matched)} 个 GGUF，为避免误下大文件已中止。", file=sys.stderr)
+            print("请改用下列更精确的标记之一：", file=sys.stderr)
+            for p in matched:
+                print(f"  @{display_token(p)}   {human(sizes.get(p, 0))}   {p}", file=sys.stderr)
+            return 4
         patterns = matched + [p for p, _ in entries if p.endswith(CONFIG_SUFFIXES)]
         print(f"量化 {quant} -> {', '.join(matched)}")
 
@@ -253,7 +288,6 @@ def main() -> int:
     print(f"开始下载（{args.workers} 并发）...")
     snapshot_download(repo, **kwargs)
 
-    # LM Studio 用规范化短名作为 modelKey（小写、连字符、去 -GGUF 后缀）
     repo_name = repo.rsplit("/", 1)[-1]
     model_key = repo_name[:-5] if repo_name.upper().endswith("-GGUF") else repo_name
     key = model_key.lower()
@@ -261,10 +295,10 @@ def main() -> int:
         verify = f'lms ls | findstr /i "{key}"'
     else:
         verify = f"lms ls | grep -i '{key}'"
-    print(f"\n完成。启动 LM Studio 后验证：")
+    print("\n完成。启动 LM Studio 后验证：")
     print(f"  {verify}")
     print(f"  加载：lms load {key}")
-    print(f"  （准确标识符见 lms ls --json 的 modelKey / indexedModelIdentifier）")
+    print("  （准确标识符见 lms ls --json 的 modelKey / indexedModelIdentifier）")
     return 0
 
 
@@ -299,11 +333,11 @@ LM Studio 内置下载走 `search.lmstudio.ai` 中转，在国内网络下常不
 
 ## 安装
 
-已安装到 `~/.local/bin/lms-ms`（源码副本 `lms-ms.py` 在工作区）。依赖 `modelscope`，已由本机 anaconda 环境提供；脚本会自动定位该解释器。
+已安装到 `~/.local/bin/lms-ms`（源码副本 `lms-ms.py` 在工作区）。依赖 `modelscope`，需由所用 Python 环境提供；缺少时脚本会给出安装提示。macOS 上可用含 `modelscope` 的解释器（如 anaconda）运行，或 `pip install modelscope`。
 
 ## Windows 全局使用
 
-脚本本身跨平台（模型目录自动展开为 `%USERPROFILE%\.lmstudio\models`），Windows 只需解决"全局命令"和"解释器定位"两件事。用附带的 `lms-ms.cmd` 启动器：
+脚本本身跨平台（模型目录优先读 LM Studio 的 `downloadsFolder` 配置，回退到 `%USERPROFILE%\.lmstudio\models`），Windows 只需解决"全局命令"和"解释器定位"两件事。用附带的 `lms-ms.cmd` 启动器：
 
 1. 把 `lms-ms.py` 和 `lms-ms.cmd` 放到同一目录，例如 `%USERPROFILE%\.lms-ms\`
 2. 把该目录加入 PATH（系统属性 → 环境变量，或 PowerShell 执行）：
@@ -318,7 +352,7 @@ LM Studio 内置下载走 `search.lmstudio.ai` 中转，在国内网络下常不
 [Environment]::SetEnvironmentVariable("LMS_MS_PYTHON", "C:\ProgramData\anaconda3\python.exe", "User")
 ```
 
-（路径按实际 Anaconda 安装位置调整，可用 `where python` 查看。）脚本里原有一处 macOS 专用的 Anaconda fallback 路径在 Windows 上会被忽略，不影响使用。
+（路径按实际 Anaconda 安装位置调整，可用 `where python` 查看。）新版脚本不再内置解释器自动切换，完全靠 `LMS_MS_PYTHON` 或 `py -3` 定位。
 
 Windows 下完成提示自动改用 `findstr`，与 CMD 兼容；`lms ls --json` 用法与 macOS 相同。
 

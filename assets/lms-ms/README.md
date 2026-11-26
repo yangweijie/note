@@ -4,11 +4,11 @@ LM Studio 内置下载走 `search.lmstudio.ai` 中转，在国内网络下常不
 
 ## 安装
 
-已安装到 `~/.local/bin/lms-ms`（源码副本 `lms-ms.py` 在工作区）。依赖 `modelscope`，已由本机 anaconda 环境提供；脚本会自动定位该解释器。
+已安装到 `~/.local/bin/lms-ms`（源码副本 `lms-ms.py` 在工作区）。依赖 `modelscope`，需由所用 Python 环境提供；缺少时脚本会给出安装提示。macOS 上可用含 `modelscope` 的解释器（如 anaconda）运行，或 `pip install modelscope`。
 
 ## Windows 全局使用
 
-脚本本身跨平台（模型目录自动展开为 `%USERPROFILE%\.lmstudio\models`），Windows 只需解决"全局命令"和"解释器定位"两件事。用附带的 `lms-ms.cmd` 启动器：
+脚本本身跨平台（模型目录优先读 LM Studio 的 `downloadsFolder` 配置，回退到 `%USERPROFILE%\.lmstudio\models`），Windows 只需解决"全局命令"和"解释器定位"两件事。用附带的 `lms-ms.cmd` 启动器：
 
 1. 把 `lms-ms.py` 和 `lms-ms.cmd` 放到同一目录，例如 `%USERPROFILE%\.lms-ms\`
 2. 把该目录加入 PATH（系统属性 → 环境变量，或 PowerShell 执行）：
@@ -23,7 +23,7 @@ LM Studio 内置下载走 `search.lmstudio.ai` 中转，在国内网络下常不
 [Environment]::SetEnvironmentVariable("LMS_MS_PYTHON", "C:\ProgramData\anaconda3\python.exe", "User")
 ```
 
-（路径按实际 Anaconda 安装位置调整，可用 `where python` 查看。）脚本里原有一处 macOS 专用的 Anaconda fallback 路径在 Windows 上会被忽略，不影响使用。
+（路径按实际 Anaconda 安装位置调整，可用 `where python` 查看。）新版脚本不再内置解释器自动切换，完全靠 `LMS_MS_PYTHON` 或 `py -3` 定位。
 
 Windows 下完成提示自动改用 `findstr`，与 CMD 兼容；`lms ls --json` 用法与 macOS 相同。
 
